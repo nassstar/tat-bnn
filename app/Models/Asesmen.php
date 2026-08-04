@@ -10,8 +10,8 @@ class Asesmen extends Model
 {
     use HasFactory;
 
-    // Cukup gunakan ini agar semua kolom di tabel asesmens bisa diisi
-    protected $guarded = [];
+    // Mengizinkan semua kolom diisi secara massal kecuali kolom 'id'
+    protected $guarded = ['id'];
 
     protected $table = 'asesmens';
 
@@ -19,7 +19,7 @@ class Asesmen extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
-    // Event Booting: Otomatis generate UUID
+    // Event Booting: Otomatis generate UUID saat data baru dibuat
     protected static function boot()
     {
         parent::boot();
@@ -31,6 +31,7 @@ class Asesmen extends Model
     }
 
     // --- Relasi BelongsTo ke Tabel Master ---
+
     public function pekerjaan()
     {
         return $this->belongsTo(Pekerjaan::class, 'pekerjaan_id');
@@ -55,49 +56,4 @@ class Asesmen extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
-
-    protected $fillable = [
-        'nama_lengkap',
-        'nik',
-        'tempat_lahir',
-        'tgl_lahir',
-        'jenis_kelamin',
-        'no_hp',
-        'pendidikan_id',
-        'pekerjaan_id',
-        'alamat_ktp',
-        'alamat_domisili',
-        'no_register',
-        'no_bln',
-        'no_surat_pengajuan',
-        'no_lkn',
-        'tgl_surat',
-        'tgl_berkas',
-        'tgl_pelaksanaan',
-        'tgl_tangkap',
-        'narkotika_id',
-        'berat_bb',
-        'pasal_sangkaan',
-        'hasil_asesmen_hukum',
-        'hasil_asesmen_medis',
-        'rekomendasi_id',
-        'pelaksanaan',
-
-        // -- KOLOM BARU CASE CONFERENCE --
-        'penghasilan_rata_rata',
-        'status_hukum',
-        'keterlibatan_jaringan',
-        'cara_mendapatkan',
-        'dapat_dari',
-        'kesehatan',
-        'psikologi',
-        'tes_urine',
-        'alasan_penggunaan',
-        'kondisi_keluarga',
-        'tingkat_ketergantungan',
-        'pola_pemakaian',
-        'kondisi_lingkungan',
-        'keterangan',
-        'saran'
-    ];
 }

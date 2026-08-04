@@ -13,6 +13,7 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     </head>
     <body class="font-sans antialiased bg-slate-50 text-slate-900">
         <div class="min-h-screen bg-slate-50">
@@ -33,4 +34,17 @@
             </main>
         </div>
     </body>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inisialisasi Datepicker untuk semua input dengan class 'datepicker-id'
+        flatpickr(".datepicker-id", {
+            altInput: true,
+            altFormat: "d-m-Y", // Format yang dilihat pengguna (Indonesia)
+            dateFormat: "Y-m-d", // Format baku yang dikirim ke database (MySQL)
+            locale: "id" // Bahasa Indonesia
+        });
+    });
+</script>
 </html>
