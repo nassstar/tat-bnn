@@ -390,136 +390,176 @@ class AsesmenController extends Controller
 
     public function beritaAcara(string $id)
     {
-        $asesmen = Asesmen::findOrFail($id);
-        return view('asesmen.berita-acara', compact('asesmen'));
+        $asesmen = \App\Models\Asesmen::with(['pendidikan', 'pekerjaan', 'anggotaTim'])->findOrFail($id);
+
+        $masterMedis = \App\Models\MasterAnggota::where('kategori', 'medis')->get();
+        $masterHukum = \App\Models\MasterAnggota::where('kategori', 'hukum')->get();
+
+        // Panggil data Master Opsi
+        $masterZat = \App\Models\MasterOpsi::where('kategori', 'zat')->get();
+        $masterTempatRehab = \App\Models\MasterOpsi::where('kategori', 'tempat_rehab')->get();
+        $masterDiagnosis = \App\Models\MasterOpsi::where('kategori', 'diagnosis')->get();
+
+        $klienData = [
+            'nama' => $asesmen->nama_lengkap ?? '-',
+            'nik' => $asesmen->nik ?? '-',
+            'usia' => $asesmen->tgl_lahir ? \Carbon\Carbon::parse($asesmen->tgl_lahir)->age : '-',
+            'tempat_lahir' => $asesmen->tempat_lahir ?? '-',
+            'tgl_lahir' => $asesmen->tgl_lahir ? \Carbon\Carbon::parse($asesmen->tgl_lahir)->translatedFormat('d F Y') : '-',
+            'jk' => $asesmen->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan',
+            'agama' => $asesmen->agama ?? '-',
+            'pendidikan' => $asesmen->pendidikan->nama_pendidikan ?? '-',
+            'pekerjaan' => $asesmen->pekerjaan->nama_pekerjaan ?? '-',
+            'alamat_ktp' => $asesmen->alamat_ktp ?? '-',
+            'alamat_domisili' => $asesmen->alamat_domisili ?? '-',
+        ];
+
+        // Variabel masterDiagnosis dikirimkan ke blade melalui compact()
+        return view('asesmen.berita-acara', compact('asesmen', 'masterMedis', 'masterHukum', 'masterZat', 'masterTempatRehab', 'masterDiagnosis', 'klienData'));
     }
 
-    /**
-     * Memproses form Berita Acara dan mencetak ke dokumen Word (.docx)
-     */
-    public function generateBeritaAcara(Request $request, string $id)
+    public function generateBeritaAcara(\Illuminate\Http\Request $request, string $id)
     {
-        $asesmen = Asesmen::with(['pendidikan', 'pekerjaan'])->findOrFail($id);
+        $asesmen = \App\Models\Asesmen::findOrFail($id);
 
+        // 1. Simpan/Update data ke database terlebih dahulu
+        // (Pastikan kolom status_klien dan diagnosis_medis sudah Anda tambahkan di tabel asesmens jika ingin disave)
+        $asesmen->update([
+            'no_ba' => $request->no_ba,
+            'tgl_ba' => $request->tgl_ba,
+            'ketua_tat_nama' => $request->ketua_tat_nama,
+            'ketua_tat_nrp' => $request->ketua_tat_nrp,
+            'no_kep_tim' => $request->no_kep_tim,
+            'tgl_kep_tim' => $request->tgl_kep_tim,
+
+            'narasi_medis' => $request->narasi_medis,
+            'narasi_hukum' => $request->narasi_hukum,
+
+            'alat_bukti_no_sk' => $request->alat_bukti_no_sk,
+            'alat_bukti_tgl_sk' => $request->alat_bukti_tgl_sk,
+            'alat_bukti_dokter' => $request->alat_bukti_dokter,
+            'alat_bukti_hasil' => $request->alat_bukti_hasil,
+
+            // Variabel Kesimpulan
+            'status_klien' => $request->status_klien,
+            'kesimpulan_jenis_zat' => $request->kesimpulan_jenis_zat,
+            'kesimpulan_pola_pakai' => $request->kesimpulan_pola_pakai,
+            'kesimpulan_kategori' => $request->kesimpulan_kategori,
+            'diagnosis_medis' => $request->diagnosis_medis,
+
+            'rekomendasi_tempat_rehab' => $request->rekomendasi_tempat_rehab,
+            'rekomendasi_durasi' => $request->rekomendasi_durasi,
+            'rekomendasi_keterangan' => $request->rekomendasi_keterangan,
+        ]);
+
+        // Simpan relasi anggota tim (Tim Medis & Hukum) ke tabel pivot
+        $asesmen->anggotaTim()->sync(array_merge(
+            (array) $request->tim_medis,
+            (array) $request->tim_hukum
+        ));
+
+        // 2. Load Template Word (Pastikan path ini sesuai dengan letak file template Anda)
         $templatePath = storage_path('app/templates/template_berita_acara.docx');
-
-        if (!file_exists($templatePath)) {
-            return redirect()->back()->with('error', 'Template Word Berita Acara tidak ditemukan di storage.');
-        }
-
         $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($templatePath);
 
-        $templateProcessor->setValue('nama_lengkap', $asesmen->nama_lengkap);
+        // --- MAPPING VARIABEL IDENTITAS & HEADER ---
+        $templateProcessor->setValue('nama_lengkap', $asesmen->nama_lengkap ?? '-');
         $templateProcessor->setValue('no_register', $asesmen->no_register ?? '-');
-
-        $jk = $asesmen->jenis_kelamin == 'L' ? 'laki-laki' : ($asesmen->jenis_kelamin == 'P' ? 'perempuan' : '-');
-        $templateProcessor->setValue('jenis_kelamin', $jk);
-
-        $umur = '-';
-        if ($asesmen->tgl_lahir) {
-            $umur = Carbon::parse($asesmen->tgl_lahir)->age;
-        }
-        $templateProcessor->setValue('umur', $umur);
-
-        $templateProcessor->setValue('pendidikan', $asesmen->pendidikan->nama_pendidikan ?? '-');
-        $templateProcessor->setValue('pekerjaan', $asesmen->pekerjaan->nama_pekerjaan ?? '-');
-        $templateProcessor->setValue('kewarganegaraan', $asesmen->kewarganegaraan ?? 'Indonesia');
-        $templateProcessor->setValue('tempat_lahir', $asesmen->tempat_lahir ?? '-');
-        $templateProcessor->setValue('tgl_lahir', $asesmen->tgl_lahir ? Carbon::parse($asesmen->tgl_lahir)->translatedFormat('d F Y') : '-');
-        $templateProcessor->setValue('nik', $asesmen->nik ?? '-');
-        $templateProcessor->setValue('agama', $asesmen->agama ?? '-');
-        $templateProcessor->setValue('penghasilan', $asesmen->penghasilan_rata_rata ?? '-');
-        $templateProcessor->setValue('alamat_domisili', $asesmen->alamat_domisili ?? '-');
-
-        // Mapping Request Form Berita Acara
         $templateProcessor->setValue('no_ba', $request->no_ba ?? '-');
-        $templateProcessor->setValue('hari_ba', $request->hari_ba ?? '-');
-        $templateProcessor->setValue('tgl_sk_tim', $request->tgl_sk_tim ?? '-');
-        $templateProcessor->setValue('tgl_pelaksanaan_surat', $request->tgl_pelaksanaan_surat ?? '-');
-        $templateProcessor->setValue('tgl_surat_narkoba', $request->tgl_surat_narkoba ?? '-');
+        $templateProcessor->setValue('ketua_tat_nama', $request->ketua_tat_nama ?? '-');
+        $templateProcessor->setValue('ketua_tat_nrp', $request->ketua_tat_nrp ?? '-');
+        $templateProcessor->setValue('no_kep_tim', $request->no_kep_tim ?? '-');
 
+        // --- MAPPING TANGGAL INDONESIA (Manual Tahun Huruf) ---
         if ($request->tgl_ba) {
-            $tanggalBa = Carbon::parse($request->tgl_ba);
-            $templateProcessor->setValue('tgl_ba', $tanggalBa->translatedFormat('d F Y'));
+            $tglBa = \Carbon\Carbon::parse($request->tgl_ba);
+            $templateProcessor->setValue('tgl_ba', $tglBa->translatedFormat('d'));
+            $templateProcessor->setValue('hari_ba', $tglBa->translatedFormat('l'));
+            $templateProcessor->setValue('bln_ba', $tglBa->translatedFormat('F'));
+            $templateProcessor->setValue('thn_ba', $tglBa->year);
 
-            $bulanIndo = [
-                1 => 'Januari',
-                2 => 'Februari',
-                3 => 'Maret',
-                4 => 'April',
-                5 => 'Mei',
-                6 => 'Juni',
-                7 => 'Juli',
-                8 => 'Agustus',
-                9 => 'September',
-                10 => 'Oktober',
-                11 => 'November',
-                12 => 'Desember'
-            ];
-
-            $templateProcessor->setValue('bln_ba', $bulanIndo[$tanggalBa->month]);
-            $templateProcessor->setValue('thn_ba', $tanggalBa->year);
-
-            if (class_exists('NumberFormatter')) {
-                $formatter = new \NumberFormatter('id', \NumberFormatter::SPELLOUT);
-                $thnHuruf = ucwords($formatter->format($tanggalBa->year));
+            $tahunAngka = $tglBa->year;
+            $tahunHuruf = '';
+            if ($tahunAngka >= 2000 && $tahunAngka < 2100) {
+                $puluhan = $tahunAngka % 100;
+                $hurufAngka = [0 => '', 1 => 'satu', 2 => 'dua', 3 => 'tiga', 4 => 'empat', 5 => 'lima', 6 => 'enam', 7 => 'tujuh', 8 => 'delapan', 9 => 'sembilan', 10 => 'sepuluh', 11 => 'sebelas', 12 => 'dua belas', 13 => 'tiga belas', 14 => 'empat belas', 15 => 'lima belas', 16 => 'enam belas', 17 => 'tujuh belas', 18 => 'delapan belas', 19 => 'sembilan belas'];
+                if ($puluhan < 20) {
+                    $teksPuluhan = $hurufAngka[$puluhan];
+                } else {
+                    $puluhanBulat = floor($puluhan / 10);
+                    $satuan = $puluhan % 10;
+                    $teksPuluhan = $hurufAngka[$puluhanBulat] . ' puluh ' . $hurufAngka[$satuan];
+                }
+                $tahunHuruf = 'dua ribu ' . trim($teksPuluhan);
             } else {
-                $thnHuruf = $tanggalBa->year;
+                $tahunHuruf = (string) $tahunAngka;
             }
-            $templateProcessor->setValue('thn_ba_huruf', $thnHuruf);
+            $templateProcessor->setValue('thn_ba_huruf', $tahunHuruf);
         } else {
             $templateProcessor->setValue('tgl_ba', '-');
+            $templateProcessor->setValue('hari_ba', '-');
             $templateProcessor->setValue('bln_ba', '-');
             $templateProcessor->setValue('thn_ba', '-');
             $templateProcessor->setValue('thn_ba_huruf', '-');
         }
 
-        // Tim Medis & Hukum
-        $templateProcessor->setValue('med_1_nama', $request->med_1_nama ?? '-');
-        $templateProcessor->setValue('med_1_nip', $request->med_1_nip ?? '-');
-        $templateProcessor->setValue('med_1_jabatan', $request->med_1_jabatan ?? '-');
+        $templateProcessor->setValue('tgl_kep_tim', $request->tgl_kep_tim ? \Carbon\Carbon::parse($request->tgl_kep_tim)->translatedFormat('d F Y') : '-');
+        $templateProcessor->setValue('alat_bukti_tgl_sk', $request->alat_bukti_tgl_sk ? \Carbon\Carbon::parse($request->alat_bukti_tgl_sk)->translatedFormat('d F Y') : '-');
 
-        $templateProcessor->setValue('med_2_nama', $request->med_2_nama ?? '-');
-        $templateProcessor->setValue('med_2_sip', $request->med_2_sip ?? '-');
-        $templateProcessor->setValue('med_2_jabatan', $request->med_2_jabatan ?? '-');
+        // --- MAPPING TIM MEDIS (Dinamis dengan cloneBlock) ---
+        $medis = \App\Models\MasterAnggota::whereIn('id', (array) $request->tim_medis)->get();
+        $templateProcessor->cloneBlock('block_medis', count($medis), true, true);
+        foreach ($medis as $index => $m) {
+            $i = $index + 1;
+            $templateProcessor->setValue("no_medis#{$i}", $i);
+            $templateProcessor->setValue("med_nama#{$i}", $m->nama);
+            $templateProcessor->setValue("med_nip#{$i}", $m->nip_nrp_sip ?? '-');
+            $templateProcessor->setValue("med_jabatan#{$i}", $m->jabatan ?? '-');
+        }
 
-        $templateProcessor->setValue('huk_1_nama', $request->huk_1_nama ?? '-');
-        $templateProcessor->setValue('huk_1_pangkat', $request->huk_1_pangkat ?? '-');
-        $templateProcessor->setValue('huk_1_nip', $request->huk_1_nip ?? '-');
-        $templateProcessor->setValue('huk_1_jabatan', $request->huk_1_jabatan ?? '-');
+        // --- MAPPING TIM HUKUM (Dinamis dengan cloneBlock) ---
+        $hukum = \App\Models\MasterAnggota::whereIn('id', (array) $request->tim_hukum)->get();
+        $templateProcessor->cloneBlock('block_hukum', count($hukum), true, true);
+        foreach ($hukum as $index => $m) {
+            $i = $index + 1;
+            $templateProcessor->setValue("no_hukum#{$i}", $i);
+            $templateProcessor->setValue("huk_nama#{$i}", $m->nama);
+            $templateProcessor->setValue("huk_pangkat#{$i}", $m->pangkat ?? '-');
+            $templateProcessor->setValue("huk_nip#{$i}", $m->nip_nrp_sip ?? '-');
+            $templateProcessor->setValue("huk_jabatan#{$i}", $m->jabatan ?? '-');
+        }
 
-        $templateProcessor->setValue('huk_2_nama', $request->huk_2_nama ?? '-');
-        $templateProcessor->setValue('huk_2_pangkat', $request->huk_2_pangkat ?? '-');
-        $templateProcessor->setValue('huk_2_nip', $request->huk_2_nip ?? '-');
-        $templateProcessor->setValue('huk_2_jabatan', $request->huk_2_jabatan ?? '-');
+        // --- MAPPING NARASI & ALAT BUKTI ---
+        $templateProcessor->setValue('narasi_medis', $request->narasi_medis ?? '-');
+        $templateProcessor->setValue('narasi_hukum', $request->narasi_hukum ?? '-');
 
-        $templateProcessor->setValue('huk_3_nama', $request->huk_3_nama ?? '-');
-        $templateProcessor->setValue('huk_3_pangkat', $request->huk_3_pangkat ?? '-');
-        $templateProcessor->setValue('huk_3_nip', $request->huk_3_nip ?? '-');
-        $templateProcessor->setValue('huk_3_jabatan', $request->huk_3_jabatan ?? '-');
+        $templateProcessor->setValue('alat_bukti_no_sk', $request->alat_bukti_no_sk ?? '-');
+        $templateProcessor->setValue('alat_bukti_dokter', $request->alat_bukti_dokter ?? '-');
+        $templateProcessor->setValue('alat_bukti_hasil', $request->alat_bukti_hasil ?? '-');
 
-        // Narasi
-        $templateProcessor->setValue('hasil_medis', $request->hasil_medis ?? '-');
-        $templateProcessor->setValue('pasal_sangkaan', $request->pasal_sangkaan ?? '-');
-        $templateProcessor->setValue('hasil_hukum', $request->hasil_hukum ?? '-');
-        $templateProcessor->setValue('dokter_penandatangan', $request->dokter_penandatangan ?? '-');
-        $templateProcessor->setValue('hasil_urine', $request->hasil_urine ?? '-');
-        $templateProcessor->setValue('hasil_lab_for', $request->hasil_lab_for ?: '-');
-        $templateProcessor->setValue('jenis_narkotika', $request->jenis_narkotika ?? '-');
-        $templateProcessor->setValue('pola_pemakaian', $request->pola_pemakaian ?? '-');
-        $templateProcessor->setValue('kategori_ketergantungan', $request->kategori_ketergantungan ?? '-');
+        // --- MAPPING KESIMPULAN (Terbaru) ---
+        $templateProcessor->setValue('status_klien', $request->status_klien ?? 'penyalahguna');
+        $templateProcessor->setValue('kesimpulan_jenis_zat', $request->kesimpulan_jenis_zat ?? '-');
+        $templateProcessor->setValue('kesimpulan_pola_pakai', $request->kesimpulan_pola_pakai ?? '-');
+        $templateProcessor->setValue('kesimpulan_kategori', $request->kesimpulan_kategori ?? '-');
         $templateProcessor->setValue('diagnosis_medis', $request->diagnosis_medis ?? '-');
-        $templateProcessor->setValue('kesimpulan_keterlibatan', $request->kesimpulan_keterlibatan ?? '-');
-        $templateProcessor->setValue('jenis_rehabilitasi', $request->jenis_rehabilitasi ?? '-');
-        $templateProcessor->setValue('tempat_rehabilitasi', $request->tempat_rehabilitasi ?? '-');
-        $templateProcessor->setValue('lama_rehabilitasi', $request->lama_rehabilitasi ?? '-');
 
-        $fileName = 'Berita_Acara_TAT_' . preg_replace('/[^A-Za-z0-9]/', '_', $asesmen->nama_lengkap) . '.docx';
-        $tempPath = storage_path('app/temp_' . $fileName);
+        // --- MAPPING REKOMENDASI ---
+        $templateProcessor->setValue('rekomendasi_tempat_rehab', $request->rekomendasi_tempat_rehab ?? '-');
+        $templateProcessor->setValue('rekomendasi_durasi', $request->rekomendasi_durasi ?? '-');
+        $templateProcessor->setValue('rekomendasi_keterangan', $request->rekomendasi_keterangan ?? '-');
 
-        $templateProcessor->saveAs($tempPath);
+        // Membersihkan variabel lama/sisa (Jika masih ada di dokumen Word)
+        $templateProcessor->setValue('pasal_sangkaan', '');
+        $templateProcessor->setValue('hasil_lab_for', '');
+        $templateProcessor->setValue('jenis_rehabilitasi', '');
 
-        return response()->download($tempPath, $fileName)->deleteFileAfterSend(true);
+        // --- OUTPUT & DOWNLOAD ---
+        $fileName = 'Berita_Acara_TAT_' . str_replace(' ', '_', $asesmen->nama_lengkap) . '.docx';
+        $tempFile = tempnam(sys_get_temp_dir(), 'word');
+        $templateProcessor->saveAs($tempFile);
+
+        return response()->download($tempFile, $fileName)->deleteFileAfterSend(true);
     }
 
     public function rekomendasi(string $id)
@@ -617,5 +657,63 @@ class AsesmenController extends Controller
     {
         $namaFile = 'Rekap_Asesmen_TAT_' . date('Ymd_His') . '.xlsx';
         return Excel::download(new AsesmenExport($request), $namaFile);
+    }
+
+    /**
+     * Mengunduh Surat Rekomendasi Word langsung dari data Database yang tersimpan
+     */
+    public function downloadWordTerpakai(string $id)
+    {
+        $asesmen = Asesmen::with(['rekomendasi', 'narkotika'])->findOrFail($id);
+        $templatePath = storage_path('app/templates/template_rekomendasi.docx');
+
+        if (!file_exists($templatePath)) {
+            return redirect()->back()->with('error', 'Template Word tidak ditemukan.');
+        }
+
+        $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($templatePath);
+
+        // Mapping Data Administrasi Surat (Dari Database)
+        $templateProcessor->setValue('no_surat_rekomendasi', $asesmen->no_surat_rekomendasi ?? '-');
+        $templateProcessor->setValue('tgl_rekomendasi', $asesmen->tgl_rekomendasi ? \Carbon\Carbon::parse($asesmen->tgl_rekomendasi)->translatedFormat('d F Y') : '-');
+        $templateProcessor->setValue('kepada_yth', $asesmen->kepada_yth ?? '-');
+        $templateProcessor->setValue('no_keputusan', $asesmen->no_keputusan ?? '-');
+        $templateProcessor->setValue('tgl_keputusan', $asesmen->tgl_keputusan ? \Carbon\Carbon::parse($asesmen->tgl_keputusan)->translatedFormat('d F Y') : '-');
+        $templateProcessor->setValue('tentang_permohonan', $asesmen->tentang_permohonan ?? '-');
+        $templateProcessor->setValue('kewarganegaraan', $asesmen->kewarganegaraan ?? 'Indonesia (WNI)');
+        $templateProcessor->setValue('nama_narkotika', $asesmen->nama_narkotika_medis ?? '-');
+        $templateProcessor->setValue('keterangan_diagnosis', $asesmen->keterangan_diagnosis ?? '-');
+        $templateProcessor->setValue('lama_perawatan', $asesmen->lama_perawatan ?? '-');
+
+        // Mapping Data Klien
+        $templateProcessor->setValue('nama_lengkap', $asesmen->nama_lengkap);
+        $templateProcessor->setValue('nama_langkap', $asesmen->nama_lengkap);
+        $templateProcessor->setValue('nam_lengkap', $asesmen->nama_lengkap);
+        $templateProcessor->setValue('nik', $asesmen->nik);
+        $templateProcessor->setValue('tempat_lahir', $asesmen->tempat_lahir ?? '-');
+        $templateProcessor->setValue('tgl_lahir', $asesmen->tgl_lahir ? \Carbon\Carbon::parse($asesmen->tgl_lahir)->translatedFormat('d F Y') : '-');
+
+        $jk = $asesmen->jenis_kelamin == 'L' ? 'Laki-laki' : ($asesmen->jenis_kelamin == 'P' ? 'Perempuan' : '-');
+        $templateProcessor->setValue('jenis_kelamin', $jk);
+        $templateProcessor->setValue('alamat_ktp', $asesmen->alamat_ktp ?? '-');
+        $templateProcessor->setValue('alamat_domisili', $asesmen->alamat_domisili ?? '-');
+        $templateProcessor->setValue('no_surat_pengajuan', $asesmen->no_surat_pengajuan ?? '-');
+
+        $tgl_pelaksanaan = $asesmen->tgl_pelaksanaan ? \Carbon\Carbon::parse($asesmen->tgl_pelaksanaan)->translatedFormat('d F Y') : '-';
+        $hari_pelaksanaan = $asesmen->tgl_pelaksanaan ? \Carbon\Carbon::parse($asesmen->tgl_pelaksanaan)->translatedFormat('l') : '-';
+
+        $templateProcessor->setValue('tgl_pelaksanaan', $tgl_pelaksanaan);
+        $templateProcessor->setValue('tanggal_tat', $tgl_pelaksanaan);
+        $templateProcessor->setValue('hari', $hari_pelaksanaan);
+        $templateProcessor->setValue('jenis_narkotika', $asesmen->narkotika->jenis_narkotika ?? '-');
+        $templateProcessor->setValue('tingkat_ketergantungan', $asesmen->tingkat_ketergantungan ?? '-');
+        $templateProcessor->setValue('rekomendasi_tat', $asesmen->rekomendasi->tempat_rehabilitasi ?? '-');
+
+        // Proses Unduh
+        $fileName = 'Surat_Rekomendasi_TAT_' . str_replace(' ', '_', $asesmen->nama_lengkap) . '.docx';
+        $tempPath = storage_path('app/temp_' . $fileName);
+
+        $templateProcessor->saveAs($tempPath);
+        return response()->download($tempPath, $fileName)->deleteFileAfterSend(true);
     }
 }

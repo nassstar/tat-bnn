@@ -58,6 +58,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/asesmen/{id}/pdf', [AsesmenController::class, 'pdf'])
         ->name('asesmen.pdf');
 
+    Route::get('/asesmen/{id}/rekomendasi/download-word', [AsesmenController::class, 'downloadWordTerpakai'])->name('asesmen.rekomendasi.downloadWord');
+
+    Route::post('/master-anggota/ajax', [App\Http\Controllers\MasterAnggotaController::class, 'storeAjax'])->name('master-anggota.storeAjax');
+
+    Route::post('/master-anggota/ajax', [App\Http\Controllers\MasterAnggotaController::class, 'storeAjax'])->name('master-anggota.storeAjax');
+    // TAMBAHKAN BARIS INI:
+    Route::delete('/master-anggota/ajax/{id}', [App\Http\Controllers\MasterAnggotaController::class, 'destroyAjax'])->name('master-anggota.destroyAjax');
+
+    Route::post('/master-opsi/ajax', [App\Http\Controllers\MasterOpsiController::class, 'storeAjax'])->name('master-opsi.storeAjax');
+    Route::delete('/master-opsi/ajax/{id}', [App\Http\Controllers\MasterOpsiController::class, 'destroyAjax'])->name('master-opsi.destroyAjax');
+
 });
 
 // 3. Route bawaan Laravel Breeze untuk autentikasi (Login, Register, Logout)
