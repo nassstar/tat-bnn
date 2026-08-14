@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AsesmenController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
+
 
 // 1. Halaman Beranda Pengenalan (Landing Page)
 Route::get('/', function () {
@@ -12,8 +14,9 @@ Route::get('/', function () {
 // 2. Route aplikasi yang dikunci dengan Middleware (Wajib Login)
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    // Dashboard diarahkan ke halaman utama Asesmen
-    Route::get('/dashboard', [AsesmenController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->middleware(['auth', 'verified'])
+        ->name('dashboard');
 
     // ==========================================
     // ROUTE PROFIL USER
