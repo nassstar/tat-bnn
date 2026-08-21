@@ -13,6 +13,7 @@ class Asesmen extends Model
     // Mengizinkan semua kolom diisi secara massal kecuali kolom 'id'
     protected $guarded = ['id'];
 
+    // Menentukan nama tabel secara eksplisit
     protected $table = 'asesmens';
 
     // Konfigurasi Primary Key UUID
@@ -56,6 +57,8 @@ class Asesmen extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    // --- Accessor: Mengecek Status Kelengkapan Data ---
     public function getStatusKelengkapanAttribute()
     {
         // Ambil semua kolom yang ada di tabel asesmens untuk data ini
@@ -68,7 +71,7 @@ class Asesmen extends Model
             if (!in_array($key, $exclude)) {
                 // Jika ditemukan satu saja nilai yang NULL atau string kosong ('')
                 // (Angka 0 tetap akan terhitung sebagai data yang sudah diisi)
-                if (is_null($value) || trim($value) === '') {
+                if (is_null($value) || trim((string)$value) === '') {
                     return 'Data Belum Lengkap';
                 }
             }

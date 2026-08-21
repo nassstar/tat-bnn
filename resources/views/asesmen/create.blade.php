@@ -34,43 +34,43 @@
                         <svg class="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         1. Administrasi Surat & Registrasi
                     </h3>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">No. Register</label>
-                            <input type="text" name="no_register" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="Cth: REG/TAT/001/2026">
+                            <label class="block text-sm font-medium text-slate-700">No / BLN</label>
+                            <input type="text" name="no_bln" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                         </div>
                         <div>
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">No / BLN</label>
-                            <input type="text" name="no_bln" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
+                            <label class="block text-sm font-medium text-slate-700">Asal Pengajuan</label>
+                            <input type="text" name="asal_pengajuan" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                         </div>
                         <div>
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Asal Pengajuan</label>
-                            <input type="text" name="asal_pengajuan" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
+                            <label class="block text-sm font-medium text-slate-700">Tanggal Surat</label>
+                            <input type="text" name="tgl_surat" class="datepicker-id mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Pilih Tanggal">
                         </div>
                         <div>
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">No. Surat Pengajuan</label>
-                            <input type="text" name="no_surat_pengajuan" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
+                            <label class="block text-sm font-medium text-slate-700">Tanggal Berkas Diterima</label>
+                            <input type="text" name="tgl_berkas" class="datepicker-id mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Pilih Tanggal">
                         </div>
                         <div>
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">No. LKN / LP / LI</label>
-                            <input type="text" name="no_lkn" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
+                            <label class="block text-sm font-medium text-slate-700">Tanggal Pelaksanaan</label>
+                            <input type="text" name="tgl_pelaksanaan" class="datepicker-id mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Pilih Tanggal">
                         </div>
                         <div>
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Tanggal Surat</label>
-                            <input type="text" name="tgl_surat" class="datepicker-id block w-full rounded-xl border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="Pilih Tanggal">
+                            <label class="block text-sm font-medium text-slate-700">No. Surat Pengajuan</label>
+                            <input type="text" name="no_surat_pengajuan" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                         </div>
                         <div>
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Tanggal Berkas Diterima</label>
-                            <input type="text" name="tgl_berkas" class="datepicker-id block w-full rounded-xl border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="Pilih Tanggal">
+                            <label class="block text-sm font-medium text-slate-700">No. LKN / LP / LI</label>
+                            <input type="text" name="no_lkn" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                         </div>
                         <div>
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Tanggal Pelaksanaan</label>
-                            <input type="text" name="tgl_pelaksanaan" class="datepicker-id block w-full rounded-xl border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="Pilih Tanggal">
+                            <label class="block text-sm font-medium text-slate-700">Tanggal Penangkapan</label>
+                            <input type="text" name="tgl_tangkap" class="datepicker-id mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Pilih Tanggal">
                         </div>
                         <div>
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Tanggal Penangkapan</label>
-                            <input type="text" name="tgl_tangkap" class="datepicker-id block w-full rounded-xl border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="Pilih Tanggal">
+                            <label class="block text-sm font-medium text-slate-700">No. Register</label>
+                            <input type="text" name="no_register" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                         </div>
                     </div>
                 </div>
@@ -84,7 +84,7 @@
                         <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                         2. Identitas Profil Klien
                     </h3>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                         <div>
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Nama Lengkap <span class="text-rose-500">*</span></label>
@@ -164,7 +164,7 @@
                         <svg class="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path></svg>
                         3. Perkara Hukum & Barang Bukti
                     </h3>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                         <div>
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Jenis Narkotika</label>
@@ -219,7 +219,7 @@
                         <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
                         4. Hasil Asesmen Awal (Rekap Mentah TAT)
                     </h3>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Hasil Asesmen Hukum</label>
@@ -256,7 +256,7 @@
                         5. Analisis Sidang Case Conference
                     </h3>
                     <p class="text-[13px] font-medium text-indigo-700 mb-6 border-b border-indigo-200/60 pb-4">
-                        <span class="bg-white px-2 py-0.5 rounded border border-indigo-100 text-xs shadow-sm mr-1">💡 Opsional</span> 
+                        <span class="bg-white px-2 py-0.5 rounded border border-indigo-100 text-xs shadow-sm mr-1">💡 Opsional</span>
                         Bisa dikosongkan saat pendaftaran awal. Anda dapat memperbarui bagian ini nanti setelah sidang selesai.
                     </p>
 
@@ -270,11 +270,11 @@
                             <textarea name="aspek_medis" rows="3" class="block w-full rounded-xl border-white shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 sm:text-sm transition-all bg-white/80 focus:bg-white"></textarea>
                         </div>
                         <div>
-                            <label class="block text-[12px] font-bold text-indigo-900 uppercase tracking-wide mb-1">Kesehatan Fisik</label>
+                            <label class="block text-[12px] font-bold text-indigo-900 uppercase tracking-wide mb-1">Kesehatan</label>
                             <textarea name="kesehatan_fisik" rows="2" class="block w-full rounded-xl border-white shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 sm:text-sm transition-all bg-white/80 focus:bg-white"></textarea>
                         </div>
                         <div>
-                            <label class="block text-[12px] font-bold text-indigo-900 uppercase tracking-wide mb-1">Kondisi Psikologi</label>
+                            <label class="block text-[12px] font-bold text-indigo-900 uppercase tracking-wide mb-1">Psikologi</label>
                             <textarea name="psikologi" rows="2" class="block w-full rounded-xl border-white shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 sm:text-sm transition-all bg-white/80 focus:bg-white"></textarea>
                         </div>
 

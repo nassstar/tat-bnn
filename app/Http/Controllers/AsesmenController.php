@@ -50,7 +50,7 @@ class AsesmenController extends Controller
             $query->where('pelaksanaan', strtoupper($request->status));
         }
 
-        $sort = $request->get('sort', 'terbaru'); 
+        $sort = $request->get('sort', 'terbaru');
         if ($sort === 'terlama') {
             $query->oldest('tgl_pelaksanaan');
         } elseif ($sort === 'a-z') {
@@ -91,11 +91,92 @@ class AsesmenController extends Controller
      */
     public function store(Request $request)
     {
-        // (Validasi panjang disembunyikan untuk kerapian jawaban, anggap sama dengan milik Anda)
-        $validatedData = $request->except(['_token']); 
+        $validatedData = $request->validate([
+            // Identitas Dasar
+            'nama_lengkap' => 'required|string|max:255',
+            'nik' => 'required|string|max:16',
+            'tempat_lahir' => 'nullable|string|max:255',
+            'tgl_lahir' => 'nullable|date',
+            'jenis_kelamin' => 'nullable|in:L,P',
+            'no_hp' => 'nullable|string|max:20',
+            'kewarganegaraan' => 'nullable|string|max:255',
+            'agama' => 'nullable|string|max:255',
+
+            // PERBAIKAN: Validasi Text Input Master Data
+            'pendidikan_input' => 'nullable|string|max:255',
+            'pekerjaan_input' => 'nullable|string|max:255',
+            'rekomendasi_input' => 'nullable|string|max:255',
+
+            // Alamat & Administrasi
+            'alamat_ktp' => 'nullable|string',
+            'alamat_domisili' => 'nullable|string',
+            'no_register' => 'nullable|string|max:100',
+            'no_bln' => 'nullable|string|max:100',
+            'asal_pengajuan' => 'nullable|string',
+            'no_surat_pengajuan' => 'nullable|string|max:100',
+            'no_lkn' => 'nullable|string|max:100',
+            'tgl_surat' => 'nullable|date',
+            'tgl_berkas' => 'nullable|date',
+            'tgl_pelaksanaan' => 'nullable|date',
+            'tgl_tangkap' => 'nullable|date',
+
+            // Kasus & Medis
+            'narkotika_id' => 'nullable|integer',
+            'berat_bb' => 'nullable|numeric',
+            'pasal_sangkaan' => 'nullable|string',
+            'deskripsi_bb' => 'nullable|string',
+            'hasil_asesmen_hukum' => 'nullable|string',
+            'hasil_asesmen_medis' => 'nullable|string',
+            'pelaksanaan' => 'nullable|in:YA,TIDAK',
+            'penghasilan_rata_rata' => 'nullable|string|max:255',
+            'status_hukum' => 'nullable|string|max:255',
+            'keterlibatan_jaringan' => 'nullable|string|max:255',
+            'cara_mendapatkan' => 'nullable|string|max:255',
+            'dapat_dari_siapa' => 'nullable|string|max:255',
+            'kesehatan_fisik' => 'nullable|string',
+            'psikologi' => 'nullable|string',
+            'tes_urine' => 'nullable|string',
+            'alasan_penggunaan' => 'nullable|string',
+            'kondisi_keluarga' => 'nullable|string',
+            'tingkat_ketergantungan' => 'nullable|string|max:255',
+            'pola_pemakaian' => 'nullable|string|max:255',
+            'kondisi_lingkungan' => 'nullable|string',
+            'keterangan_tambahan' => 'nullable|string',
+            'saran_case_conference' => 'nullable|string',
+            'aspek_hukum' => 'nullable|string',
+            'aspek_medis' => 'nullable|string',
+        ]);
+
+        // LOGIKA PENYIMPANAN OTOMATIS MASTER PENDIDIKAN
+        if ($request->filled('pendidikan_input')) {
+            $pendidikan = Pendidikan::firstOrCreate([
+                'nama_pendidikan' => $request->pendidikan_input
+            ]);
+            $validatedData['pendidikan_id'] = $pendidikan->id;
+        }
+        unset($validatedData['pendidikan_input']);
+
+        // LOGIKA PENYIMPANAN OTOMATIS MASTER PEKERJAAN (PERBAIKAN)
+        if ($request->filled('pekerjaan_input')) {
+            $pekerjaan = Pekerjaan::firstOrCreate([
+                'nama_pekerjaan' => $request->pekerjaan_input
+            ]);
+            $validatedData['pekerjaan_id'] = $pekerjaan->id;
+        }
+        unset($validatedData['pekerjaan_input']);
+
+        // LOGIKA PENYIMPANAN OTOMATIS MASTER REKOMENDASI TAT
+        if ($request->filled('rekomendasi_input')) {
+            $rekomendasi = Rekomendasi::firstOrCreate([
+                'tempat_rehabilitasi' => $request->rekomendasi_input
+            ]);
+            $validatedData['rekomendasi_id'] = $rekomendasi->id;
+        }
+        unset($validatedData['rekomendasi_input']);
+
         Asesmen::create($validatedData);
 
-        return redirect()->route('asesmen.index')->with('success', 'Data Asesmen & Case Conference berhasil ditambahkan!');
+        return redirect()->route('asesmen.index')->with('success', 'Data Asesmen berhasil ditambahkan!');
     }
 
     /**
@@ -131,11 +212,93 @@ class AsesmenController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $validatedData = $request->except(['_token', '_method']);
+        $validatedData = $request->validate([
+            // Identitas Dasar
+            'nama_lengkap' => 'required|string|max:255',
+            'nik' => 'required|string|max:16',
+            'tempat_lahir' => 'nullable|string|max:255',
+            'tgl_lahir' => 'nullable|date',
+            'jenis_kelamin' => 'nullable|in:L,P',
+            'no_hp' => 'nullable|string|max:20',
+            'kewarganegaraan' => 'nullable|string|max:255',
+            'agama' => 'nullable|string|max:255',
+
+            // PERBAIKAN: Validasi Text Input Master Data
+            'pendidikan_input' => 'nullable|string|max:255',
+            'pekerjaan_input' => 'nullable|string|max:255',
+            'rekomendasi_input' => 'nullable|string|max:255',
+
+            // Alamat & Administrasi
+            'alamat_ktp' => 'nullable|string',
+            'alamat_domisili' => 'nullable|string',
+            'no_register' => 'nullable|string|max:100',
+            'no_bln' => 'nullable|string|max:100',
+            'asal_pengajuan' => 'nullable|string',
+            'no_surat_pengajuan' => 'nullable|string|max:100',
+            'no_lkn' => 'nullable|string|max:100',
+            'tgl_surat' => 'nullable|date',
+            'tgl_berkas' => 'nullable|date',
+            'tgl_pelaksanaan' => 'nullable|date',
+            'tgl_tangkap' => 'nullable|date',
+
+            // Kasus & Medis
+            'narkotika_id' => 'nullable|integer',
+            'berat_bb' => 'nullable|numeric',
+            'pasal_sangkaan' => 'nullable|string',
+            'deskripsi_bb' => 'nullable|string',
+            'hasil_asesmen_hukum' => 'nullable|string',
+            'hasil_asesmen_medis' => 'nullable|string',
+            'pelaksanaan' => 'nullable|in:YA,TIDAK',
+            'penghasilan_rata_rata' => 'nullable|string|max:255',
+            'status_hukum' => 'nullable|string|max:255',
+            'keterlibatan_jaringan' => 'nullable|string|max:255',
+            'cara_mendapatkan' => 'nullable|string|max:255',
+            'dapat_dari_siapa' => 'nullable|string|max:255',
+            'kesehatan_fisik' => 'nullable|string',
+            'psikologi' => 'nullable|string',
+            'tes_urine' => 'nullable|string',
+            'alasan_penggunaan' => 'nullable|string',
+            'kondisi_keluarga' => 'nullable|string',
+            'tingkat_ketergantungan' => 'nullable|string|max:255',
+            'pola_pemakaian' => 'nullable|string|max:255',
+            'kondisi_lingkungan' => 'nullable|string',
+            'keterangan_tambahan' => 'nullable|string',
+            'saran_case_conference' => 'nullable|string',
+            'aspek_hukum' => 'nullable|string',
+            'aspek_medis' => 'nullable|string',
+        ]);
+
+        // LOGIKA PENYIMPANAN OTOMATIS MASTER PENDIDIKAN
+        if ($request->filled('pendidikan_input')) {
+            $pendidikan = Pendidikan::firstOrCreate([
+                'nama_pendidikan' => $request->pendidikan_input
+            ]);
+            $validatedData['pendidikan_id'] = $pendidikan->id;
+        }
+        unset($validatedData['pendidikan_input']);
+
+        // LOGIKA PENYIMPANAN OTOMATIS MASTER PEKERJAAN (PERBAIKAN)
+        if ($request->filled('pekerjaan_input')) {
+            $pekerjaan = Pekerjaan::firstOrCreate([
+                'nama_pekerjaan' => $request->pekerjaan_input
+            ]);
+            $validatedData['pekerjaan_id'] = $pekerjaan->id;
+        }
+        unset($validatedData['pekerjaan_input']);
+
+        // LOGIKA PENYIMPANAN OTOMATIS MASTER REKOMENDASI TAT
+        if ($request->filled('rekomendasi_input')) {
+            $rekomendasi = Rekomendasi::firstOrCreate([
+                'tempat_rehabilitasi' => $request->rekomendasi_input
+            ]);
+            $validatedData['rekomendasi_id'] = $rekomendasi->id;
+        }
+        unset($validatedData['rekomendasi_input']);
+
         $asesmen = Asesmen::findOrFail($id);
         $asesmen->update($validatedData);
 
-        return redirect()->route('asesmen.index')->with('success', 'Data Asesmen & Case Conference berhasil diperbarui!');
+        return redirect()->route('asesmen.index')->with('success', 'Data Asesmen berhasil diperbarui!');
     }
 
     /**
@@ -181,14 +344,14 @@ class AsesmenController extends Controller
         $sheet->mergeCells('A1:AT1');
         $sheet->setCellValue('A1', 'TEMPLATE IMPORT DATA ASESMEN TERPADU (TAT) BNN');
         $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14)->getColor()->setARGB('FFFFFFFF');
-        $sheet->getStyle('A1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FF1E3A8A'); 
+        $sheet->getStyle('A1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FF1E3A8A');
         $sheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $sheet->getRowDimension(1)->setRowHeight(30);
 
         $sheet->mergeCells('A2:AT2');
         $sheet->setCellValue('A2', 'PANDUAN: Hapus/timpa data contoh di baris 4. Mulai isi data asli di baris 4 ke bawah. Jangan ubah struktur kolom baris 1-3. Kolom dengan tanda (*) wajib diisi. Format tanggal harus YYYY-MM-DD (Contoh: 2026-08-17).');
         $sheet->getStyle('A2')->getFont()->setItalic(true)->getColor()->setARGB('FFDC2626');
-        $sheet->getStyle('A2')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFFFFBEB'); 
+        $sheet->getStyle('A2')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFFFFBEB');
         $sheet->getStyle('A2')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
         $sheet->getRowDimension(2)->setRowHeight(25);
 
@@ -228,7 +391,7 @@ class AsesmenController extends Controller
             'AK' => 'Analisis hukum lengkap...', 'AL' => 'Analisis medis lengkap...', 'AM' => 'Sehat', 'AN' => 'Cemas', 'AO' => 'Coba-coba', 'AP' => 'Kurang harmonis', 'AQ' => 'Ringan', 'AR' => 'Situasional', 'AS' => 'Rentan', 'AT' => 'Rehab medis'
         ];
         foreach ($dummyData as $col => $val) { $sheet->setCellValue($col . '4', $val); }
-        
+
         $sheet->getStyle('A4:AT4')->getFont()->setItalic(true)->getColor()->setARGB('FF94A3B8');
         $sheet->getStyle('A4:AT4')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFF8FAFC');
         $sheet->freezePane('A5');
@@ -285,39 +448,41 @@ class AsesmenController extends Controller
     }
 
     /**
-     * Memproses & Generate Berita Acara Word
+     * Memproses & Generate Berita Acara Word (Dari Form BA)
      */
     public function generateBeritaAcara(\Illuminate\Http\Request $request, string $id)
     {
         $asesmen = \App\Models\Asesmen::findOrFail($id);
 
-        // 1. Simpan/Update data draf ke database
-        $asesmen->update([
-            'no_ba' => $request->no_ba,
-            'tgl_ba' => $request->tgl_ba,
-            'ketua_tat_nama' => $request->ketua_tat_nama,
-            'ketua_tat_nrp' => $request->ketua_tat_nrp,
-            'no_kep_tim' => $request->no_kep_tim,
-            'tgl_kep_tim' => $request->tgl_kep_tim,
+        // 1. SIMPAN MANUAL SEMUA DATA DARI FORM (Termasuk Status Klien & Diagnosis)
+        $asesmen->no_ba = $request->no_ba;
+        $asesmen->tgl_ba = $request->tgl_ba;
+        $asesmen->ketua_tat_nama = $request->ketua_tat_nama;
+        $asesmen->ketua_tat_nrp = $request->ketua_tat_nrp;
+        $asesmen->no_kep_tim = $request->no_kep_tim;
+        $asesmen->tgl_kep_tim = $request->tgl_kep_tim;
 
-            'narasi_medis' => $request->narasi_medis,
-            'narasi_hukum' => $request->narasi_hukum,
+        $asesmen->narasi_medis = $request->narasi_medis;
+        $asesmen->narasi_hukum = $request->narasi_hukum;
 
-            'alat_bukti_no_sk' => $request->alat_bukti_no_sk,
-            'alat_bukti_tgl_sk' => $request->alat_bukti_tgl_sk,
-            'alat_bukti_dokter' => $request->alat_bukti_dokter,
-            'alat_bukti_hasil' => $request->alat_bukti_hasil,
+        $asesmen->alat_bukti_no_sk = $request->alat_bukti_no_sk;
+        $asesmen->alat_bukti_tgl_sk = $request->alat_bukti_tgl_sk;
+        $asesmen->alat_bukti_dokter = $request->alat_bukti_dokter;
+        $asesmen->alat_bukti_hasil = $request->alat_bukti_hasil;
 
-            'status_klien' => $request->status_klien,
-            'kesimpulan_jenis_zat' => $request->kesimpulan_jenis_zat,
-            'kesimpulan_pola_pakai' => $request->kesimpulan_pola_pakai,
-            'kesimpulan_kategori' => $request->kesimpulan_kategori,
-            'diagnosis_medis' => $request->diagnosis_medis,
+        // --- INI ADALAH BAGIAN YANG SEBELUMNYA TERHAPUS/TERLEWAT ---
+        $asesmen->status_klien = $request->status_klien;
+        $asesmen->kesimpulan_jenis_zat = $request->kesimpulan_jenis_zat;
+        $asesmen->kesimpulan_pola_pakai = $request->kesimpulan_pola_pakai;
+        $asesmen->kesimpulan_kategori = $request->kesimpulan_kategori;
+        $asesmen->diagnosis_medis = $request->diagnosis_medis;
 
-            'rekomendasi_tempat_rehab' => $request->rekomendasi_tempat_rehab,
-            'rekomendasi_durasi' => $request->rekomendasi_durasi,
-            'rekomendasi_keterangan' => $request->rekomendasi_keterangan,
-        ]);
+        $asesmen->rekomendasi_tempat_rehab = $request->rekomendasi_tempat_rehab;
+        $asesmen->rekomendasi_durasi = $request->rekomendasi_durasi;
+        $asesmen->rekomendasi_keterangan = $request->rekomendasi_keterangan;
+
+        // Eksekusi penyimpanan ke database
+        $asesmen->save();
 
         // Simpan relasi anggota tim (Tim Medis & Hukum) ke tabel pivot
         $asesmen->anggotaTim()->sync(array_merge(
@@ -325,27 +490,52 @@ class AsesmenController extends Controller
             (array) $request->tim_hukum
         ));
 
-        // ==============================================================
-        // LOGIKA BARU: Jika user hanya menekan tombol "Simpan Perubahan"
-        // ==============================================================
-        if ($request->input('action') === 'save_only') {
-            return redirect()->back()->with('success', 'Draf Berita Acara berhasil disimpan ke sistem!');
+        // 2. Redirect Ke Halaman Show Jika Klik "Simpan Perubahan"
+        if ($request->input('action') === 'save_only' || $request->input('action') === 'save') {
+            return redirect()->route('asesmen.show', $asesmen->id)
+                             ->with('success', 'Data Berita Acara berhasil disimpan dan diperbarui!');
         }
 
-        // 2. Load Template Word (Hanya tereksekusi jika tombol Generate ditekan)
+        // 3. Jika "Simpan & Unduh" ditekan, Word di-generate dengan data dari Database
+        return $this->prosesCetakBeritaAcaraWord($asesmen);
+    }
+
+    /**
+     * Memproses & Generate Berita Acara Word (Hanya Unduh, Dari Card 5)
+     */
+    public function unduhBeritaAcara(Request $request, string $id)
+    {
+        // Tarik data langsung dari DB tanpa menyentuh request form
+        $asesmen = Asesmen::with(['rekomendasi', 'narkotika', 'pendidikan', 'pekerjaan', 'anggotaTim'])->findOrFail($id);
+
+        return $this->prosesCetakBeritaAcaraWord($asesmen);
+    }
+
+    /**
+     * PRIVATE FUNCTION: Fungsi Terpusat Untuk Membaca dan Render Word Berita Acara
+     * (Digunakan bersama oleh generateBeritaAcara dan unduhBeritaAcara)
+     */
+    private function prosesCetakBeritaAcaraWord($asesmen)
+    {
         $templatePath = storage_path('app/templates/template_berita_acara.docx');
+
+        if (!file_exists($templatePath)) {
+            return redirect()->back()->with('error', 'Template Word Berita Acara tidak ditemukan di folder storage.');
+        }
+
         $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($templatePath);
 
-        // --- MAPPING VARIABEL ---
+        // --- MAPPING IDENTITAS DASAR ---
         $templateProcessor->setValue('nama_lengkap', $asesmen->nama_lengkap ?? '-');
         $templateProcessor->setValue('no_register', $asesmen->no_register ?? '-');
-        $templateProcessor->setValue('no_ba', $request->no_ba ?? '-');
-        $templateProcessor->setValue('ketua_tat_nama', $request->ketua_tat_nama ?? '-');
-        $templateProcessor->setValue('ketua_tat_nrp', $request->ketua_tat_nrp ?? '-');
-        $templateProcessor->setValue('no_kep_tim', $request->no_kep_tim ?? '-');
+        $templateProcessor->setValue('no_ba', $asesmen->no_ba ?? '-');
+        $templateProcessor->setValue('ketua_tat_nama', $asesmen->ketua_tat_nama ?? '-');
+        $templateProcessor->setValue('ketua_tat_nrp', $asesmen->ketua_tat_nrp ?? '-');
+        $templateProcessor->setValue('no_kep_tim', $asesmen->no_kep_tim ?? '-');
 
-        if ($request->tgl_ba) {
-            $tglBa = \Carbon\Carbon::parse($request->tgl_ba);
+        // --- MAPPING TANGGAL BA ---
+        if ($asesmen->tgl_ba) {
+            $tglBa = \Carbon\Carbon::parse($asesmen->tgl_ba);
             $templateProcessor->setValue('tgl_ba', $tglBa->translatedFormat('d'));
             $templateProcessor->setValue('hari_ba', $tglBa->translatedFormat('l'));
             $templateProcessor->setValue('bln_ba', $tglBa->translatedFormat('F'));
@@ -355,46 +545,63 @@ class AsesmenController extends Controller
             $templateProcessor->setValue('bln_ba', '-'); $templateProcessor->setValue('thn_ba', '-');
         }
 
-        $templateProcessor->setValue('tgl_kep_tim', $request->tgl_kep_tim ? \Carbon\Carbon::parse($request->tgl_kep_tim)->translatedFormat('d F Y') : '-');
-        $templateProcessor->setValue('alat_bukti_tgl_sk', $request->alat_bukti_tgl_sk ? \Carbon\Carbon::parse($request->alat_bukti_tgl_sk)->translatedFormat('d F Y') : '-');
+        $templateProcessor->setValue('tgl_kep_tim', $asesmen->tgl_kep_tim ? \Carbon\Carbon::parse($asesmen->tgl_kep_tim)->translatedFormat('d F Y') : '-');
+        $templateProcessor->setValue('alat_bukti_tgl_sk', $asesmen->alat_bukti_tgl_sk ? \Carbon\Carbon::parse($asesmen->alat_bukti_tgl_sk)->translatedFormat('d F Y') : '-');
 
-        // --- MAPPING TIM ---
-        $medis = \App\Models\MasterAnggota::whereIn('id', (array) $request->tim_medis)->get();
-        $templateProcessor->cloneBlock('block_medis', count($medis), true, true);
-        foreach ($medis as $index => $m) {
-            $i = $index + 1;
-            $templateProcessor->setValue("no_medis#{$i}", $i);
-            $templateProcessor->setValue("med_nama#{$i}", $m->nama);
-            $templateProcessor->setValue("med_nip#{$i}", $m->nip_nrp_sip ?? '-');
-            $templateProcessor->setValue("med_jabatan#{$i}", $m->jabatan ?? '-');
+        // --- MAPPING TIM MEDIS ---
+        $medis = $asesmen->anggotaTim->where('kategori', 'medis')->values();
+        $templateProcessor->cloneBlock('block_medis', max(count($medis), 1), true, true);
+        if (count($medis) > 0) {
+            foreach ($medis as $index => $m) {
+                $i = $index + 1;
+                $templateProcessor->setValue("no_medis#{$i}", $i);
+                $templateProcessor->setValue("med_nama#{$i}", $m->nama);
+                $templateProcessor->setValue("med_nip#{$i}", $m->nip_nrp_sip ?? '-');
+                $templateProcessor->setValue("med_jabatan#{$i}", $m->jabatan ?? '-');
+            }
+        } else {
+            $templateProcessor->setValue("no_medis#1", '-');
+            $templateProcessor->setValue("med_nama#1", '-');
+            $templateProcessor->setValue("med_nip#1", '-');
+            $templateProcessor->setValue("med_jabatan#1", '-');
         }
 
-        $hukum = \App\Models\MasterAnggota::whereIn('id', (array) $request->tim_hukum)->get();
-        $templateProcessor->cloneBlock('block_hukum', count($hukum), true, true);
-        foreach ($hukum as $index => $m) {
-            $i = $index + 1;
-            $templateProcessor->setValue("no_hukum#{$i}", $i);
-            $templateProcessor->setValue("huk_nama#{$i}", $m->nama);
-            $templateProcessor->setValue("huk_pangkat#{$i}", $m->pangkat ?? '-');
-            $templateProcessor->setValue("huk_nip#{$i}", $m->nip_nrp_sip ?? '-');
-            $templateProcessor->setValue("huk_jabatan#{$i}", $m->jabatan ?? '-');
+        // --- MAPPING TIM HUKUM ---
+        $hukum = $asesmen->anggotaTim->where('kategori', 'hukum')->values();
+        $templateProcessor->cloneBlock('block_hukum', max(count($hukum), 1), true, true);
+        if (count($hukum) > 0) {
+            foreach ($hukum as $index => $m) {
+                $i = $index + 1;
+                $templateProcessor->setValue("no_hukum#{$i}", $i);
+                $templateProcessor->setValue("huk_nama#{$i}", $m->nama);
+                $templateProcessor->setValue("huk_pangkat#{$i}", $m->pangkat ?? '-');
+                $templateProcessor->setValue("huk_nip#{$i}", $m->nip_nrp_sip ?? '-');
+                $templateProcessor->setValue("huk_jabatan#{$i}", $m->jabatan ?? '-');
+            }
+        } else {
+            $templateProcessor->setValue("no_hukum#1", '-');
+            $templateProcessor->setValue("huk_nama#1", '-');
+            $templateProcessor->setValue("huk_pangkat#1", '-');
+            $templateProcessor->setValue("huk_nip#1", '-');
+            $templateProcessor->setValue("huk_jabatan#1", '-');
         }
 
-        // --- MAPPING TEKS ---
-        $templateProcessor->setValue('narasi_medis', $request->narasi_medis ?? '-');
-        $templateProcessor->setValue('narasi_hukum', $request->narasi_hukum ?? '-');
-        $templateProcessor->setValue('alat_bukti_no_sk', $request->alat_bukti_no_sk ?? '-');
-        $templateProcessor->setValue('alat_bukti_dokter', $request->alat_bukti_dokter ?? '-');
-        $templateProcessor->setValue('alat_bukti_hasil', $request->alat_bukti_hasil ?? '-');
-        $templateProcessor->setValue('status_klien', $request->status_klien ?? 'penyalahguna');
-        $templateProcessor->setValue('kesimpulan_jenis_zat', $request->kesimpulan_jenis_zat ?? '-');
-        $templateProcessor->setValue('kesimpulan_pola_pakai', $request->kesimpulan_pola_pakai ?? '-');
-        $templateProcessor->setValue('kesimpulan_kategori', $request->kesimpulan_kategori ?? '-');
-        $templateProcessor->setValue('diagnosis_medis', $request->diagnosis_medis ?? '-');
-        $templateProcessor->setValue('rekomendasi_tempat_rehab', $request->rekomendasi_tempat_rehab ?? '-');
-        $templateProcessor->setValue('rekomendasi_durasi', $request->rekomendasi_durasi ?? '-');
-        $templateProcessor->setValue('rekomendasi_keterangan', $request->rekomendasi_keterangan ?? '-');
+        // --- MAPPING TEKS ASESMEN & KESIMPULAN ---
+        $templateProcessor->setValue('narasi_medis', $asesmen->narasi_medis ?? '-');
+        $templateProcessor->setValue('narasi_hukum', $asesmen->narasi_hukum ?? '-');
+        $templateProcessor->setValue('alat_bukti_no_sk', $asesmen->alat_bukti_no_sk ?? '-');
+        $templateProcessor->setValue('alat_bukti_dokter', $asesmen->alat_bukti_dokter ?? '-');
+        $templateProcessor->setValue('alat_bukti_hasil', $asesmen->alat_bukti_hasil ?? '-');
+        $templateProcessor->setValue('status_klien', $asesmen->status_klien ?? 'penyalahguna');
+        $templateProcessor->setValue('kesimpulan_jenis_zat', $asesmen->kesimpulan_jenis_zat ?? '-');
+        $templateProcessor->setValue('kesimpulan_pola_pakai', $asesmen->kesimpulan_pola_pakai ?? '-');
+        $templateProcessor->setValue('kesimpulan_kategori', $asesmen->kesimpulan_kategori ?? '-');
+        $templateProcessor->setValue('diagnosis_medis', $asesmen->diagnosis_medis ?? '-');
+        $templateProcessor->setValue('rekomendasi_tempat_rehab', $asesmen->rekomendasi_tempat_rehab ?? '-');
+        $templateProcessor->setValue('rekomendasi_durasi', $asesmen->rekomendasi_durasi ?? '-');
+        $templateProcessor->setValue('rekomendasi_keterangan', $asesmen->rekomendasi_keterangan ?? '-');
 
+        // --- PROSES UNDUH FILE ---
         $fileName = 'Berita_Acara_TAT_' . str_replace(' ', '_', $asesmen->nama_lengkap) . '.docx';
         $tempFile = tempnam(sys_get_temp_dir(), 'word');
         $templateProcessor->saveAs($tempFile);
@@ -425,88 +632,79 @@ class AsesmenController extends Controller
      */
     public function unduhRekomendasi(Request $request, string $id)
     {
+        // 1. CARI DATA KLIEN
         $asesmen = Asesmen::with(['rekomendasi', 'narkotika'])->findOrFail($id);
 
-        // 1. Simpan/Update data draf Rekomendasi ke database
-        $asesmen->update([
-            'no_surat_rekomendasi' => $request->no_surat_rekomendasi,
-            'tgl_rekomendasi' => $request->tgl_rekomendasi,
-            'kepada_yth' => $request->kepada_yth,
-            'kewarganegaraan' => $request->kewarganegaraan,
-            'no_keputusan' => $request->no_keputusan,
-            'tgl_keputusan' => $request->tgl_keputusan,
-            'tentang_permohonan' => $request->tentang_permohonan,
-            'nama_narkotika_medis' => $request->nama_narkotika_medis,
-            'lama_perawatan' => $request->lama_perawatan,
-            'keterangan_diagnosis' => $request->keterangan_diagnosis,
-            
-            // Kolom kesimpulan
-            'status_klien' => $request->status_klien,
-            'kesimpulan_pola_pakai' => $request->kesimpulan_pola_pakai,
-            'kesimpulan_kategori' => $request->kesimpulan_kategori,
-            'diagnosis_medis' => $request->diagnosis_medis,
-            'rekomendasi_tempat_rehab' => $request->rekomendasi_tempat_rehab,
-            'rekomendasi_durasi' => $request->rekomendasi_durasi,
-            'rekomendasi_keterangan' => $request->rekomendasi_keterangan,
-        ]);
+        // 2. SIMPAN MANUAL (Lebih Kuat & Anti-Silent Failure)
+        $asesmen->no_surat_rekomendasi = $request->input('no_surat_rekomendasi');
+        $asesmen->tgl_rekomendasi      = $request->input('tgl_rekomendasi');
+        $asesmen->kepada_yth           = $request->input('kepada_yth');
+        $asesmen->no_keputusan         = $request->input('no_keputusan');
+        $asesmen->tgl_keputusan        = $request->input('tgl_keputusan');
+        $asesmen->tentang_permohonan   = $request->input('tentang_permohonan');
+        $asesmen->kewarganegaraan      = $request->input('kewarganegaraan');
+        $asesmen->nama_narkotika_medis = $request->input('nama_narkotika_medis');
+        $asesmen->lama_perawatan       = $request->input('lama_perawatan');
+        $asesmen->keterangan_diagnosis = $request->input('keterangan_diagnosis');
 
-        // ==============================================================
-        // LOGIKA BARU: Jika user hanya menekan tombol "Simpan Perubahan"
-        // ==============================================================
-        if ($request->input('action') === 'save_only') {
-            return redirect()->back()->with('success', 'Draf Surat Rekomendasi berhasil disimpan ke sistem!');
+        // EKSEKUSI SIMPAN KE DATABASE
+        $asesmen->save();
+
+        // 3. CEK AKSI TOMBOL YANG DIKLIK
+        if ($request->input('action') === 'save') {
+            return redirect()->route('asesmen.show', $asesmen->id)
+                             ->with('success', 'Data Form Rekomendasi berhasil disimpan!');
         }
 
-        // 2. Load Template Word
+        // 4. JIKA KLIK "SIMPAN & UNDUH", PROSES WORD BERJALAN
         $templatePath = storage_path('app/templates/template_rekomendasi.docx');
+
         if (!file_exists($templatePath)) {
             return redirect()->back()->with('error', 'Template Word tidak ditemukan.');
         }
 
         $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($templatePath);
-        $templateProcessor->setValue('no_surat_rekomendasi', $request->no_surat_rekomendasi ?? '-');
 
-        try { $tgl_rek = Carbon::parse($request->tgl_rekomendasi)->translatedFormat('d F Y'); } 
-        catch (Exception $e) { $tgl_rek = $request->tgl_rekomendasi ?? '-'; }
-        $templateProcessor->setValue('tgl_rekomendasi', $tgl_rek);
+        // Mapping Data Input Manual
+        $templateProcessor->setValue('no_surat_rekomendasi', $asesmen->no_surat_rekomendasi ?? '-');
+        $templateProcessor->setValue('tgl_rekomendasi', $asesmen->tgl_rekomendasi ? \Carbon\Carbon::parse($asesmen->tgl_rekomendasi)->translatedFormat('d F Y') : '-');
+        $templateProcessor->setValue('kepada_yth', $asesmen->kepada_yth ?? '-');
+        $templateProcessor->setValue('no_keputusan', $asesmen->no_keputusan ?? '-');
+        $templateProcessor->setValue('tgl_keputusan', $asesmen->tgl_keputusan ? \Carbon\Carbon::parse($asesmen->tgl_keputusan)->translatedFormat('d F Y') : '-');
+        $templateProcessor->setValue('tentang_permohonan', $asesmen->tentang_permohonan ?? '-');
+        $templateProcessor->setValue('kewarganegaraan', $asesmen->kewarganegaraan ?? 'Indonesia (WNI)');
+        $templateProcessor->setValue('nama_narkotika', $asesmen->nama_narkotika_medis ?? '-');
+        $templateProcessor->setValue('keterangan_diagnosis', $asesmen->keterangan_diagnosis ?? '-');
+        $templateProcessor->setValue('lama_perawatan', $asesmen->lama_perawatan ?? '-');
 
-        $templateProcessor->setValue('kepada_yth', $request->kepada_yth ?? '-');
-        $templateProcessor->setValue('no_keputusan', $request->no_keputusan ?? '-');
-
-        try { $tgl_kep = Carbon::parse($request->tgl_keputusan)->translatedFormat('d F Y'); } 
-        catch (Exception $e) { $tgl_kep = $request->tgl_keputusan ?? '-'; }
-        $templateProcessor->setValue('tgl_keputusan', $tgl_kep);
-
-        $templateProcessor->setValue('tentang_permohonan', $request->tentang_permohonan ?? '-');
-        $templateProcessor->setValue('kewarganegaraan', $request->kewarganegaraan ?? 'Indonesia (WNI)');
-        $templateProcessor->setValue('nama_narkotika', $request->nama_narkotika_medis ?? '-');
-        $templateProcessor->setValue('keterangan_diagnosis', $request->keterangan_diagnosis ?? '-');
-        $templateProcessor->setValue('lama_perawatan', $request->lama_perawatan ?? '-');
+        // Mapping Data Otomatis dari Database
         $templateProcessor->setValue('nama_lengkap', $asesmen->nama_lengkap);
         $templateProcessor->setValue('nik', $asesmen->nik);
         $templateProcessor->setValue('tempat_lahir', $asesmen->tempat_lahir ?? '-');
-        $templateProcessor->setValue('tgl_lahir', $asesmen->tgl_lahir ? Carbon::parse($asesmen->tgl_lahir)->translatedFormat('d F Y') : '-');
-        
+        $templateProcessor->setValue('tgl_lahir', $asesmen->tgl_lahir ? \Carbon\Carbon::parse($asesmen->tgl_lahir)->translatedFormat('d F Y') : '-');
+
         $jk = $asesmen->jenis_kelamin == 'L' ? 'Laki-laki' : ($asesmen->jenis_kelamin == 'P' ? 'Perempuan' : '-');
         $templateProcessor->setValue('jenis_kelamin', $jk);
+
         $templateProcessor->setValue('alamat_ktp', $asesmen->alamat_ktp ?? '-');
         $templateProcessor->setValue('alamat_domisili', $asesmen->alamat_domisili ?? '-');
         $templateProcessor->setValue('no_surat_pengajuan', $asesmen->no_surat_pengajuan ?? '-');
 
-        $tgl_pelaksanaan = $asesmen->tgl_pelaksanaan ? Carbon::parse($asesmen->tgl_pelaksanaan)->translatedFormat('d F Y') : '-';
-        $hari_pelaksanaan = $asesmen->tgl_pelaksanaan ? Carbon::parse($asesmen->tgl_pelaksanaan)->translatedFormat('l') : '-';
+        $tgl_pelaksanaan = $asesmen->tgl_pelaksanaan ? \Carbon\Carbon::parse($asesmen->tgl_pelaksanaan)->translatedFormat('d F Y') : '-';
+        $hari_pelaksanaan = $asesmen->tgl_pelaksanaan ? \Carbon\Carbon::parse($asesmen->tgl_pelaksanaan)->translatedFormat('l') : '-';
 
         $templateProcessor->setValue('tgl_pelaksanaan', $tgl_pelaksanaan);
-        $templateProcessor->setValue('tanggal_tat', $tgl_pelaksanaan);
         $templateProcessor->setValue('hari', $hari_pelaksanaan);
         $templateProcessor->setValue('jenis_narkotika', $asesmen->narkotika->jenis_narkotika ?? '-');
         $templateProcessor->setValue('tingkat_ketergantungan', $asesmen->tingkat_ketergantungan ?? '-');
         $templateProcessor->setValue('rekomendasi_tat', $asesmen->rekomendasi->tempat_rehabilitasi ?? '-');
 
-        $fileName = 'Surat_Rekomendasi_TAT_' . preg_replace('/[^A-Za-z0-9]/', '_', $asesmen->nama_lengkap) . '.docx';
+        // Proses Unduh File
+        $fileName = 'Surat_Rekomendasi_TAT_' . str_replace(' ', '_', $asesmen->nama_lengkap) . '.docx';
         $tempPath = storage_path('app/temp_' . $fileName);
 
         $templateProcessor->saveAs($tempPath);
+
         return response()->download($tempPath, $fileName)->deleteFileAfterSend(true);
     }
 
