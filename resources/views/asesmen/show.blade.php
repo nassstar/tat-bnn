@@ -29,16 +29,10 @@
         </div>
     </x-slot>
 
-    <!-- PEMBUNGKUS UTAMA HALAMAN -->
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <!-- ========================================================================= -->
-            <!-- BAGIAN ATAS: Card 1, 2, dan 3 (DIRUBAH KE FLEXBOX AGAR LEBIH STABIL) -->
-            <!-- ========================================================================= -->
             <div class="flex flex-col lg:flex-row gap-6 items-start">
-
-                <!-- KOLOM KIRI (Card 1 & 2): Mengambil 1/3 layar -->
                 <div class="w-full lg:w-1/3 flex flex-col gap-6">
 
                     <!-- Card 1: Data Administrasi -->
@@ -73,12 +67,35 @@
                             <div class="flex flex-col border-b border-slate-50 pb-1.5"><span class="text-slate-500 font-medium mb-1">NIK</span> <span class="font-bold text-slate-800">{{ $asesmen->nik }}</span></div>
                             <div class="flex flex-col border-b border-slate-50 pb-1.5"><span class="text-slate-500 font-medium mb-1">No. HP</span> <span class="font-bold text-slate-800">{{ $asesmen->no_hp ?? '-' }}</span></div>
                             <div class="flex flex-col border-b border-slate-50 pb-1.5"><span class="text-slate-500 font-medium mb-1">Tempat, Tgl Lahir</span> <span class="font-bold text-slate-800">{{ $asesmen->tempat_lahir ?? '-' }}, {{ $asesmen->tgl_lahir ? \Carbon\Carbon::parse($asesmen->tgl_lahir)->format('d-m-Y') : '-' }}</span></div>
+
+                            @php
+                                $usiaKlien = '-';
+                                if (!empty($asesmen->tgl_lahir) && !empty($asesmen->created_at)) {
+                                    try {
+                                        $usiaKlien = \Carbon\Carbon::parse($asesmen->tgl_lahir)->diff(\Carbon\Carbon::parse($asesmen->created_at))->y . ' Tahun';
+                                    } catch (\Exception $e) {
+                                        $usiaKlien = 'Format Invalid';
+                                    }
+                                }
+                            @endphp
+                            <div class="flex flex-col border-b border-slate-50 pb-1.5">
+                                <span class="text-slate-500 font-medium mb-1">Usia <span class="text-[10px] font-normal text-blue-500">(Saat Didaftarkan)</span></span>
+                                <span class="font-bold text-slate-800">{{ $usiaKlien }}</span>
+                            </div>
+
                             <div class="flex flex-col border-b border-slate-50 pb-1.5"><span class="text-slate-500 font-medium mb-1">Jenis Kelamin</span> <span class="font-bold text-slate-800">{{ $asesmen->jenis_kelamin == 'L' ? 'Laki-Laki' : 'Perempuan' }}</span></div>
                             <div class="flex flex-col border-b border-slate-50 pb-1.5"><span class="text-slate-500 font-medium mb-1">Agama & WN</span> <span class="font-bold text-slate-800">{{ $asesmen->agama ?? '-' }} | {{ $asesmen->kewarganegaraan ?? '-' }}</span></div>
-                            <div class="flex flex-col border-b border-slate-50 pb-1.5"><span class="text-slate-500 font-medium mb-1">Pendidikan</span> <span class="font-bold text-slate-800">{{ $asesmen->pendidikan->nama_pendidikan ?? '-' }}</span></div>
-                            <div class="flex flex-col border-b border-slate-50 pb-1.5"><span class="text-slate-500 font-medium mb-1">Pekerjaan</span> <span class="font-bold text-slate-800">{{ $asesmen->pekerjaan->nama_pekerjaan ?? '-' }}</span></div>
 
-                            <!-- TAMBAHAN: Penghasilan Rata-rata -->
+                            <!-- PERBAIKAN: Memanggil Relasi Dari Database, Bukan _input -->
+                            <div class="flex flex-col border-b border-slate-50 pb-1.5">
+                                <span class="text-slate-500 font-medium mb-1">Pendidikan</span>
+                                <span class="font-bold text-slate-800">{{ $asesmen->pendidikan->nama_pendidikan ?? '-' }}</span>
+                            </div>
+                            <div class="flex flex-col border-b border-slate-50 pb-1.5">
+                                <span class="text-slate-500 font-medium mb-1">Pekerjaan</span>
+                                <span class="font-bold text-slate-800">{{ $asesmen->pekerjaan->nama_pekerjaan ?? '-' }}</span>
+                            </div>
+
                             <div class="flex flex-col border-b border-slate-50 pb-1.5">
                                 <span class="text-slate-500 font-medium mb-1">Penghasilan Rata-rata</span>
                                 <span class="font-bold text-slate-800">{{ $asesmen->penghasilan_rata_rata ?? '-' }}</span>
@@ -156,8 +173,8 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
             </div> <!-- END BAGIAN ATAS -->
 
@@ -271,20 +288,20 @@
                         5. Kesimpulan Diagnostik & Keputusan Rekomendasi TAT
                     </h3>
                     <div class="flex gap-2 w-full sm:w-auto">
-    <!-- Tombol Edit Form -->
-    <a href="{{ route('asesmen.berita-acara', $asesmen->id) }}" class="flex-1 sm:flex-none text-center px-4 py-2 border border-slate-300 bg-white rounded-lg font-bold text-xs text-slate-700 uppercase tracking-widest hover:bg-slate-50 transition shadow-sm">
-        Edit Form BA
-    </a>
+                        <!-- Tombol Edit Form -->
+                        <a href="{{ route('asesmen.berita-acara', $asesmen->id) }}" class="flex-1 sm:flex-none text-center px-4 py-2 border border-slate-300 bg-white rounded-lg font-bold text-xs text-slate-700 uppercase tracking-widest hover:bg-slate-50 transition shadow-sm">
+                            Edit Form BA
+                        </a>
 
-    <!-- Tombol Unduh Murni (Tanpa Update Database) -->
-    <form action="{{ route('asesmen.berita-acara.unduh', $asesmen->id) }}" method="POST" class="flex-1 sm:flex-none">
-        @csrf
-        <button type="submit" style="background-color: #9333ea;" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-lg font-bold text-xs text-white uppercase tracking-widest hover:opacity-90 transition shadow-sm">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-            Unduh BA
-        </button>
-    </form>
-</div>
+                        <!-- Tombol Unduh Murni (Tanpa Update Database) -->
+                        <form action="{{ route('asesmen.berita-acara.unduh', $asesmen->id) }}" method="POST" class="flex-1 sm:flex-none">
+                            @csrf
+                            <button type="submit" style="background-color: #9333ea;" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-lg font-bold text-xs text-white uppercase tracking-widest hover:opacity-90 transition shadow-sm">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Unduh BA
+                            </button>
+                        </form>
+                    </div>
                 </div>
                 <div class="p-6 md:p-8 relative z-10 space-y-8">
                     <div class="bg-white/90 backdrop-blur-md p-5 md:p-6 rounded-2xl border border-white shadow-sm">

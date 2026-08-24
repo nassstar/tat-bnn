@@ -5,7 +5,6 @@
                 <h2 class="font-bold text-2xl text-slate-900 tracking-tight">Data Asesmen & Case Conference</h2>
                 <p class="text-sm text-slate-500 mt-1">Kelola data klien, status hukum, dan hasil rekomendasi TAT.</p>
             </div>
-            <!-- Tombol Tambah Utama -->
             <a href="{{ route('asesmen.create') }}" class="inline-flex items-center px-5 py-2.5 bg-indigo-600 border border-transparent rounded-xl font-bold text-sm text-white hover:bg-indigo-700 transition-all shadow-md hover:shadow-lg focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
                 Tambah Data Baru
@@ -16,9 +15,7 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <!-- ========================================== -->
             <!-- 1. ALERT MESSAGES -->
-            <!-- ========================================== -->
             @if(session('success'))
                 <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-start animate-fade-in shadow-sm">
                     <svg class="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -33,12 +30,9 @@
                 </div>
             @endif
 
-            <!-- ========================================== -->
-            <!-- 2. BLOK MANAJEMEN DATA MASSAL (Template & Import) -->
-            <!-- ========================================== -->
+            <!-- 2. BLOK MANAJEMEN DATA MASSAL -->
             <div class="bg-gradient-to-br from-slate-50 to-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                 <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
-                    <!-- Info Kiri -->
                     <div class="flex items-start gap-4">
                         <div class="p-3 bg-emerald-100 text-emerald-600 rounded-xl">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
@@ -48,15 +42,12 @@
                             <p class="text-sm text-slate-500 mt-1 max-w-xl">Unduh template kosong untuk diisi secara luring (offline), lalu unggah kembali ke sistem untuk mempercepat proses input data banyak klien sekaligus.</p>
                         </div>
                     </div>
-                    
-                    <!-- Aksi Kanan (Download & Upload) -->
+
                     <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto bg-white p-2 rounded-xl border border-slate-100 shadow-sm">
-                        <!-- Tombol Download -->
                         <a href="{{ route('asesmen.downloadTemplate') }}" class="w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 bg-white border border-slate-200 rounded-lg font-semibold text-xs text-slate-700 hover:bg-slate-50 hover:text-emerald-600 transition-all">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                             Unduh Template
                         </a>
-                        <!-- Form Upload -->
                         <div class="hidden sm:block w-px h-8 bg-slate-200"></div>
                         <form action="{{ route('asesmen.import') }}" method="POST" enctype="multipart/form-data" class="w-full sm:w-auto flex items-center gap-2">
                             @csrf
@@ -67,12 +58,39 @@
                 </div>
             </div>
 
-            <!-- ========================================== -->
+            <!-- HEADER DAFTAR KLIEN & TOMBOL AKSI SORTING -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 mt-4">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Daftar Klien TAT</h2>
+                    <p class="text-sm text-slate-500 mt-1">Total data ditemukan: <span class="font-bold text-indigo-600">{{ $asesmens->total() }}</span> klien</p>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                    <form action="{{ route('asesmen.index') }}" method="GET" class="flex-1 md:flex-none">
+                        @foreach(request()->except('sort', 'page') as $key => $value)
+                            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                        @endforeach
+
+                        <div class="relative">
+                            <select name="sort" onchange="this.form.submit()" class="appearance-none w-full md:w-48 bg-white border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block pl-3 pr-10 py-2.5 shadow-sm cursor-pointer hover:bg-slate-50 transition-colors">
+                                <option value="terbaru" {{ request('sort') == 'terbaru' ? 'selected' : '' }}>Terbaru Ditambahkan</option>
+                                <option value="terlama" {{ request('sort') == 'terlama' ? 'selected' : '' }}>Terlama Ditambahkan</option>
+                                <option value="a-z" {{ request('sort') == 'a-z' ? 'selected' : '' }}>Abjad (A - Z)</option>
+                                <option value="z-a" {{ request('sort') == 'z-a' ? 'selected' : '' }}>Abjad (Z - A)</option>
+                            </select>
+                        </div>
+                    </form>
+
+                    <a href="{{ route('asesmen.export-excel', request()->query()) }}" class="flex-1 md:flex-none inline-flex justify-center items-center px-4 py-2.5 border border-emerald-200 text-sm font-bold rounded-lg text-emerald-700 bg-emerald-50 hover:bg-emerald-100 hover:border-emerald-300 shadow-sm transition-colors">
+                        <svg class="w-4 h-4 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Export Excel (Sesuai Filter)
+                    </a>
+                </div>
+            </div>
+
             <!-- 3. PENCARIAN & FILTER ANIMASI -->
-            <!-- ========================================== -->
             <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                 <form action="{{ route('asesmen.index') }}" method="GET" id="filterForm">
-                    <!-- Baris Pencarian Utama (Selalu Tampil) -->
                     <div class="flex flex-col sm:flex-row gap-3">
                         <div class="flex-1 relative">
                             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -80,13 +98,11 @@
                             </div>
                             <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Nama Klien, NIK, atau No. Register..." class="block w-full pl-11 pr-3 py-3 border border-slate-300 rounded-xl text-sm bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all shadow-sm">
                         </div>
-                        
-                        <!-- Tombol Submit Pencarian Cepat -->
+
                         <button type="submit" class="px-6 py-3 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 transition shadow-sm">
                             Cari
                         </button>
-                        
-                        <!-- Tombol Toggle Filter -->
+
                         <button type="button" onclick="toggleFilter()" class="px-5 py-3 bg-white border border-slate-300 text-slate-700 text-sm font-bold rounded-xl hover:bg-slate-50 transition shadow-sm flex items-center justify-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
                             Filter Lanjutan
@@ -94,10 +110,9 @@
                         </button>
                     </div>
 
-                    <!-- Panel Filter Lanjutan (Disembunyikan secara default) -->
                     <div id="filterPanel" class="overflow-hidden transition-all duration-300 ease-in-out max-h-0 opacity-0">
                         <div class="pt-5 mt-5 border-t border-slate-100">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                                 <select name="bulan" class="w-full border-slate-300 rounded-xl text-sm text-slate-600 focus:border-indigo-500 focus:ring-indigo-200 bg-slate-50 focus:bg-white py-2.5">
                                     <option value="">-- Bulan --</option>
                                     @php $bulans = [1=>'Januari', 2=>'Februari', 3=>'Maret', 4=>'April', 5=>'Mei', 6=>'Juni', 7=>'Juli', 8=>'Agustus', 9=>'September', 10=>'Oktober', 11=>'November', 12=>'Desember']; @endphp
@@ -125,15 +140,10 @@
                                     <option value="YA" {{ request('status') == 'YA' ? 'selected' : '' }}>Selesai</option>
                                     <option value="TIDAK" {{ request('status') == 'TIDAK' ? 'selected' : '' }}>Menunggu</option>
                                 </select>
-
-                                <select name="sort" class="w-full border-slate-300 rounded-xl text-sm text-slate-600 focus:border-indigo-500 focus:ring-indigo-200 bg-slate-50 focus:bg-white py-2.5">
-                                    <option value="terbaru" {{ request('sort') == 'terbaru' ? 'selected' : '' }}>Urutkan: Terbaru</option>
-                                    <option value="terlama" {{ request('sort') == 'terlama' ? 'selected' : '' }}>Urutkan: Terlama</option>
-                                </select>
                             </div>
 
                             <div class="flex justify-end gap-3 mt-4">
-                                @if(request()->hasAny(['bulan', 'tahun', 'narkotika', 'status']))
+                                @if(request()->hasAny(['bulan', 'tahun', 'narkotika', 'status', 'sort']))
                                     <a href="{{ route('asesmen.index') }}" class="px-5 py-2 text-sm font-bold text-slate-500 hover:text-slate-800 transition">Bersihkan Filter</a>
                                 @endif
                                 <button type="submit" class="px-5 py-2 bg-indigo-100 text-indigo-700 text-sm font-bold rounded-lg hover:bg-indigo-200 transition">
@@ -145,18 +155,13 @@
                 </form>
             </div>
 
-            <!-- ========================================== -->
             <!-- 4. TABEL DATA & EXPORT EXCEL -->
-            <!-- ========================================== -->
             <div class="bg-white overflow-hidden shadow-sm rounded-2xl border border-slate-200">
-                
-                <!-- Table Header & Toolbar Export -->
                 <div class="p-4 sm:p-5 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row justify-between items-center gap-4">
                     <div>
-                        <h3 class="font-bold text-slate-800 text-lg">Daftar Klien TAT</h3>
-                        <p class="text-xs text-slate-500">Total data ditemukan: <span class="font-bold text-indigo-600">{{ $asesmens->total() }}</span> klien</p>
+                        <h3 class="font-bold text-slate-800 text-lg">Tabel Data Klien</h3>
                     </div>
-                    <a href="{{ route('asesmen.export-excel', request()->all()) }}" class="inline-flex justify-center items-center px-4 py-2 border border-emerald-300 text-sm font-bold rounded-xl shadow-sm text-emerald-700 bg-white hover:bg-emerald-50 transition-all">
+                    <a href="{{ route('asesmen.export-excel', request()->query()) }}" class="inline-flex justify-center items-center px-4 py-2 border border-emerald-300 text-sm font-bold rounded-xl shadow-sm text-emerald-700 bg-white hover:bg-emerald-50 transition-all">
                         <svg class="h-4 w-4 mr-2 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                         Export Excel (Sesuai Filter)
                     </a>
@@ -183,7 +188,6 @@
                                     <!-- Kolom Identitas -->
                                     <td class="px-6 py-5 align-top">
                                         <div class="flex items-start gap-3">
-                                            <!-- Avatar Inisial (UKURAN DIKEMBALIKAN SESUAI GAMBAR w-10 h-10) -->
                                             <div class="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 font-bold flex items-center justify-center text-lg mt-0.5 border border-indigo-100">
                                                 {{ strtoupper(substr($item->nama_lengkap ?? 'A', 0, 1)) }}
                                             </div>
@@ -191,17 +195,35 @@
                                                 <div class="font-bold text-slate-900 text-sm">{{ $item->nama_lengkap }}</div>
                                                 <div class="text-xs text-slate-500 mt-1">NIK: <span class="font-medium text-slate-700">{{ $item->nik ?? '-' }}</span></div>
                                                 <div class="text-xs text-slate-500 mt-0.5">Reg: <span class="font-medium text-slate-700">{{ $item->no_register ?? '-' }}</span></div>
-                                                
-                                                <div class="mt-2.5">
-                                                    @if($item->status_kelengkapan === 'Data Lengkap')
-                                                        <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                                            DATA LENGKAP
-                                                        </span>
-                                                    @else
-                                                        <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
-                                                            BELUM LENGKAP
-                                                        </span>
-                                                    @endif
+
+                                                <div class="mt-2.5 flex flex-col gap-2">
+                                                    <div>
+                                                        @if($item->status_kelengkapan === 'Data Lengkap')
+                                                            <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">DATA LENGKAP</span>
+                                                        @else
+                                                            <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">BELUM LENGKAP</span>
+                                                        @endif
+                                                    </div>
+
+                                                    <!-- Fitur Tanggal Ditambahkan & Edit Inline -->
+                                                    <div class="border-t border-slate-100 pt-2 mt-1">
+                                                        <div id="text-tanggal-{{ $item->id }}" class="flex items-center gap-1.5">
+                                                            <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Ditambahkan:</span>
+                                                            <span class="text-[11px] font-bold text-slate-700">{{ $item->created_at ? $item->created_at->format('d M Y') : '-' }}</span>
+
+                                                            <button type="button" onclick="toggleEditTanggal('{{ $item->id }}', true)" class="text-indigo-400 hover:text-indigo-600 transition-colors" title="Edit Tanggal">
+    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+</button>
+                                                        </div>
+
+                                                        <form id="form-tanggal-{{ $item->id }}" action="{{ route('asesmen.update-tanggal', $item->id) }}" method="POST" class="hidden items-center gap-1.5">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <input type="date" name="tanggal_ditambahkan" value="{{ $item->created_at ? $item->created_at->format('Y-m-d') : date('Y-m-d') }}" class="text-[11px] border-slate-300 rounded py-0.5 px-1.5 focus:ring-indigo-500 focus:border-indigo-500 h-6">
+                                                            <button type="submit" class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded hover:bg-emerald-200 transition h-6">Simpan</button>
+                                                            <button type="button" onclick="toggleEditTanggal('{{ $item->id }}', false)" class="px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-bold rounded hover:bg-slate-200 transition h-6">Batal</button>
+                                                        </form>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -248,11 +270,9 @@
                                         </div>
                                     </td>
 
-                                    <!-- Kolom Tindakan & Dokumen (Didesain ulang dengan keterangan yang jelas) -->
+                                    <!-- Kolom Tindakan & Dokumen -->
                                     <td class="px-6 py-5 align-top">
                                         <div class="flex flex-col gap-2 min-w-[175px] float-right">
-                                            
-                                            <!-- Aksi Manajemen: Grup Button Menyatu -->
                                             <div class="inline-flex rounded-lg shadow-sm" role="group">
                                                 <a href="{{ route('asesmen.show', $item->id) }}" class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-[11px] font-bold text-slate-600 bg-white border border-slate-200 rounded-l-lg hover:bg-slate-50 hover:text-blue-600 transition-colors" title="Lihat Detail Klien">
                                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
@@ -270,7 +290,6 @@
                                                 </form>
                                             </div>
 
-                                            <!-- Aksi Dokumen (Format Grid) -->
                                             <div class="grid grid-cols-2 gap-1.5">
                                                 <a href="{{ route('asesmen.berita-acara', $item->id) }}" class="inline-flex items-center justify-center gap-1.5 px-2 py-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-md hover:bg-emerald-100 transition-colors text-[10px] font-bold" title="Generate Berita Acara (Word)">
                                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
@@ -281,9 +300,8 @@
                                                     Rekom
                                                 </a>
                                             </div>
-                                            
-                                            <!-- Aksi PDF -->
-                                            <a href="{{ route('asesmen.pdf', $item->id) }}" class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-rose-50 border border-rose-200 text-rose-600 rounded-md hover:bg-rose-100 transition-colors text-[11px] font-bold w-full" title="Cetak Ringkasan Asesmen (PDF)">
+
+                                            <a href="{{ route('asesmen.cetakPdf', $item->id) }}" class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-rose-50 border border-rose-200 text-rose-600 rounded-md hover:bg-rose-100 transition-colors text-[11px] font-bold w-full" title="Cetak Ringkasan Asesmen (PDF)">
                                                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
                                                 Unduh PDF Ringkasan
                                             </a>
@@ -291,7 +309,6 @@
                                     </td>
                                 </tr>
                             @empty
-                                <!-- Empty State -->
                                 <tr>
                                     <td colspan="5" class="px-6 py-20 text-center">
                                         <div class="mx-auto w-24 h-24 mb-5 bg-slate-50 rounded-full flex items-center justify-center border-2 border-dashed border-slate-200">
@@ -322,12 +339,12 @@
         </div>
     </div>
 
-    <!-- Script Animasi Filter -->
+    <!-- Script Animasi Filter & Edit Tanggal -->
     <script>
         function toggleFilter() {
             const panel = document.getElementById('filterPanel');
             const icon = document.getElementById('filterIcon');
-            
+
             if (panel.classList.contains('max-h-0')) {
                 panel.classList.remove('max-h-0', 'opacity-0');
                 panel.classList.add('max-h-[500px]', 'opacity-100');
@@ -348,5 +365,27 @@
                 }
             }
         });
+
+        // Script untuk toggle form Edit Tanggal Inline dengan Konfirmasi
+        function toggleEditTanggal(id, isOpening) {
+            const textDiv = document.getElementById('text-tanggal-' + id);
+            const formDiv = document.getElementById('form-tanggal-' + id);
+
+            if (isOpening) {
+                // Operator klik tombol Pensil
+                if (confirm("Apakah Anda yakin ingin mengedit tanggal klien ditambahkan?")) {
+                    formDiv.classList.remove('hidden');
+                    formDiv.classList.add('flex');
+                    textDiv.classList.add('hidden');
+                    textDiv.classList.remove('flex');
+                }
+            } else {
+                // Operator klik tombol Batal di form
+                formDiv.classList.add('hidden');
+                formDiv.classList.remove('flex');
+                textDiv.classList.remove('hidden');
+                textDiv.classList.add('flex');
+            }
+        }
     </script>
 </x-app-layout>

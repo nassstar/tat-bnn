@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Imports\AsesmenImport;
 use App\Models\Asesmen;
 use App\Models\Pendidikan;
 use App\Models\Pekerjaan;
@@ -51,14 +50,15 @@ class AsesmenController extends Controller
         }
 
         $sort = $request->get('sort', 'terbaru');
+
         if ($sort === 'terlama') {
-            $query->oldest('tgl_pelaksanaan');
+            $query->oldest('created_at');
         } elseif ($sort === 'a-z') {
             $query->orderBy('nama_lengkap', 'asc');
         } elseif ($sort === 'z-a') {
             $query->orderBy('nama_lengkap', 'desc');
         } else {
-            $query->latest('tgl_pelaksanaan');
+            $query->latest('created_at');
         }
 
         $asesmens = $query->paginate(10)->withQueryString();
@@ -91,6 +91,13 @@ class AsesmenController extends Controller
      */
     public function store(Request $request)
     {
+        // === BLOK VALIDASI NIK ===
+        $request->validate([
+            'nik' => 'required|max:16|unique:asesmens,nik',
+        ], [
+            'nik.unique' => 'Peringatan: NIK ini sudah pernah terdaftar di dalam sistem! Silakan gunakan NIK lain atau gunakan fitur Edit Data.',
+        ]);
+
         $validatedData = $request->validate([
             // Identitas Dasar
             'nama_lengkap' => 'required|string|max:255',
@@ -102,7 +109,7 @@ class AsesmenController extends Controller
             'kewarganegaraan' => 'nullable|string|max:255',
             'agama' => 'nullable|string|max:255',
 
-            // PERBAIKAN: Validasi Text Input Master Data
+            // Validasi Input Master Data
             'pendidikan_input' => 'nullable|string|max:255',
             'pekerjaan_input' => 'nullable|string|max:255',
             'rekomendasi_input' => 'nullable|string|max:255',
@@ -149,21 +156,22 @@ class AsesmenController extends Controller
 
         // LOGIKA PENYIMPANAN OTOMATIS MASTER PENDIDIKAN
         if ($request->filled('pendidikan_input')) {
+            // Hanya buat relasi ID untuk keperluan internal, tapi TETAP simpan teks inputnya
             $pendidikan = Pendidikan::firstOrCreate([
                 'nama_pendidikan' => $request->pendidikan_input
             ]);
             $validatedData['pendidikan_id'] = $pendidikan->id;
+            // PERBAIKAN FATAL: BARIS "UNSET" DIHAPUS agar pendidikan_input ikut terekam ke database
         }
-        unset($validatedData['pendidikan_input']);
 
-        // LOGIKA PENYIMPANAN OTOMATIS MASTER PEKERJAAN (PERBAIKAN)
+        // LOGIKA PENYIMPANAN OTOMATIS MASTER PEKERJAAN
         if ($request->filled('pekerjaan_input')) {
             $pekerjaan = Pekerjaan::firstOrCreate([
                 'nama_pekerjaan' => $request->pekerjaan_input
             ]);
             $validatedData['pekerjaan_id'] = $pekerjaan->id;
+            // PERBAIKAN FATAL: BARIS "UNSET" DIHAPUS
         }
-        unset($validatedData['pekerjaan_input']);
 
         // LOGIKA PENYIMPANAN OTOMATIS MASTER REKOMENDASI TAT
         if ($request->filled('rekomendasi_input')) {
@@ -171,8 +179,8 @@ class AsesmenController extends Controller
                 'tempat_rehabilitasi' => $request->rekomendasi_input
             ]);
             $validatedData['rekomendasi_id'] = $rekomendasi->id;
+            // PERBAIKAN FATAL: BARIS "UNSET" DIHAPUS
         }
-        unset($validatedData['rekomendasi_input']);
 
         Asesmen::create($validatedData);
 
@@ -212,6 +220,13 @@ class AsesmenController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        // Validasi NIK yang sama untuk dirinya sendiri diabaikan
+        $request->validate([
+            'nik' => 'required|max:16|unique:asesmens,nik,' . $id,
+        ], [
+            'nik.unique' => 'Peringatan: NIK ini sudah digunakan oleh Klien lain.',
+        ]);
+
         $validatedData = $request->validate([
             // Identitas Dasar
             'nama_lengkap' => 'required|string|max:255',
@@ -223,7 +238,7 @@ class AsesmenController extends Controller
             'kewarganegaraan' => 'nullable|string|max:255',
             'agama' => 'nullable|string|max:255',
 
-            // PERBAIKAN: Validasi Text Input Master Data
+            // Validasi Input Master Data
             'pendidikan_input' => 'nullable|string|max:255',
             'pekerjaan_input' => 'nullable|string|max:255',
             'rekomendasi_input' => 'nullable|string|max:255',
@@ -274,17 +289,17 @@ class AsesmenController extends Controller
                 'nama_pendidikan' => $request->pendidikan_input
             ]);
             $validatedData['pendidikan_id'] = $pendidikan->id;
+            // PERBAIKAN FATAL: BARIS "UNSET" DIHAPUS
         }
-        unset($validatedData['pendidikan_input']);
 
-        // LOGIKA PENYIMPANAN OTOMATIS MASTER PEKERJAAN (PERBAIKAN)
+        // LOGIKA PENYIMPANAN OTOMATIS MASTER PEKERJAAN
         if ($request->filled('pekerjaan_input')) {
             $pekerjaan = Pekerjaan::firstOrCreate([
                 'nama_pekerjaan' => $request->pekerjaan_input
             ]);
             $validatedData['pekerjaan_id'] = $pekerjaan->id;
+            // PERBAIKAN FATAL: BARIS "UNSET" DIHAPUS
         }
-        unset($validatedData['pekerjaan_input']);
 
         // LOGIKA PENYIMPANAN OTOMATIS MASTER REKOMENDASI TAT
         if ($request->filled('rekomendasi_input')) {
@@ -292,8 +307,8 @@ class AsesmenController extends Controller
                 'tempat_rehabilitasi' => $request->rekomendasi_input
             ]);
             $validatedData['rekomendasi_id'] = $rekomendasi->id;
+            // PERBAIKAN FATAL: BARIS "UNSET" DIHAPUS
         }
-        unset($validatedData['rekomendasi_input']);
 
         $asesmen = Asesmen::findOrFail($id);
         $asesmen->update($validatedData);
@@ -438,8 +453,8 @@ class AsesmenController extends Controller
             'tgl_lahir' => $asesmen->tgl_lahir ? \Carbon\Carbon::parse($asesmen->tgl_lahir)->translatedFormat('d F Y') : '-',
             'jk' => $asesmen->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan',
             'agama' => $asesmen->agama ?? '-',
-            'pendidikan' => $asesmen->pendidikan->nama_pendidikan ?? '-',
-            'pekerjaan' => $asesmen->pekerjaan->nama_pekerjaan ?? '-',
+            'pendidikan' => $asesmen->pendidikan_input ?? '-', // PERBAIKAN: Tarik nilai input mentah langsung
+            'pekerjaan' => $asesmen->pekerjaan_input ?? '-',   // PERBAIKAN: Tarik nilai input mentah langsung
             'alamat_ktp' => $asesmen->alamat_ktp ?? '-',
             'alamat_domisili' => $asesmen->alamat_domisili ?? '-',
         ];
@@ -470,7 +485,6 @@ class AsesmenController extends Controller
         $asesmen->alat_bukti_dokter = $request->alat_bukti_dokter;
         $asesmen->alat_bukti_hasil = $request->alat_bukti_hasil;
 
-        // --- INI ADALAH BAGIAN YANG SEBELUMNYA TERHAPUS/TERLEWAT ---
         $asesmen->status_klien = $request->status_klien;
         $asesmen->kesimpulan_jenis_zat = $request->kesimpulan_jenis_zat;
         $asesmen->kesimpulan_pola_pakai = $request->kesimpulan_pola_pakai;
@@ -505,17 +519,14 @@ class AsesmenController extends Controller
      */
     public function unduhBeritaAcara(Request $request, string $id)
     {
-        // Tarik data langsung dari DB tanpa menyentuh request form
         $asesmen = Asesmen::with(['rekomendasi', 'narkotika', 'pendidikan', 'pekerjaan', 'anggotaTim'])->findOrFail($id);
-
         return $this->prosesCetakBeritaAcaraWord($asesmen);
     }
 
     /**
      * PRIVATE FUNCTION: Fungsi Terpusat Untuk Membaca dan Render Word Berita Acara
-     * (Digunakan bersama oleh generateBeritaAcara dan unduhBeritaAcara)
      */
-    private function prosesCetakBeritaAcaraWord($asesmen)
+    private function prosesCetakBeritaAcaraWord(\App\Models\Asesmen $asesmen)
     {
         $templatePath = storage_path('app/templates/template_berita_acara.docx');
 
@@ -715,5 +726,60 @@ class AsesmenController extends Controller
     {
         $namaFile = 'Rekap_Asesmen_TAT_' . date('Ymd_His') . '.xlsx';
         return Excel::download(new AsesmenExport($request), $namaFile);
+    }
+
+    /**
+     * Memperbarui "Tanggal Ditambahkan" (created_at) dari halaman Index
+     */
+    public function updateTanggal(Request $request, string $id)
+    {
+        $request->validate([
+            'tanggal_ditambahkan' => 'required|date',
+        ]);
+
+        $asesmen = Asesmen::findOrFail($id);
+
+        // Mempertahankan jam asli, hanya mengubah tanggalnya
+        $jamAsli = $asesmen->created_at ? $asesmen->created_at->format('H:i:s') : '00:00:00';
+        $asesmen->created_at = $request->tanggal_ditambahkan . ' ' . $jamAsli;
+
+        $asesmen->save();
+
+        return redirect()->back()->with('success', 'Tanggal klien ditambahkan berhasil diperbarui!');
+    }
+
+    /**
+     * Menghapus master data Pendidikan (Dari Modal Kelola)
+     */
+    /**
+     * Menghapus master data Pendidikan (Dari Modal Kelola)
+     */
+    /**
+     * Menghapus master data Pendidikan (Dari Modal Kelola)
+     */
+    /**
+     * Menghapus master data Pendidikan (Dari Modal Kelola)
+     */
+    /**
+     * Menghapus master data Pendidikan (Dari Modal Kelola)
+     */
+    public function destroyPendidikan(string $id)
+    {
+        try {
+            $pendidikan = \App\Models\Pendidikan::findOrFail($id);
+            $pendidikan->delete();
+
+            return redirect()->back()->with('success', 'Pilihan Pendidikan berhasil dihapus secara permanen dari sistem!');
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Menangkap error jika data sedang dipakai oleh Klien (Foreign Key Constraint Violation)
+            if ($e->getCode() == '23000') {
+                return redirect()->back()->with('error', 'Gagal menghapus! Pilihan pendidikan ini tidak bisa dihapus karena pilihan ini sudah digunakan dalam penambahan data Klien.');
+            }
+
+            return redirect()->back()->with('error', 'Terjadi kesalahan database: ' . $e->getMessage());
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
+        }
     }
 }
