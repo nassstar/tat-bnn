@@ -35,7 +35,7 @@
                         <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         1. Header Surat & Pimpinan Rapat
                     </h3>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Nomor Berita Acara</label>
@@ -80,7 +80,7 @@
                         </h3>
                         <p class="text-xs font-semibold text-indigo-600 bg-white px-3 py-1 rounded-lg border border-indigo-100 shadow-sm">Pilih & Kelola dari Master Data</p>
                     </div>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- KOLOM TIM MEDIS -->
                         <div class="bg-white p-5 rounded-xl shadow-sm border border-indigo-100">
@@ -119,7 +119,7 @@
                         <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                         3. Narasi Hasil Pemeriksaan
                     </h3>
-                    
+
                     <div class="space-y-8">
                         <!-- KOTAK NARASI MEDIS -->
                         <div class="p-5 md:p-6 bg-blue-50/50 border border-blue-100 rounded-2xl shadow-sm">
@@ -182,7 +182,7 @@
                         <svg class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         4. Alat Bukti & Kesimpulan
                     </h3>
-                    
+
                     <!-- Sub A: Alat Bukti -->
                     <div class="bg-slate-50 p-5 rounded-xl border border-slate-100 mb-8">
                         <h4 class="font-extrabold text-[12px] text-emerald-700 uppercase tracking-wider mb-4 flex items-center gap-2">
@@ -287,7 +287,7 @@
                                     <button type="button" onclick="bukaKelolaOpsi('tempat_rehab')" class="px-4 py-2 bg-slate-100 text-slate-600 text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-slate-200 whitespace-nowrap transition shadow-sm">Kelola</button>
                                 </div>
                             </div>
-                            
+
                             <!-- DURASI REHABILITASI -->
                             <div>
                                 <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Lama (Durasi) Rawat</label>
@@ -336,7 +336,7 @@
                     <a href="{{ route('asesmen.show', $asesmen->id) }}" class="inline-flex justify-center items-center px-6 py-3 bg-white border border-slate-300 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-all shadow-sm focus:ring-2 focus:ring-slate-200">
                         Batal
                     </a>
-                    
+
                     <!-- Tombol 1: Simpan Saja -->
                     <button type="submit" name="action" value="save_only" onclick="syncHiddenInputs()" class="inline-flex justify-center items-center px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 hover:-translate-y-0.5 transition-all shadow-lg shadow-blue-200 focus:ring-4 focus:ring-blue-100">
                         <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
@@ -356,7 +356,7 @@
     <!-- ========================================== -->
     <!-- MODALS (ANGGOTA TAT & OPSI) -->
     <!-- ========================================== -->
-    
+
     <!-- MODAL ANGGOTA TAT (MEDIS/HUKUM) -->
     <div id="modalTambahAnggota" class="fixed inset-0 z-[60] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 sm:p-8">
@@ -377,7 +377,7 @@
             </form>
         </div>
     </div>
-    
+
     <div id="modalKelolaAnggota" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 sm:p-8 flex flex-col max-h-[85vh]">
             <div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-4">
@@ -431,7 +431,7 @@
         function getDraftMedis() {
             let alamatType = document.querySelector('input[name="alamat_medis"]:checked').value;
             let alamatTeks = "";
-            
+
             if (alamatType === 'ktp') {
                 alamatTeks = klien.alamat_ktp;
             } else if (alamatType === 'domisili') {
@@ -445,7 +445,7 @@
         function getDraftHukum() {
             let alamatType = document.querySelector('input[name="alamat_hukum"]:checked').value;
             let alamatTeks = "";
-            
+
             if (alamatType === 'ktp') {
                 alamatTeks = klien.alamat_ktp;
             } else if (alamatType === 'domisili') {
@@ -455,7 +455,7 @@
             }
 
             let pekerjaan = document.getElementById('input_pekerjaan_hukum').value || '-';
-            
+
             return `Bahwa Tersangka bernama lengkap ${klien.nama}, NIK ${klien.nik}, Tempat/Tanggal Lahir ${klien.tempat_lahir}, ${klien.tgl_lahir}, Jenis Kelamin ${klien.jk}, Agama ${klien.agama}, Pekerjaan ${pekerjaan}, Pendidikan Terakhir ${klien.pendidikan}, Alamat Tempat Tinggal ${alamatTeks}.\n\nTersangka diamankan oleh petugas pada... (Lanjutkan mengetik kronologi penangkapan di sini...)`;
         }
         function applyDraftMedis() {
@@ -479,7 +479,7 @@
             let val = document.getElementById('rekomendasi_durasi_hidden').value;
             let sel = document.getElementById('select_durasi');
             let inp = document.getElementById('input_durasi_custom');
-            
+
             let options = Array.from(sel.options).map(o => o.value);
             if(options.includes(val)) {
                 sel.value = val;
@@ -507,7 +507,7 @@
         let masterTempatRehab = @json($masterTempatRehab);
         let masterDiagnosis = @json($masterDiagnosis);
         let prevZatString = "{{ old('alat_bukti_hasil', $asesmen->alat_bukti_hasil) }}";
-        
+
         function renderOpsiData() {
             // Render Zat Checkbox
             let contZat = document.getElementById('container-zat');
@@ -550,7 +550,7 @@
 
         function bukaModalOpsi(kategori) {
             document.getElementById('modalOpsiKategori').value = kategori;
-            
+
             let title = 'Tambah Data Baru';
             if(kategori === 'zat') title = 'Tambah Zat Baru';
             else if(kategori === 'tempat_rehab') title = 'Tambah Tempat Rehabilitasi';
@@ -569,7 +569,7 @@
                 _token: '{{ csrf_token() }}'
             };
             if(!data.nilai) return alert('Data tidak boleh kosong!');
-            
+
             btn.innerText = 'Tunggu...';
             fetch('{{ route("master-opsi.storeAjax") }}', {
                 method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(data)
@@ -578,7 +578,7 @@
                     if(data.kategori === 'zat') masterZat.push(res.data);
                     else if(data.kategori === 'tempat_rehab') masterTempatRehab.push(res.data);
                     else masterDiagnosis.push(res.data);
-                    
+
                     renderOpsiData();
                     document.getElementById('modalTambahOpsi').classList.add('hidden');
                 }
@@ -600,7 +600,7 @@
             let container = document.getElementById('kelolaOpsiList');
             container.innerHTML = '';
             let data = kategori === 'zat' ? masterZat : (kategori === 'tempat_rehab' ? masterTempatRehab : masterDiagnosis);
-            
+
             data.forEach(item => {
                 container.innerHTML += `
                     <div class="flex justify-between items-center p-3 border border-slate-100 rounded-xl mb-2 hover:bg-slate-50 transition-colors shadow-sm">
@@ -620,7 +620,7 @@
                     if(kategori === 'zat') masterZat = masterZat.filter(x => x.id !== id);
                     else if(kategori === 'tempat_rehab') masterTempatRehab = masterTempatRehab.filter(x => x.id !== id);
                     else masterDiagnosis = masterDiagnosis.filter(x => x.id !== id);
-                    
+
                     renderOpsiData();
                     renderKelolaOpsiList(kategori);
                 }
@@ -638,8 +638,8 @@
         function renderMedis() {
             const container = document.getElementById('container-medis');
             const select = document.getElementById('select-medis');
-            const selectDokter = document.getElementById('select-dokter-pemeriksa'); 
-            
+            const selectDokter = document.getElementById('select-dokter-pemeriksa');
+
             container.innerHTML = ''; select.innerHTML = '<option value="">-- Pilih Dokter TAT --</option>';
             let currentDokterVal = selectDokter.value || "{{ old('alat_bukti_dokter', $asesmen->alat_bukti_dokter) }}";
             selectDokter.innerHTML = `<option value="${currentDokterVal}">${currentDokterVal || '-- Otomatis dari Tim Medis --'}</option>`;
@@ -737,14 +737,14 @@
                 tutupModal();
             });
         }
-        
+
         function bukaKelola(kategori) {
             document.getElementById('kelolaTitle').innerText = kategori === 'medis' ? 'Kelola Tim Medis' : 'Kelola Tim Hukum';
             renderKelolaList(kategori);
             document.getElementById('modalKelolaAnggota').classList.remove('hidden');
         }
         function tutupKelola() { document.getElementById('modalKelolaAnggota').classList.add('hidden'); }
-        
+
         function renderKelolaList(kategori) {
             let container = document.getElementById('kelolaList'); container.innerHTML = '';
             let data = kategori === 'medis' ? masterMedis : masterHukum;

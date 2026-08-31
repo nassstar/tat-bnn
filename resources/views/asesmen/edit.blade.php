@@ -34,31 +34,28 @@
             <!-- ========================================== -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div class="flex items-center gap-4">
-                    <a href="{{ route('asesmen.index') }}" class="p-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-indigo-600 transition-colors shadow-sm">
+                    <a href="{{ route('asesmen.index') }}" class="p-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-blue-600 transition-colors shadow-sm">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     </a>
                     <div>
                         <div class="inline-flex items-center gap-2 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700 uppercase tracking-wider mb-1">
                             Mode Edit Data
                         </div>
-                        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
-                            Edit Klien: {{ $asesmen->nama_lengkap }}
-                            <!-- Indikator Auto-Save -->
+                        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">Edit Klien: {{ $asesmen->nama_lengkap }}
                             <span id="autosaveIndicator" class="hidden text-[10px] font-bold text-emerald-600 bg-emerald-100 border border-emerald-200 px-2 py-1 rounded-md uppercase tracking-wider autosave-active">
                                 Perubahan Tersimpan Otomatis
                             </span>
                         </h1>
                     </div>
                 </div>
-                <p class="text-sm text-slate-500 bg-white px-4 py-2 rounded-lg border border-slate-200 shadow-sm hidden md:block">
+                <div class="text-sm text-slate-500 bg-white px-4 py-2 rounded-lg border border-slate-200 shadow-sm hidden md:block">
                     Perbarui data dengan teliti. Tanda <span class="text-rose-500 font-bold">*</span> wajib diisi.
-                </p>
+                </div>
             </div>
 
             <!-- ========================================== -->
-            <!-- BANNER NOTIFIKASI (SUCCESS, ERROR & VALIDASI) -->
+            <!-- BANNER NOTIFIKASI -->
             <!-- ========================================== -->
-
             @if (session('success'))
                 <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-start shadow-sm">
                     <svg class="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
@@ -110,46 +107,44 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-slate-700">No / BLN</label>
-                            <input type="text" name="no_bln" value="{{ old('no_bln', $asesmen->no_bln) }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            <input type="text" name="no_bln" value="{{ old('no_bln', $asesmen->no_bln) }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700">Asal Pengajuan</label>
-                            <input type="text" name="asal_pengajuan" value="{{ old('asal_pengajuan', $asesmen->asal_pengajuan) }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            <input type="text" name="asal_pengajuan" value="{{ old('asal_pengajuan', $asesmen->asal_pengajuan) }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700">Tanggal Surat</label>
-                            <input type="text" name="tgl_surat" value="{{ old('tgl_surat', $asesmen->tgl_surat ? \Carbon\Carbon::parse($asesmen->tgl_surat)->format('d-m-Y') : '') }}" class="datepicker-id mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Pilih Tanggal">
+                            <input type="text" name="tgl_surat" value="{{ old('tgl_surat', $asesmen->tgl_surat ? \Carbon\Carbon::parse($asesmen->tgl_surat)->format('Y-m-d') : '') }}" class="datepicker-id mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Pilih Tanggal">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700">Tanggal Berkas Diterima</label>
-                            <input type="text" name="tgl_berkas" value="{{ old('tgl_berkas', $asesmen->tgl_berkas ? \Carbon\Carbon::parse($asesmen->tgl_berkas)->format('d-m-Y') : '') }}" class="datepicker-id mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Pilih Tanggal">
+                            <input type="text" name="tgl_berkas" value="{{ old('tgl_berkas', $asesmen->tgl_berkas ? \Carbon\Carbon::parse($asesmen->tgl_berkas)->format('Y-m-d') : '') }}" class="datepicker-id mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Pilih Tanggal">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700">Tanggal Pelaksanaan</label>
-                            <input type="text" name="tgl_pelaksanaan" value="{{ old('tgl_pelaksanaan', $asesmen->tgl_pelaksanaan ? \Carbon\Carbon::parse($asesmen->tgl_pelaksanaan)->format('d-m-Y') : '') }}" class="datepicker-id mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Pilih Tanggal">
+                            <input type="text" name="tgl_pelaksanaan" value="{{ old('tgl_pelaksanaan', $asesmen->tgl_pelaksanaan ? \Carbon\Carbon::parse($asesmen->tgl_pelaksanaan)->format('Y-m-d') : '') }}" class="datepicker-id mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Pilih Tanggal">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700">No. Surat Pengajuan</label>
-                            <input type="text" name="no_surat_pengajuan" value="{{ old('no_surat_pengajuan', $asesmen->no_surat_pengajuan) }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            <input type="text" name="no_surat_pengajuan" value="{{ old('no_surat_pengajuan', $asesmen->no_surat_pengajuan) }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700">No. LKN / LP / LI</label>
-                            <input type="text" name="no_lkn" value="{{ old('no_lkn', $asesmen->no_lkn) }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            <input type="text" name="no_lkn" value="{{ old('no_lkn', $asesmen->no_lkn) }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700">Tanggal Penangkapan</label>
-                            <input type="text" name="tgl_tangkap" value="{{ old('tgl_tangkap', $asesmen->tgl_tangkap ? \Carbon\Carbon::parse($asesmen->tgl_tangkap)->format('d-m-Y') : '') }}" class="datepicker-id mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Pilih Tanggal">
+                            <input type="text" name="tgl_tangkap" value="{{ old('tgl_tangkap', $asesmen->tgl_tangkap ? \Carbon\Carbon::parse($asesmen->tgl_tangkap)->format('Y-m-d') : '') }}" class="datepicker-id mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Pilih Tanggal">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700">No. Register</label>
-                            <input type="text" name="no_register" value="{{ old('no_register', $asesmen->no_register) }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            <input type="text" name="no_register" value="{{ old('no_register', $asesmen->no_register) }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                         </div>
                     </div>
                 </div>
 
-                <!-- ========================================== -->
                 <!-- SEKSI 2: IDENTITAS KLIEN & UPLOAD FOTO -->
-                <!-- ========================================== -->
                 <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm relative z-30">
                     <div class="absolute top-0 left-0 w-full h-1.5 bg-blue-500 rounded-t-2xl"></div>
                     <h3 class="text-sm font-extrabold text-slate-800 uppercase tracking-wider mb-6 border-b border-slate-100 pb-3 flex items-center gap-2 mt-1">
@@ -164,7 +159,6 @@
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-3">Pas Foto Klien <span class="text-slate-400 font-normal lowercase">(Opsional)</span></label>
                             <div class="flex flex-col sm:flex-row items-center gap-5">
                                 <div class="shrink-0 w-24 h-32 bg-white rounded-xl border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden relative group shadow-sm">
-                                    <!-- Menampilkan Foto Lama Jika Ada -->
                                     <img id="previewFoto" src="{{ $asesmen->foto_klien ? asset('storage/' . $asesmen->foto_klien) : '#' }}" alt="Preview" class="{{ $asesmen->foto_klien ? 'w-full h-full object-cover' : 'hidden w-full h-full object-cover' }}">
                                     <svg id="iconPlaceholder" class="{{ $asesmen->foto_klien ? 'hidden' : '' }} w-8 h-8 text-slate-300 group-hover:text-blue-400 transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                                 </div>
@@ -180,7 +174,6 @@
                             <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap', $asesmen->nama_lengkap) }}" required class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
                         </div>
 
-                        <!-- BLOK INPUT NIK -->
                         <div>
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">NIK KTP <span class="text-rose-500">*</span></label>
                             <input type="text" name="nik" value="{{ old('nik', $asesmen->nik) }}" required maxlength="16"
@@ -208,10 +201,9 @@
                         </div>
                         <div>
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Tanggal Lahir</label>
-                            <input type="text" name="tgl_lahir" id="tgl_lahir" value="{{ old('tgl_lahir', $asesmen->tgl_lahir ? \Carbon\Carbon::parse($asesmen->tgl_lahir)->format('d-m-Y') : '') }}" class="datepicker-id block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="Pilih Tanggal">
+                            <input type="text" name="tgl_lahir" id="tgl_lahir" value="{{ old('tgl_lahir', $asesmen->tgl_lahir ? \Carbon\Carbon::parse($asesmen->tgl_lahir)->format('Y-m-d') : '') }}" class="datepicker-id block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="Pilih Tanggal">
                         </div>
 
-                        <!-- FITUR KOTAK USIA OTOMATIS -->
                         <div>
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Usia <span class="text-blue-500 ml-1 lowercase font-normal">(Saat Didaftarkan)</span></label>
                             <input type="text" name="usia" id="usia" value="{{ old('usia') }}" class="block w-full rounded-xl border-slate-200 shadow-sm sm:text-sm transition-all bg-blue-50 text-blue-800 font-bold pointer-events-none focus:ring-0" placeholder="0 Tahun" readonly>
@@ -240,7 +232,7 @@
                             </select>
                         </div>
 
-                        <!-- FITUR DROPDOWN PENDIDIKAN DENGAN MODAL KELOLA -->
+                        <!-- DROPDOWN PENDIDIKAN DENGAN MODAL KELOLA -->
                         <div class="md:col-span-2 lg:col-span-1">
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Pendidikan</label>
                             <div class="flex gap-2">
@@ -269,11 +261,8 @@
                         </div>
                     </div>
 
-                    <!-- ===================================== -->
                     <!-- BLOK ALAMAT KTP & DOMISILI -->
-                    <!-- ===================================== -->
                     <div class="col-span-1 sm:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6 pt-6 border-t border-slate-200">
-
                         <!-- 1. ALAMAT KTP -->
                         <div class="space-y-4 bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col h-full">
                             <h4 class="text-sm font-extrabold text-slate-800 border-b border-slate-200 pb-2 mb-2">Alamat Sesuai KTP</h4>
@@ -575,7 +564,7 @@
                             <textarea name="hasil_asesmen_medis" rows="4" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-slate-500 focus:ring-2 focus:ring-slate-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="Ketik kronologi mentah asesmen medis...">{{ old('hasil_asesmen_medis', $asesmen->hasil_asesmen_medis) }}</textarea>
                         </div>
 
-                        <!-- FITUR BARU: DROPDOWN REKOMENDASI TAT (OPSI RAWAT JALAN & INAP CANGGIH) -->
+                        <!-- FITUR DROPDOWN REKOMENDASI TAT -->
                         <div class="md:col-span-2">
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-2">Rekomendasi TAT <span class="text-rose-500">*</span></label>
 
@@ -591,37 +580,39 @@
                             </div>
 
                             <div class="flex flex-col sm:flex-row gap-2">
-                                <select id="selectTempatRekomendasi" disabled class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-slate-500 focus:ring-2 focus:ring-slate-100 sm:text-sm transition-all bg-slate-100 text-slate-400 cursor-not-allowed" onchange="updateRekomendasiPreview()">
+                                <select id="selectTempatRekomendasi" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" onchange="updateRekomendasiPreview()">
                                     <option value="">-- Pilih Tempat / Instansi --</option>
-
-                                    <option value="Bawaan Sistem" data-kategori="Rawat Jalan" class="hidden">Hanya Rawat Jalan (Tanpa Instansi)</option>
-                                    <option value="Bawaan Sistem" data-kategori="Rawat Inap" class="hidden">Hanya Rawat Inap (Tanpa Instansi)</option>
+                                    <option value="Bawaan Sistem" data-kategori="Rawat Jalan" style="display:none;" disabled>Hanya Rawat Jalan (Tanpa Instansi)</option>
+                                    <option value="Bawaan Sistem" data-kategori="Rawat Inap" style="display:none;" disabled>Hanya Rawat Inap (Tanpa Instansi)</option>
 
                                     @foreach($masterRekomendasi ?? [] as $r)
-                                        <!-- PERBAIKAN: Membaca dari data master -->
-                                        @php $namaRekomendasi = $r->tempat_rehabilitasi ?? $r->nama_rekomendasi ?? ''; @endphp
-                                        @if(trim($namaRekomendasi) !== '')
+                                        @php
+                                            $namaAsli = $r->tempat_rehabilitasi ?? $r->nama_rekomendasi ?? '';
+                                        @endphp
+                                        @if(trim($namaAsli) !== '')
                                             @php
                                                 $kategoriItem = 'Semua';
-                                                $namaItem = $namaRekomendasi;
+                                                $namaTampil = trim($namaAsli);
 
-                                                if (str_starts_with($namaItem, 'Rawat Jalan - ')) {
+                                                if (str_starts_with($namaTampil, 'Rawat Jalan')) {
                                                     $kategoriItem = 'Rawat Jalan';
-                                                    $namaItem = trim(substr($namaItem, 14));
-                                                } elseif (str_starts_with($namaItem, 'Rawat Inap - ')) {
+                                                    $namaTampil = trim(str_replace('Rawat Jalan', '', $namaTampil));
+                                                    $namaTampil = ltrim($namaTampil, ' -');
+                                                } elseif (str_starts_with($namaTampil, 'Rawat Inap')) {
                                                     $kategoriItem = 'Rawat Inap';
-                                                    $namaItem = trim(substr($namaItem, 13));
+                                                    $namaTampil = trim(str_replace('Rawat Inap', '', $namaTampil));
+                                                    $namaTampil = ltrim($namaTampil, ' -');
                                                 }
                                             @endphp
-                                            <option value="{{ $namaItem }}" data-kategori="{{ $kategoriItem }}" data-full="{{ $namaRekomendasi }}" class="hidden">
-                                                {{ $namaItem }}
+                                            <option value="{{ $namaTampil }}" data-kategori="{{ $kategoriItem }}" data-full="{{ $namaAsli }}" style="display:none;" disabled>
+                                                {{ $namaTampil }}
                                             </option>
                                         @endif
                                     @endforeach
                                 </select>
                                 <div class="flex gap-2">
-                                    <button type="button" id="btnTambahRekomendasi" disabled onclick="openModalTambahRekomendasi()" class="flex-1 sm:flex-none px-4 py-2 bg-slate-200 text-slate-400 font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider rounded-xl transition-colors shadow-sm cursor-not-allowed">+ Tambah</button>
-                                    <button type="button" id="btnKelolaRekomendasi" disabled onclick="openModalKelolaRekomendasi()" class="flex-1 sm:flex-none px-4 py-2 bg-slate-100 text-slate-600 font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider rounded-xl transition-colors shadow-sm cursor-not-allowed">Kelola</button>
+                                    <button type="button" onclick="openModalTambahRekomendasi()" class="shrink-0 px-3 py-2 bg-indigo-100 text-indigo-700 font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider rounded-xl hover:bg-indigo-200 transition-colors shadow-sm">+ Tambah</button>
+                                    <button type="button" onclick="openModalKelolaRekomendasi()" class="shrink-0 px-3 py-2 bg-slate-100 text-slate-700 font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider rounded-xl hover:bg-slate-200 transition-colors shadow-sm">Kelola</button>
                                 </div>
                             </div>
 
@@ -752,15 +743,17 @@
             <h3 class="text-xl font-extrabold text-slate-900 mb-6">Kelola Pendidikan</h3>
             <div id="listKelolaPendidikan" class="max-h-[60vh] overflow-y-auto pr-2 space-y-3 mb-8 custom-scrollbar">
                 @forelse($masterPendidikan ?? [] as $p)
-                <div class="flex justify-between items-center p-4 border border-slate-200 rounded-2xl hover:bg-slate-50 transition-colors">
-                    <span class="text-sm font-bold text-slate-700">{{ $p->nama_pendidikan }}</span>
-                    <!-- PERINGATAN: Pastikan Anda menambahkan route('pendidikan.destroy') di web.php -->
-                    <form action="{{ Route::has('pendidikan.destroy') ? route('pendidikan.destroy', $p->id) : url('pendidikan/'.$p->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="text-xs font-bold text-rose-500 bg-white hover:bg-rose-50 border border-rose-100 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button>
-                    </form>
-                </div>
+                    @if(trim($p->nama_pendidikan) !== '')
+                    <div class="flex justify-between items-center p-4 border border-slate-200 rounded-2xl hover:bg-slate-50 transition-colors">
+                        <span class="text-sm font-bold text-slate-700">{{ $p->nama_pendidikan }}</span>
+                        <!-- PERINGATAN: Pastikan Anda menambahkan route('pendidikan.destroy') di web.php -->
+                        <form action="{{ Route::has('pendidikan.destroy') ? route('pendidikan.destroy', $p->id) : url('pendidikan/'.$p->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-xs font-bold text-rose-500 bg-white hover:bg-rose-50 border border-rose-100 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button>
+                        </form>
+                    </div>
+                    @endif
                 @empty
                 <div class="text-sm text-slate-500 text-center py-6 italic empty-msg">Belum ada data pendidikan.</div>
                 @endforelse
@@ -813,29 +806,37 @@
             <div id="listKelolaRekomendasi" class="max-h-[60vh] overflow-y-auto pr-2 space-y-3 mb-8 custom-scrollbar">
 
                 <!-- Bawaan Sistem Tidak Bisa Dihapus -->
-                <div data-kategori="Rawat Jalan" class="rekomendasi-item flex justify-between items-center p-4 border border-slate-100 bg-slate-50 rounded-2xl opacity-70 hidden">
-                    <span class="text-sm font-bold text-slate-500">Rawat Jalan <span class="ml-2 text-[9px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full uppercase">Bawaan Sistem</span></span>
+                <div data-kategori="Rawat Jalan" class="rekomendasi-item hidden justify-between items-center p-4 border border-slate-100 bg-slate-50 rounded-2xl opacity-70">
+                    <span class="text-sm font-bold text-slate-500">Hanya Rawat Jalan (Tanpa Instansi)</span>
                     <button type="button" disabled class="text-xs font-bold text-slate-300 px-4 py-2 cursor-not-allowed">Tetap</button>
                 </div>
-                <div data-kategori="Rawat Inap" class="rekomendasi-item flex justify-between items-center p-4 border border-slate-100 bg-slate-50 rounded-2xl opacity-70 hidden">
-                    <span class="text-sm font-bold text-slate-500">Rawat Inap <span class="ml-2 text-[9px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full uppercase">Bawaan Sistem</span></span>
+                <div data-kategori="Rawat Inap" class="rekomendasi-item hidden justify-between items-center p-4 border border-slate-100 bg-slate-50 rounded-2xl opacity-70">
+                    <span class="text-sm font-bold text-slate-500">Hanya Rawat Inap (Tanpa Instansi)</span>
                     <button type="button" disabled class="text-xs font-bold text-slate-300 px-4 py-2 cursor-not-allowed">Tetap</button>
                 </div>
 
                 <!-- Tarikan dari Database -->
                 @foreach($masterRekomendasi ?? [] as $r)
-                    @php $namaRekomendasi = $r->tempat_rehabilitasi ?? $r->nama_rekomendasi ?? ''; @endphp
-                    @if(trim($namaRekomendasi) !== '')
+                    @php
+                        $namaAsli = $r->tempat_rehabilitasi ?? $r->nama_rekomendasi ?? '';
+                    @endphp
+                    @if(trim($namaAsli) !== '')
                         @php
                             $kategoriItem = 'Semua';
-                            if (str_starts_with($namaRekomendasi, 'Rawat Jalan - ')) {
+                            $namaTampil = trim($namaAsli);
+
+                            if (str_starts_with($namaTampil, 'Rawat Jalan')) {
                                 $kategoriItem = 'Rawat Jalan';
-                            } elseif (str_starts_with($namaRekomendasi, 'Rawat Inap - ')) {
+                                $namaTampil = trim(str_replace('Rawat Jalan', '', $namaTampil));
+                                $namaTampil = ltrim($namaTampil, ' -');
+                            } elseif (str_starts_with($namaTampil, 'Rawat Inap')) {
                                 $kategoriItem = 'Rawat Inap';
+                                $namaTampil = trim(str_replace('Rawat Inap', '', $namaTampil));
+                                $namaTampil = ltrim($namaTampil, ' -');
                             }
                         @endphp
-                        <div data-kategori="{{ $kategoriItem }}" class="rekomendasi-item flex justify-between items-center p-4 border border-slate-200 rounded-2xl hover:bg-slate-50 transition-colors hidden">
-                            <span class="text-sm font-bold text-slate-700">{{ $namaRekomendasi }}</span>
+                        <div data-kategori="{{ $kategoriItem }}" class="rekomendasi-item hidden justify-between items-center p-4 border border-slate-200 rounded-2xl hover:bg-slate-50 transition-colors">
+                            <span class="text-sm font-bold text-slate-700">{{ $namaTampil }}</span>
                             <form action="{{ Route::has('rekomendasi.destroy') ? route('rekomendasi.destroy', $r->id) : url('rekomendasi/'.$r->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
                                 @csrf
                                 @method('DELETE')
@@ -912,6 +913,8 @@
                     const newOption = document.createElement('option');
                     newOption.value = inputVal;
                     newOption.textContent = inputVal;
+                    newOption.style.display = '';
+                    newOption.disabled = false;
                     selectElement.appendChild(newOption);
 
                     // ==============================================================
@@ -936,6 +939,11 @@
 
                     // Sisipkan baris di urutan paling atas daftar
                     listKelola.insertAdjacentHTML('afterbegin', draftHtml);
+
+                    let savedPend = JSON.parse(localStorage.getItem('customPendidikan')) || [];
+                    if (!savedPend.includes(inputVal)) {
+                        savedPend.push(inputVal); localStorage.setItem('customPendidikan', JSON.stringify(savedPend));
+                    }
                 }
 
                 selectElement.value = inputVal;
@@ -943,6 +951,7 @@
                 closeModalTambahPendidikan();
                 document.getElementById('inputPendidikanBaru').value = '';
 
+                saveFormDraft();
                 alert('Pendidikan "' + inputVal + '" berhasil ditambahkan ke pilihan! Data akan tersimpan permanen ke database saat Anda menyimpan formulir utama.');
             }
         }
@@ -970,6 +979,11 @@
 
             // Kembalikan ke pilihan default ("-- Pilih Pendidikan --")
             selectElement.value = "";
+            saveFormDraft();
+
+            let savedPend = JSON.parse(localStorage.getItem('customPendidikan')) || [];
+            savedPend = savedPend.filter(item => item !== val);
+            localStorage.setItem('customPendidikan', JSON.stringify(savedPend));
         }
 
         // Database Desa dan Kelurahan Kabupaten Malang
@@ -1113,226 +1127,251 @@
                     document.getElementById('manual_domisili').value = '';
                 }
                 updateAlamatDomisili();
+                saveFormDraft();
             } catch(e) { console.error(e); }
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        function loadCustomOptions() {
+            // Load Pendidikan
+            let savedPend = JSON.parse(localStorage.getItem('customPendidikan')) || [];
+            const selectPend = document.getElementById('selectPendidikan');
+            const listKelolaPend = document.getElementById('listKelolaPendidikan');
 
-            // JALANKAN TOGGLE TAMPILAN DEFAULT
+            savedPend.forEach(val => {
+                let exists = Array.from(selectPend.options).some(opt => opt.value === val);
+                if (!exists) {
+                    const newOption = document.createElement('option');
+                    newOption.value = val;
+                    newOption.textContent = val;
+                    selectPend.appendChild(newOption);
+
+                    const emptyMsg = listKelolaPend.querySelector('.empty-msg');
+                    if(emptyMsg) emptyMsg.remove();
+                    const draftId = 'draft-' + val.replace(/\s+/g, '-').toLowerCase();
+                    const draftHtml = `
+                        <div class="flex justify-between items-center p-4 border border-slate-200 rounded-2xl hover:bg-slate-50 transition-colors" id="${draftId}">
+                            <span class="text-sm font-bold text-slate-700">${val}</span>
+                            <button type="button" onclick="hapusDraftPendidikan('${val}', '${draftId}')" class="text-xs font-bold text-rose-500 bg-white hover:bg-rose-50 border border-rose-100 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button>
+                        </div>
+                    `;
+                    listKelolaPend.insertAdjacentHTML('afterbegin', draftHtml);
+                }
+            });
+
+            // Load Rekomendasi TAT
+            let savedRek = JSON.parse(localStorage.getItem('customRekomendasi')) || [];
+            const selectRek = document.getElementById('selectTempatRekomendasi');
+            const listKelolaRek = document.getElementById('listKelolaRekomendasi');
+
+            savedRek.forEach(obj => {
+                let exists = Array.from(selectRek.options).some(opt => opt.value === obj.val && opt.getAttribute('data-kategori') === obj.cat);
+                if (!exists) {
+                    const newOption = document.createElement('option');
+                    newOption.value = obj.val;
+                    newOption.textContent = obj.val;
+                    newOption.setAttribute('data-kategori', obj.cat);
+                    newOption.style.display = 'none';
+                    newOption.disabled = true;
+                    selectRek.appendChild(newOption);
+
+                    const emptyMsg = listKelolaRek.querySelector('.empty-msg');
+                    if(emptyMsg) emptyMsg.remove();
+                    const draftId = 'draft-rek-' + obj.val.replace(/\s+/g, '-').toLowerCase() + '-' + obj.cat.replace(/\s+/g, '-').toLowerCase();
+                    const draftHtml = `
+                        <div data-kategori="${obj.cat}" class="rekomendasi-item hidden justify-between items-center p-4 border border-slate-200 rounded-2xl hover:bg-slate-50 transition-colors" id="${draftId}">
+                            <span class="text-sm font-bold text-slate-700">${obj.val}</span>
+                            <button type="button" onclick="hapusDraftRekomendasi('${obj.val}', '${draftId}')" class="text-xs font-bold text-rose-500 bg-white hover:bg-rose-50 border border-rose-100 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button>
+                        </div>
+                    `;
+                    listKelolaRek.insertAdjacentHTML('afterbegin', draftHtml);
+                }
+            });
+        }
+
+        const mainForm = document.getElementById('formEditKlien');
+        const autosaveIndicator = document.getElementById('autosaveIndicator');
+
+        function saveFormDraft() {
+            if(!mainForm) return;
+            const formData = new FormData(mainForm);
+            const data = {};
+            formData.forEach((value, key) => {
+                if(key !== '_token' && key !== 'foto_klien') data[key] = value;
+            });
+            localStorage.setItem('formKlienDraft', JSON.stringify(data));
+            if(autosaveIndicator) {
+                autosaveIndicator.classList.remove('hidden');
+                setTimeout(() => { autosaveIndicator.classList.add('hidden'); }, 3000);
+            }
+        }
+
+        function loadFormDraft() {
+            if(!mainForm) return;
+            const draft = localStorage.getItem('formKlienDraft');
+            if (draft) {
+                const data = JSON.parse(draft);
+                Object.keys(data).forEach(key => {
+                    const elements = mainForm.querySelectorAll(`[name="${key}"]`);
+                    if (elements.length > 0) {
+                        const el = elements[0];
+                        if (el.type === 'radio' || el.type === 'checkbox') {
+                            const target = mainForm.querySelector(`[name="${key}"][value="${data[key]}"]`);
+                            if (target) target.checked = true;
+                        } else {
+                            el.value = data[key];
+                        }
+                    }
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCustomOptions();
+            loadFormDraft();
+
             toggleModeKtp();
             toggleModeDomisili();
 
-            // Jalankan Searchable Dropdown
-            initSearchableDropdown('desa_ktp', 'list_desa_ktp', 'tipe_desa_ktp', updateAlamatKtp);
-            initSearchableDropdown('desa_domisili', 'list_desa_domisili', 'tipe_desa_domisili', updateAlamatDomisili);
+            // =========================================================
+            // INISIALISASI STATE AWAL DATA EDIT
+            // =========================================================
+            let oldRek = "{!! old('rekomendasi_input', $asesmen->rekomendasi->tempat_rehabilitasi ?? $asesmen->rekomendasi_input ?? '') !!}";
 
-            // Inisialisasi State Awal Form Edit
+            if (oldRek) {
+                let kategori = "";
+                let tempat = "";
+
+                if (oldRek.startsWith('Rawat Jalan')) {
+                    kategori = 'Rawat Jalan';
+                    tempat = oldRek.substring(11).replace(/^[\s-]+/, '').trim();
+                } else if (oldRek.startsWith('Rawat Inap')) {
+                    kategori = 'Rawat Inap';
+                    tempat = oldRek.substring(10).replace(/^[\s-]+/, '').trim();
+                }
+
+                if (kategori) {
+                    let radio = document.querySelector(`input[name="kategori_rekomendasi"][value="${kategori}"]`);
+                    if (radio) {
+                        radio.checked = true;
+                        toggleRekomendasi();
+
+                        const selectRek = document.getElementById('selectTempatRekomendasi');
+                        if (tempat) {
+                            let exists = Array.from(selectRek.options).some(opt => opt.value === tempat);
+                            if(!exists) {
+                               const newOption = document.createElement('option');
+                               newOption.value = tempat;
+                               newOption.textContent = tempat;
+                               newOption.setAttribute('data-kategori', kategori);
+                               newOption.style.display = '';
+                               newOption.disabled = false;
+                               selectRek.appendChild(newOption);
+                            }
+                            selectRek.value = tempat;
+                        } else {
+                            selectRek.value = 'Bawaan Sistem';
+                        }
+                    }
+                }
+            }
             updateRekomendasiPreview();
 
-            // Sisa Inisialisasi Rekomendasi
-            let oldRek = "{{ old('rekomendasi_input', $asesmen->rekomendasi->tempat_rehabilitasi ?? $asesmen->rekomendasi_input) }}";
-            if (oldRek) {
-                if (oldRek.startsWith('Rawat Jalan')) {
-                    let radio = document.querySelector('input[name="kategori_rekomendasi"][value="Rawat Jalan"]');
-                    if(radio) radio.checked = true; toggleRekomendasi();
-                    let tempat = oldRek.substring(11).replace(/^ - /, '').trim();
-                    if(tempat) document.getElementById('selectTempatRekomendasi').value = tempat;
-                    else document.getElementById('selectTempatRekomendasi').value = 'Bawaan Sistem';
-                } else if (oldRek.startsWith('Rawat Inap')) {
-                    let radio = document.querySelector('input[name="kategori_rekomendasi"][value="Rawat Inap"]');
-                    if(radio) radio.checked = true; toggleRekomendasi();
-                    let tempat = oldRek.substring(10).replace(/^ - /, '').trim();
-                    if(tempat) document.getElementById('selectTempatRekomendasi').value = tempat;
-                    else document.getElementById('selectTempatRekomendasi').value = 'Bawaan Sistem';
-                }
-                updateRekomendasiPreview();
-            }
-
-            // Format Rupiah
             var penghasilanInput = document.getElementById('penghasilan_rupiah');
             if (penghasilanInput) {
-                penghasilanInput.addEventListener('keyup', function(e) {
-                    this.value = formatRupiah(this.value, 'Rp. ');
-                });
-
-                if(penghasilanInput.value) {
-                    penghasilanInput.value = formatRupiah(penghasilanInput.value, 'Rp. ');
-                }
+                penghasilanInput.addEventListener('keyup', function(e) { this.value = formatRupiah(this.value, 'Rp. '); });
+                if(penghasilanInput.value) { penghasilanInput.value = formatRupiah(penghasilanInput.value, 'Rp. '); }
             }
 
             function formatRupiah(angka, prefix) {
-                var number_string = angka.replace(/[^,\d]/g, '').toString(),
-                    split = number_string.split(','),
-                    sisa = split[0].length % 3,
-                    rupiah = split[0].substr(0, sisa),
-                    ribuan = split[0].substr(sisa).match(/\d{3}/gi);
-
-                if (ribuan) {
-                    var separator = sisa ? '.' : '';
-                    rupiah += separator + ribuan.join('.');
-                }
-
+                var number_string = angka.replace(/[^,\d]/g, '').toString(), split = number_string.split(','), sisa = split[0].length % 3,
+                    rupiah = split[0].substr(0, sisa), ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+                if (ribuan) { var separator = sisa ? '.' : ''; rupiah += separator + ribuan.join('.'); }
                 rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
                 return prefix == undefined ? rupiah : (rupiah ? 'Rp. ' + rupiah : '');
             }
 
-            // HITUNG USIA OTOMATIS CERDAS & ANTI GAGAL (Memakai created_at database)
             function hitungUsia() {
                 try {
                     const tglLahirInput = document.getElementById('tgl_lahir').value.trim();
                     const usiaInput = document.getElementById('usia');
-
-                    if (!tglLahirInput) {
-                        usiaInput.value = '';
-                        return;
-                    }
-
-                    let rawDate = tglLahirInput.split(' ')[0];
-                    let parts = rawDate.split('-');
-                    let dob;
-
+                    if (!tglLahirInput) { usiaInput.value = ''; return; }
+                    let rawDate = tglLahirInput.split(' ')[0]; let parts = rawDate.split('-'); let dob;
                     if (parts.length === 3) {
-                        let p0 = parts[0];
-                        let p2 = parts[2];
-                        if (p0.length === 4) {
-                            dob = new Date(parseInt(p0), parseInt(parts[1]) - 1, parseInt(p2));
-                        } else if (p2.length === 4) {
-                            dob = new Date(parseInt(p2), parseInt(parts[1]) - 1, parseInt(p0));
-                        }
+                        let p0 = parts[0], p2 = parts[2];
+                        if (p0.length === 4) dob = new Date(parseInt(p0), parseInt(parts[1]) - 1, parseInt(p2));
+                        else if (p2.length === 4) dob = new Date(parseInt(p2), parseInt(parts[1]) - 1, parseInt(p0));
                     }
-
-                    if (!dob || isNaN(dob.getTime())) {
-                        dob = new Date(rawDate);
-                    }
-
-                    if (isNaN(dob.getTime())) {
-                        return;
-                    }
-
-                    let refDateStr = "{{ $asesmen->created_at ? \Carbon\Carbon::parse($asesmen->created_at)->format('Y-m-d') : now()->format('Y-m-d') }}";
-                    let refDate = new Date(refDateStr);
-
-                    let age = refDate.getFullYear() - dob.getFullYear();
-                    let m = refDate.getMonth() - dob.getMonth();
-
-                    if (m < 0 || (m === 0 && refDate.getDate() < dob.getDate())) {
-                        age--;
-                    }
-
-                    if(age >= 0) {
-                        usiaInput.value = age + ' Tahun';
-                    }
-                } catch(e) {
-                    console.error("Penghitungan Usia Gagal:", e);
-                }
+                    if (!dob || isNaN(dob.getTime())) dob = new Date(rawDate);
+                    if (isNaN(dob.getTime())) return;
+                    let refDateStr = "{{ $asesmen->created_at ? \Carbon\Carbon::parse($asesmen->created_at)->format('Y-m-d') : now()->format('Y-m-d') }}"; let refDate = new Date(refDateStr);
+                    let age = refDate.getFullYear() - dob.getFullYear(); let m = refDate.getMonth() - dob.getMonth();
+                    if (m < 0 || (m === 0 && refDate.getDate() < dob.getDate())) age--;
+                    if(age >= 0) usiaInput.value = age + ' Tahun';
+                } catch(e) {}
             }
 
             const tglLahirEl = document.getElementById('tgl_lahir');
             if(tglLahirEl) {
-                tglLahirEl.addEventListener('change', hitungUsia);
-                tglLahirEl.addEventListener('input', hitungUsia);
-                tglLahirEl.addEventListener('blur', hitungUsia);
+                tglLahirEl.addEventListener('change', hitungUsia); tglLahirEl.addEventListener('input', hitungUsia); tglLahirEl.addEventListener('blur', hitungUsia);
                 hitungUsia();
             }
 
             let lastTgl = tglLahirEl ? tglLahirEl.value : '';
             setInterval(function() {
                 let currentTgl = tglLahirEl ? tglLahirEl.value : '';
-                if(currentTgl !== lastTgl) {
-                    lastTgl = currentTgl;
-                    hitungUsia();
-                }
+                if(currentTgl !== lastTgl) { lastTgl = currentTgl; hitungUsia(); }
             }, 500);
 
-            // Fungsi Real-time Update Alamat KTP
             function updateAlamatKtp() {
                 try {
                     const mode = document.querySelector('input[name="mode_ktp"]:checked').value;
                     let finalAlamat = '';
-
                     if (mode === 'otomatis') {
-                        const jalan = document.getElementById('jalan_ktp').value.trim();
-                        const tipeDesa = document.getElementById('tipe_desa_ktp').value;
-                        const desa = document.getElementById('desa_ktp').value.trim();
-                        const kec = document.getElementById('kecamatan_ktp').value;
-                        const kab = document.getElementById('kabupaten_ktp').value;
-
-                        let parts = [];
-                        if (jalan) parts.push(jalan);
-                        if (desa) parts.push(tipeDesa + ' ' + desa);
-                        if (kec) parts.push('Kecamatan ' + kec);
-                        if (kab) parts.push(kab);
-
+                        const jalan = document.getElementById('jalan_ktp').value.trim(); const tipeDesa = document.getElementById('tipe_desa_ktp').value;
+                        const desa = document.getElementById('desa_ktp').value.trim(); const kec = document.getElementById('kecamatan_ktp').value; const kab = document.getElementById('kabupaten_ktp').value;
+                        let parts = []; if (jalan) parts.push(jalan); if (desa) parts.push(tipeDesa + ' ' + desa); if (kec) parts.push('Kecamatan ' + kec); if (kab) parts.push(kab);
                         finalAlamat = parts.join(', ');
-                    } else {
-                        finalAlamat = document.getElementById('manual_ktp').value.trim();
-                    }
-
-                    document.getElementById('preview_alamat_ktp').value = finalAlamat;
-                    document.getElementById('hidden_alamat_ktp').value = finalAlamat;
-                } catch(e) { console.error(e); }
+                    } else { finalAlamat = document.getElementById('manual_ktp').value.trim(); }
+                    document.getElementById('preview_alamat_ktp').value = finalAlamat; document.getElementById('hidden_alamat_ktp').value = finalAlamat;
+                } catch(e) {}
             }
 
-            // Fungsi Real-time Update Alamat Domisili
             function updateAlamatDomisili() {
                 try {
                     const mode = document.querySelector('input[name="mode_domisili"]:checked').value;
                     let finalAlamat = '';
-
                     if (mode === 'otomatis') {
-                        const jalan = document.getElementById('jalan_domisili').value.trim();
-                        const tipeDesa = document.getElementById('tipe_desa_domisili').value;
-                        const desa = document.getElementById('desa_domisili').value.trim();
-                        const kec = document.getElementById('kecamatan_domisili').value;
-                        const kab = document.getElementById('kabupaten_domisili').value;
-
-                        let parts = [];
-                        if (jalan) parts.push(jalan);
-                        if (desa) parts.push(tipeDesa + ' ' + desa);
-                        if (kec) parts.push('Kecamatan ' + kec);
-                        if (kab) parts.push(kab);
-
+                        const jalan = document.getElementById('jalan_domisili').value.trim(); const tipeDesa = document.getElementById('tipe_desa_domisili').value;
+                        const desa = document.getElementById('desa_domisili').value.trim(); const kec = document.getElementById('kecamatan_domisili').value; const kab = document.getElementById('kabupaten_domisili').value;
+                        let parts = []; if (jalan) parts.push(jalan); if (desa) parts.push(tipeDesa + ' ' + desa); if (kec) parts.push('Kecamatan ' + kec); if (kab) parts.push(kab);
                         finalAlamat = parts.join(', ');
-                    } else {
-                        finalAlamat = document.getElementById('manual_domisili').value.trim();
-                    }
-
-                    document.getElementById('preview_alamat_domisili').value = finalAlamat;
-                    document.getElementById('hidden_alamat_domisili').value = finalAlamat;
-                } catch(e) { console.error(e); }
+                    } else { finalAlamat = document.getElementById('manual_domisili').value.trim(); }
+                    document.getElementById('preview_alamat_domisili').value = finalAlamat; document.getElementById('hidden_alamat_domisili').value = finalAlamat;
+                } catch(e) {}
             }
 
-            const otomatisKtpFields = ['jalan_ktp', 'kecamatan_ktp', 'kabupaten_ktp'];
-            otomatisKtpFields.forEach(function(id) {
+            ['jalan_ktp', 'kecamatan_ktp', 'kabupaten_ktp'].forEach(function(id) {
                 const el = document.getElementById(id);
-                if (el) {
-                    el.addEventListener('input', updateAlamatKtp);
-                    el.addEventListener('change', updateAlamatKtp);
-                }
+                if (el) { el.addEventListener('input', updateAlamatKtp); el.addEventListener('change', updateAlamatKtp); }
             });
 
-            const otomatisDomisiliFields = ['jalan_domisili', 'kecamatan_domisili', 'kabupaten_domisili'];
-            otomatisDomisiliFields.forEach(function(id) {
+            ['jalan_domisili', 'kecamatan_domisili', 'kabupaten_domisili'].forEach(function(id) {
                 const el = document.getElementById(id);
-                if (el) {
-                    el.addEventListener('input', updateAlamatDomisili);
-                    el.addEventListener('change', updateAlamatDomisili);
-                }
+                if (el) { el.addEventListener('input', updateAlamatDomisili); el.addEventListener('change', updateAlamatDomisili); }
             });
 
             document.getElementById('manual_ktp').addEventListener('input', updateAlamatKtp);
             document.getElementById('manual_domisili').addEventListener('input', updateAlamatDomisili);
 
-            // Mencegah data gagal simpan saat submit
-            document.getElementById('formEditKlien').addEventListener('submit', function(e) {
-                updateAlamatKtp();
-                updateAlamatDomisili();
-                updateRekomendasiPreview();
-            });
-
+            if(mainForm) {
+                mainForm.addEventListener('input', saveFormDraft);
+                mainForm.addEventListener('change', saveFormDraft);
+                mainForm.addEventListener('submit', function(e) {
+                    updateAlamatKtp(); updateAlamatDomisili(); updateRekomendasiPreview(); localStorage.removeItem('formKlienDraft');
+                });
+            }
         });
 
-        // PREVIEW FOTO
         function previewImage(event) {
             const input = event.target;
             const preview = document.getElementById('previewFoto');
@@ -1341,16 +1380,209 @@
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.classList.remove('hidden');
-                    placeholder.classList.add('hidden');
+                    preview.src = e.target.result; preview.classList.remove('hidden'); placeholder.classList.add('hidden');
                 }
                 reader.readAsDataURL(input.files[0]);
             } else {
-                preview.src = '#';
-                preview.classList.add('hidden');
-                placeholder.classList.remove('hidden');
+                preview.src = '#'; preview.classList.add('hidden'); placeholder.classList.remove('hidden');
             }
         }
+
+        // ==============================================
+        // FUNGSI REKOMENDASI (DENGAN TOMBOL SELALU AKTIF)
+        // ==============================================
+        function openModalTambahRekomendasi() {
+            const radio = document.querySelector('input[name="kategori_rekomendasi"]:checked');
+            if (!radio) {
+                alert('Pilih Kategori Perawatan (Radio Button Rawat Jalan / Inap) terlebih dahulu di form utama!');
+                return;
+            }
+            document.getElementById('tambahKategoriDisplay').textContent = radio.value;
+            const modal = document.getElementById('modalTambahRekomendasi');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.children[0].classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeModalTambahRekomendasi() {
+            const modal = document.getElementById('modalTambahRekomendasi');
+            modal.classList.add('opacity-0');
+            modal.children[0].classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        function openModalKelolaRekomendasi() {
+            const radio = document.querySelector('input[name="kategori_rekomendasi"]:checked');
+            if (!radio) {
+                alert('Pilih Kategori Perawatan (Radio Button Rawat Jalan / Inap) terlebih dahulu di form utama!');
+                return;
+            }
+            const selectedCat = radio.value;
+            const modalTitle = document.getElementById('modalKelolaRekomendasiTitle');
+            if(modalTitle) modalTitle.innerText = 'Kelola Opsi (' + selectedCat + ')';
+
+            const items = document.querySelectorAll('#listKelolaRekomendasi .rekomendasi-item');
+            let visibleCount = 0;
+            items.forEach(item => {
+                if (item.getAttribute('data-kategori') === selectedCat || item.getAttribute('data-kategori') === 'Semua') {
+                    item.classList.remove('hidden');
+                    item.classList.add('flex');
+                    visibleCount++;
+                } else {
+                    item.classList.remove('flex');
+                    item.classList.add('hidden');
+                }
+            });
+
+            const emptyMsg = document.getElementById('emptyMsgRekomendasi');
+            if (emptyMsg) {
+                if (visibleCount === 0) emptyMsg.classList.remove('hidden');
+                else emptyMsg.classList.add('hidden');
+            }
+
+            const modal = document.getElementById('modalKelolaRekomendasi');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.children[0].classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeModalKelolaRekomendasi(force = false) {
+            const modal = document.getElementById('modalKelolaRekomendasi');
+            modal.classList.add('opacity-0');
+            modal.children[0].classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        function toggleRekomendasi() {
+            const radio = document.querySelector('input[name="kategori_rekomendasi"]:checked');
+            const select = document.getElementById('selectTempatRekomendasi');
+
+            if (radio) {
+                select.disabled = false;
+                select.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                select.classList.add('bg-slate-50', 'text-slate-700');
+
+                const selectedCat = radio.value;
+                const options = select.querySelectorAll('option');
+                options.forEach(opt => {
+                    if (opt.value === '') {
+                        opt.style.display = '';
+                        opt.disabled = false;
+                    }
+                    else if (opt.getAttribute('data-kategori') === selectedCat || opt.getAttribute('data-kategori') === 'Semua') {
+                        opt.style.display = '';
+                        opt.disabled = false;
+                    }
+                    else {
+                        opt.style.display = 'none';
+                        opt.disabled = true;
+                    }
+                });
+
+                let currentVal = select.value;
+                let isValid = Array.from(options).some(opt => opt.value === currentVal && opt.style.display !== 'none');
+                if(!isValid) select.value = '';
+            } else {
+                select.disabled = true;
+                select.classList.remove('bg-slate-50', 'text-slate-700');
+                select.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+            }
+            updateRekomendasiPreview();
+        }
+
+        function updateRekomendasiPreview() {
+            const radio = document.querySelector('input[name="kategori_rekomendasi"]:checked');
+            const select = document.getElementById('selectTempatRekomendasi');
+            const hiddenInput = document.getElementById('hidden_rekomendasi_input');
+            const preview = document.getElementById('teks_preview_rekomendasi');
+            if (radio) {
+                let finalValue = radio.value;
+                if (select.value && select.value !== 'Bawaan Sistem') { finalValue += ' - ' + select.value; }
+                hiddenInput.value = finalValue;
+                preview.innerHTML = `Hasil akhir Rekomendasi: <span class="font-bold text-indigo-600">${finalValue}</span>`;
+            } else {
+                hiddenInput.value = '';
+                preview.innerHTML = `Hasil akhir Rekomendasi: <span class="font-bold text-slate-400">Belum dipilih</span>`;
+            }
+        }
+
+        function tambahRekomendasiJS(event) {
+            event.preventDefault();
+            const jenisRadio = document.querySelector('input[name="kategori_rekomendasi"]:checked');
+            if (!jenisRadio) { alert("Pilih Kategori Perawatan (Radio Button) terlebih dahulu di form utama!"); return; }
+            const detailVal = document.getElementById('inputRekomendasiDetail').value.trim();
+            if (!detailVal) return;
+
+            const fullValue = jenisRadio.value + " - " + detailVal;
+            const selectElement = document.getElementById('selectTempatRekomendasi');
+            let exists = Array.from(selectElement.options).some(opt => opt.value === detailVal && opt.getAttribute('data-kategori') === jenisRadio.value);
+
+            if(!exists) {
+                const newOption = document.createElement('option');
+                newOption.value = detailVal;
+                newOption.textContent = detailVal;
+                newOption.setAttribute('data-kategori', jenisRadio.value);
+                newOption.style.display = '';
+                newOption.disabled = false;
+
+                selectElement.appendChild(newOption);
+
+                const listKelola = document.getElementById('listKelolaRekomendasi');
+                const emptyMsg = listKelola.querySelector('.empty-msg');
+                if(emptyMsg) emptyMsg.remove();
+                const draftId = 'draft-rek-' + detailVal.replace(/\s+/g, '-').toLowerCase() + '-' + jenisRadio.value.replace(/\s+/g, '-').toLowerCase();
+                const draftHtml = `
+                    <div data-kategori="${jenisRadio.value}" class="rekomendasi-item flex justify-between items-center p-4 border border-slate-200 rounded-2xl hover:bg-slate-50 transition-colors" id="${draftId}">
+                        <span class="text-sm font-bold text-slate-700">${detailVal}</span>
+                        <button type="button" onclick="hapusDraftRekomendasi('${detailVal}', '${draftId}')" class="text-xs font-bold text-rose-500 bg-white hover:bg-rose-50 border border-rose-100 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button>
+                    </div>
+                `;
+                listKelola.insertAdjacentHTML('afterbegin', draftHtml);
+
+                let savedRek = JSON.parse(localStorage.getItem('customRekomendasi')) || [];
+                let isSaved = savedRek.some(r => r.val === detailVal && r.cat === jenisRadio.value);
+                if (!isSaved) {
+                    savedRek.push({ val: detailVal, cat: jenisRadio.value, full: fullValue });
+                    localStorage.setItem('customRekomendasi', JSON.stringify(savedRek));
+                }
+            }
+            selectElement.value = detailVal;
+            updateRekomendasiPreview();
+            closeModalTambahRekomendasi();
+            document.getElementById('inputRekomendasiDetail').value = '';
+            saveFormDraft();
+            alert('Rekomendasi "' + fullValue + '" berhasil ditambahkan ke pilihan dan tersimpan otomatis!');
+        }
+
+        function hapusDraftRekomendasi(val, elementId) {
+            if (!confirm('Apakah Anda yakin ingin menghapus data ini?')) return;
+            const selectElement = document.getElementById('selectTempatRekomendasi');
+            const optionToRemove = Array.from(selectElement.options).find(opt => opt.value === val);
+            if (optionToRemove) optionToRemove.remove();
+
+            const draftElement = document.getElementById(elementId);
+            if (draftElement) draftElement.remove();
+
+            selectElement.value = "";
+            updateRekomendasiPreview();
+            saveFormDraft();
+
+            let savedRek = JSON.parse(localStorage.getItem('customRekomendasi')) || [];
+            savedRek = savedRek.filter(item => item.val !== val);
+            localStorage.setItem('customRekomendasi', JSON.stringify(savedRek));
+        }
+
     </script>
 </x-app-layout>

@@ -158,7 +158,7 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
 
-                        <!-- FITUR BARU: UPLOAD FOTO -->
+                        <!-- FITUR UPLOAD FOTO -->
                         <div class="md:col-span-2 lg:col-span-3 mb-4 bg-slate-50 p-4 rounded-2xl border border-slate-200 shadow-sm">
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-3">Pas Foto Klien <span class="text-slate-400 font-normal lowercase">(Opsional)</span></label>
                             <div class="flex flex-col sm:flex-row items-center gap-5">
@@ -583,7 +583,7 @@
                             </div>
 
                             <div class="flex flex-col sm:flex-row gap-2">
-                                <select id="selectTempatRekomendasi" disabled class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-slate-500 focus:ring-2 focus:ring-slate-100 sm:text-sm transition-all bg-slate-100 text-slate-400 cursor-not-allowed" onchange="updateRekomendasiPreview()">
+                                <select id="selectTempatRekomendasi" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" onchange="updateRekomendasiPreview()">
                                     <option value="">-- Pilih Tempat / Instansi --</option>
 
                                     <!-- DIUBAH MENJADI STYLE="DISPLAY:NONE" AGAR TIDAK KONFLIK DENGAN TAILWIND -->
@@ -591,29 +591,33 @@
                                     <option value="Bawaan Sistem" data-kategori="Rawat Inap" style="display:none;" disabled>Hanya Rawat Inap (Tanpa Instansi)</option>
 
                                     @foreach($masterRekomendasi ?? [] as $r)
-                                        @if(trim($r->nama_rekomendasi) !== '')
+                                        @php
+                                            $namaAsli = $r->tempat_rehabilitasi ?? $r->nama_rekomendasi ?? '';
+                                        @endphp
+                                        @if(trim($namaAsli) !== '')
                                             @php
                                                 $kategoriItem = 'Semua';
-                                                $namaItem = $r->nama_rekomendasi;
+                                                $namaTampil = trim($namaAsli);
 
-                                                if (str_starts_with($namaItem, 'Rawat Jalan - ')) {
+                                                if (str_starts_with($namaTampil, 'Rawat Jalan')) {
                                                     $kategoriItem = 'Rawat Jalan';
-                                                    $namaItem = trim(substr($namaItem, 14));
-                                                } elseif (str_starts_with($namaItem, 'Rawat Inap - ')) {
+                                                    $namaTampil = trim(str_replace('Rawat Jalan', '', $namaTampil));
+                                                    $namaTampil = ltrim($namaTampil, ' -');
+                                                } elseif (str_starts_with($namaTampil, 'Rawat Inap')) {
                                                     $kategoriItem = 'Rawat Inap';
-                                                    $namaItem = trim(substr($namaItem, 13));
+                                                    $namaTampil = trim(str_replace('Rawat Inap', '', $namaTampil));
+                                                    $namaTampil = ltrim($namaTampil, ' -');
                                                 }
                                             @endphp
-                                            <!-- DIUBAH MENJADI STYLE="DISPLAY:NONE" AGAR TIDAK KONFLIK DENGAN TAILWIND -->
-                                            <option value="{{ $namaItem }}" data-kategori="{{ $kategoriItem }}" data-full="{{ $r->nama_rekomendasi }}" style="display:none;" disabled>
-                                                {{ $namaItem }}
+                                            <option value="{{ $namaTampil }}" data-kategori="{{ $kategoriItem }}" data-full="{{ $namaAsli }}" style="display:none;" disabled>
+                                                {{ $namaTampil }}
                                             </option>
                                         @endif
                                     @endforeach
                                 </select>
                                 <div class="flex gap-2">
-                                    <button type="button" id="btnTambahRekomendasi" disabled onclick="openModalTambahRekomendasi()" class="flex-1 sm:flex-none px-4 py-2 bg-slate-200 text-slate-400 font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider rounded-xl transition-colors shadow-sm cursor-not-allowed">+ Tambah</button>
-                                    <button type="button" id="btnKelolaRekomendasi" disabled onclick="openModalKelolaRekomendasi()" class="flex-1 sm:flex-none px-4 py-2 bg-slate-100 text-slate-600 font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider rounded-xl transition-colors shadow-sm cursor-not-allowed">Kelola</button>
+                                    <button type="button" onclick="openModalTambahRekomendasi()" class="shrink-0 px-3 py-2 bg-indigo-100 text-indigo-700 font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider rounded-xl hover:bg-indigo-200 transition-colors shadow-sm">+ Tambah</button>
+                                    <button type="button" onclick="openModalKelolaRekomendasi()" class="shrink-0 px-3 py-2 bg-slate-100 text-slate-700 font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider rounded-xl hover:bg-slate-200 transition-colors shadow-sm">Kelola</button>
                                 </div>
                             </div>
 
@@ -744,15 +748,17 @@
             <h3 class="text-xl font-extrabold text-slate-900 mb-6">Kelola Pendidikan</h3>
             <div id="listKelolaPendidikan" class="max-h-[60vh] overflow-y-auto pr-2 space-y-3 mb-8 custom-scrollbar">
                 @forelse($masterPendidikan ?? [] as $p)
-                <div class="flex justify-between items-center p-4 border border-slate-200 rounded-2xl hover:bg-slate-50 transition-colors">
-                    <span class="text-sm font-bold text-slate-700">{{ $p->nama_pendidikan }}</span>
-                    <!-- PERINGATAN: Pastikan Anda menambahkan route('pendidikan.destroy') di web.php -->
-                    <form action="{{ Route::has('pendidikan.destroy') ? route('pendidikan.destroy', $p->id) : url('pendidikan/'.$p->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="text-xs font-bold text-rose-500 bg-white hover:bg-rose-50 border border-rose-100 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button>
-                    </form>
-                </div>
+                    @if(trim($p->nama_pendidikan) !== '')
+                    <div class="flex justify-between items-center p-4 border border-slate-200 rounded-2xl hover:bg-slate-50 transition-colors">
+                        <span class="text-sm font-bold text-slate-700">{{ $p->nama_pendidikan }}</span>
+                        <!-- PERINGATAN: Pastikan Anda menambahkan route('pendidikan.destroy') di web.php -->
+                        <form action="{{ Route::has('pendidikan.destroy') ? route('pendidikan.destroy', $p->id) : url('pendidikan/'.$p->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-xs font-bold text-rose-500 bg-white hover:bg-rose-50 border border-rose-100 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button>
+                        </form>
+                    </div>
+                    @endif
                 @empty
                 <div class="text-sm text-slate-500 text-center py-6 italic empty-msg">Belum ada data pendidikan.</div>
                 @endforelse
@@ -805,29 +811,37 @@
             <div id="listKelolaRekomendasi" class="max-h-[60vh] overflow-y-auto pr-2 space-y-3 mb-8 custom-scrollbar">
 
                 <!-- Bawaan Sistem Tidak Bisa Dihapus -->
-                <div data-kategori="Rawat Jalan" class="rekomendasi-item flex justify-between items-center p-4 border border-slate-100 bg-slate-50 rounded-2xl opacity-70 hidden">
-                    <span class="text-sm font-bold text-slate-500">Rawat Jalan <span class="ml-2 text-[9px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full uppercase">Bawaan Sistem</span></span>
+                <div data-kategori="Rawat Jalan" class="rekomendasi-item hidden justify-between items-center p-4 border border-slate-100 bg-slate-50 rounded-2xl opacity-70">
+                    <span class="text-sm font-bold text-slate-500">Hanya Rawat Jalan (Tanpa Instansi)</span>
                     <button type="button" disabled class="text-xs font-bold text-slate-300 px-4 py-2 cursor-not-allowed">Tetap</button>
                 </div>
-                <div data-kategori="Rawat Inap" class="rekomendasi-item flex justify-between items-center p-4 border border-slate-100 bg-slate-50 rounded-2xl opacity-70 hidden">
-                    <span class="text-sm font-bold text-slate-500">Rawat Inap <span class="ml-2 text-[9px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full uppercase">Bawaan Sistem</span></span>
+                <div data-kategori="Rawat Inap" class="rekomendasi-item hidden justify-between items-center p-4 border border-slate-100 bg-slate-50 rounded-2xl opacity-70">
+                    <span class="text-sm font-bold text-slate-500">Hanya Rawat Inap (Tanpa Instansi)</span>
                     <button type="button" disabled class="text-xs font-bold text-slate-300 px-4 py-2 cursor-not-allowed">Tetap</button>
                 </div>
 
                 <!-- Tarikan dari Database -->
                 @foreach($masterRekomendasi ?? [] as $r)
-                    @php $namaRekomendasi = $r->tempat_rehabilitasi ?? $r->nama_rekomendasi ?? ''; @endphp
-                    @if(trim($namaRekomendasi) !== '')
+                    @php
+                        $namaAsli = $r->tempat_rehabilitasi ?? $r->nama_rekomendasi ?? '';
+                    @endphp
+                    @if(trim($namaAsli) !== '')
                         @php
                             $kategoriItem = 'Semua';
-                            if (str_starts_with($namaRekomendasi, 'Rawat Jalan - ')) {
+                            $namaTampil = trim($namaAsli);
+
+                            if (str_starts_with($namaTampil, 'Rawat Jalan')) {
                                 $kategoriItem = 'Rawat Jalan';
-                            } elseif (str_starts_with($namaRekomendasi, 'Rawat Inap - ')) {
+                                $namaTampil = trim(str_replace('Rawat Jalan', '', $namaTampil));
+                                $namaTampil = ltrim($namaTampil, ' -');
+                            } elseif (str_starts_with($namaTampil, 'Rawat Inap')) {
                                 $kategoriItem = 'Rawat Inap';
+                                $namaTampil = trim(str_replace('Rawat Inap', '', $namaTampil));
+                                $namaTampil = ltrim($namaTampil, ' -');
                             }
                         @endphp
-                        <div data-kategori="{{ $kategoriItem }}" class="rekomendasi-item flex justify-between items-center p-4 border border-slate-200 rounded-2xl hover:bg-slate-50 transition-colors hidden">
-                            <span class="text-sm font-bold text-slate-700">{{ $namaRekomendasi }}</span>
+                        <div data-kategori="{{ $kategoriItem }}" class="rekomendasi-item hidden justify-between items-center p-4 border border-slate-200 rounded-2xl hover:bg-slate-50 transition-colors">
+                            <span class="text-sm font-bold text-slate-700">{{ $namaTampil }}</span>
                             <form action="{{ Route::has('rekomendasi.destroy') ? route('rekomendasi.destroy', $r->id) : url('rekomendasi/'.$r->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
                                 @csrf
                                 @method('DELETE')
@@ -930,6 +944,11 @@
 
                     // Sisipkan baris di urutan paling atas daftar
                     listKelola.insertAdjacentHTML('afterbegin', draftHtml);
+
+                    let savedPend = JSON.parse(localStorage.getItem('customPendidikan')) || [];
+                    if (!savedPend.includes(inputVal)) {
+                        savedPend.push(inputVal); localStorage.setItem('customPendidikan', JSON.stringify(savedPend));
+                    }
                 }
 
                 selectElement.value = inputVal;
@@ -937,6 +956,7 @@
                 closeModalTambahPendidikan();
                 document.getElementById('inputPendidikanBaru').value = '';
 
+                saveFormDraft();
                 alert('Pendidikan "' + inputVal + '" berhasil ditambahkan ke pilihan! Data akan tersimpan permanen ke database saat Anda menyimpan formulir utama.');
             }
         }
@@ -964,6 +984,11 @@
 
             // Kembalikan ke pilihan default ("-- Pilih Pendidikan --")
             selectElement.value = "";
+            saveFormDraft();
+
+            let savedPend = JSON.parse(localStorage.getItem('customPendidikan')) || [];
+            savedPend = savedPend.filter(item => item !== val);
+            localStorage.setItem('customPendidikan', JSON.stringify(savedPend));
         }
 
         // Database Desa dan Kelurahan Kabupaten Malang
@@ -1111,11 +1136,114 @@
             } catch(e) { console.error(e); }
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        function loadCustomOptions() {
+            // Load Pendidikan
+            let savedPend = JSON.parse(localStorage.getItem('customPendidikan')) || [];
+            const selectPend = document.getElementById('selectPendidikan');
+            const listKelolaPend = document.getElementById('listKelolaPendidikan');
 
-            // JALANKAN TOGGLE TAMPILAN DEFAULT
+            savedPend.forEach(val => {
+                let exists = Array.from(selectPend.options).some(opt => opt.value === val);
+                if (!exists) {
+                    const newOption = document.createElement('option');
+                    newOption.value = val;
+                    newOption.textContent = val;
+                    selectPend.appendChild(newOption);
+
+                    const emptyMsg = listKelolaPend.querySelector('.empty-msg');
+                    if(emptyMsg) emptyMsg.remove();
+                    const draftId = 'draft-' + val.replace(/\s+/g, '-').toLowerCase();
+                    const draftHtml = `
+                        <div class="flex justify-between items-center p-4 border border-slate-200 rounded-2xl hover:bg-slate-50 transition-colors" id="${draftId}">
+                            <span class="text-sm font-bold text-slate-700">${val}</span>
+                            <button type="button" onclick="hapusDraftPendidikan('${val}', '${draftId}')" class="text-xs font-bold text-rose-500 bg-white hover:bg-rose-50 border border-rose-100 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button>
+                        </div>
+                    `;
+                    listKelolaPend.insertAdjacentHTML('afterbegin', draftHtml);
+                }
+            });
+
+            // Load Rekomendasi TAT
+            let savedRek = JSON.parse(localStorage.getItem('customRekomendasi')) || [];
+            const selectRek = document.getElementById('selectTempatRekomendasi');
+            const listKelolaRek = document.getElementById('listKelolaRekomendasi');
+
+            savedRek.forEach(obj => {
+                let exists = Array.from(selectRek.options).some(opt => opt.value === obj.val && opt.getAttribute('data-kategori') === obj.cat);
+                if (!exists) {
+                    const newOption = document.createElement('option');
+                    newOption.value = obj.val;
+                    newOption.textContent = obj.val;
+                    newOption.setAttribute('data-kategori', obj.cat);
+                    newOption.style.display = 'none';
+                    newOption.disabled = true;
+                    selectRek.appendChild(newOption);
+
+                    const emptyMsg = listKelolaRek.querySelector('.empty-msg');
+                    if(emptyMsg) emptyMsg.remove();
+                    const draftId = 'draft-rek-' + obj.val.replace(/\s+/g, '-').toLowerCase() + '-' + obj.cat.replace(/\s+/g, '-').toLowerCase();
+                    const draftHtml = `
+                        <div data-kategori="${obj.cat}" class="rekomendasi-item hidden justify-between items-center p-4 border border-slate-200 rounded-2xl hover:bg-slate-50 transition-colors" id="${draftId}">
+                            <span class="text-sm font-bold text-slate-700">${obj.val}</span>
+                            <button type="button" onclick="hapusDraftRekomendasi('${obj.val}', '${draftId}')" class="text-xs font-bold text-rose-500 bg-white hover:bg-rose-50 border border-rose-100 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button>
+                        </div>
+                    `;
+                    listKelolaRek.insertAdjacentHTML('afterbegin', draftHtml);
+                }
+            });
+        }
+
+        const mainForm = document.getElementById('formTambahKlien');
+        const autosaveIndicator = document.getElementById('autosaveIndicator');
+
+        function saveFormDraft() {
+            if(!mainForm) return;
+            const formData = new FormData(mainForm);
+            const data = {};
+            formData.forEach((value, key) => {
+                if(key !== '_token' && key !== 'foto_klien') data[key] = value;
+            });
+            localStorage.setItem('formKlienDraft', JSON.stringify(data));
+            if(autosaveIndicator) {
+                autosaveIndicator.classList.remove('hidden');
+                setTimeout(() => { autosaveIndicator.classList.add('hidden'); }, 3000);
+            }
+        }
+
+        function loadFormDraft() {
+            if(!mainForm) return;
+            const draft = localStorage.getItem('formKlienDraft');
+            if (draft) {
+                const data = JSON.parse(draft);
+                Object.keys(data).forEach(key => {
+                    const elements = mainForm.querySelectorAll(`[name="${key}"]`);
+                    if (elements.length > 0) {
+                        const el = elements[0];
+                        if (el.type === 'radio' || el.type === 'checkbox') {
+                            const target = mainForm.querySelector(`[name="${key}"][value="${data[key]}"]`);
+                            if (target) target.checked = true;
+                        } else {
+                            el.value = data[key];
+                        }
+                    }
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Restore Custom Options
+            loadCustomOptions();
+
+            // Restore Form Draft
+            loadFormDraft();
+
+            // Jalankan Toggle Tampilan Default Berdasarkan Form Draft
             toggleModeKtp();
             toggleModeDomisili();
+
+            // Trigger Rekomendasi jika radio aktif
+            const radioRek = document.querySelector('input[name="kategori_rekomendasi"]:checked');
+            if (radioRek) toggleRekomendasi();
 
             // Jalankan Searchable Dropdown
             initSearchableDropdown('desa_ktp', 'list_desa_ktp', 'tipe_desa_ktp', updateAlamatKtp);
@@ -1123,25 +1251,6 @@
 
             // Inisialisasi State Awal Form Edit
             updateRekomendasiPreview();
-
-            // Sisa Inisialisasi Rekomendasi
-            let oldRek = "{{ old('rekomendasi_input') }}";
-            if (oldRek) {
-                if (oldRek.startsWith('Rawat Jalan')) {
-                    let radio = document.querySelector('input[name="kategori_rekomendasi"][value="Rawat Jalan"]');
-                    if(radio) radio.checked = true; toggleRekomendasi();
-                    let tempat = oldRek.substring(11).replace(/^ - /, '').trim();
-                    if(tempat) document.getElementById('selectTempatRekomendasi').value = tempat;
-                    else document.getElementById('selectTempatRekomendasi').value = 'Bawaan Sistem';
-                } else if (oldRek.startsWith('Rawat Inap')) {
-                    let radio = document.querySelector('input[name="kategori_rekomendasi"][value="Rawat Inap"]');
-                    if(radio) radio.checked = true; toggleRekomendasi();
-                    let tempat = oldRek.substring(10).replace(/^ - /, '').trim();
-                    if(tempat) document.getElementById('selectTempatRekomendasi').value = tempat;
-                    else document.getElementById('selectTempatRekomendasi').value = 'Bawaan Sistem';
-                }
-                updateRekomendasiPreview();
-            }
 
             // Format Rupiah
             var penghasilanInput = document.getElementById('penghasilan_rupiah');
@@ -1318,12 +1427,18 @@
             document.getElementById('manual_ktp').addEventListener('input', updateAlamatKtp);
             document.getElementById('manual_domisili').addEventListener('input', updateAlamatDomisili);
 
-            // Mencegah data gagal simpan saat submit
-            document.getElementById('formTambahKlien').addEventListener('submit', function(e) {
-                updateAlamatKtp();
-                updateAlamatDomisili();
-                updateRekomendasiPreview();
-            });
+            if(mainForm) {
+                mainForm.addEventListener('input', saveFormDraft);
+                mainForm.addEventListener('change', saveFormDraft);
+
+                // Mencegah data gagal simpan saat submit
+                mainForm.addEventListener('submit', function(e) {
+                    updateAlamatKtp();
+                    updateAlamatDomisili();
+                    updateRekomendasiPreview();
+                    localStorage.removeItem('formKlienDraft');
+                });
+            }
 
         });
 
@@ -1348,28 +1463,95 @@
             }
         }
 
-        // LOGIKA PENYARINGAN DROPDOWN (DIUBAH KE CSS DISPLAY)
+        // ==============================================
+        // FUNGSI REKOMENDASI (DENGAN TOMBOL SELALU AKTIF)
+        // ==============================================
+        function openModalTambahRekomendasi() {
+            const radio = document.querySelector('input[name="kategori_rekomendasi"]:checked');
+            if (!radio) {
+                alert('Pilih Kategori Perawatan (Radio Button Rawat Jalan / Inap) terlebih dahulu di form utama!');
+                return;
+            }
+            document.getElementById('tambahKategoriDisplay').textContent = radio.value;
+            const modal = document.getElementById('modalTambahRekomendasi');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.children[0].classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeModalTambahRekomendasi() {
+            const modal = document.getElementById('modalTambahRekomendasi');
+            modal.classList.add('opacity-0');
+            modal.children[0].classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        function openModalKelolaRekomendasi() {
+            const radio = document.querySelector('input[name="kategori_rekomendasi"]:checked');
+            if (!radio) {
+                alert('Pilih Kategori Perawatan (Radio Button Rawat Jalan / Inap) terlebih dahulu di form utama!');
+                return;
+            }
+            const selectedCat = radio.value;
+            const modalTitle = document.getElementById('modalKelolaRekomendasiTitle');
+            if(modalTitle) modalTitle.innerText = 'Kelola Opsi (' + selectedCat + ')';
+
+            const items = document.querySelectorAll('#listKelolaRekomendasi .rekomendasi-item');
+            let visibleCount = 0;
+            items.forEach(item => {
+                if (item.getAttribute('data-kategori') === selectedCat || item.getAttribute('data-kategori') === 'Semua') {
+                    item.classList.remove('hidden');
+                    item.classList.add('flex');
+                    visibleCount++;
+                } else {
+                    item.classList.remove('flex');
+                    item.classList.add('hidden');
+                }
+            });
+
+            const emptyMsg = document.getElementById('emptyMsgRekomendasi');
+            if (emptyMsg) {
+                if (visibleCount === 0) emptyMsg.classList.remove('hidden');
+                else emptyMsg.classList.add('hidden');
+            }
+
+            const modal = document.getElementById('modalKelolaRekomendasi');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.children[0].classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeModalKelolaRekomendasi(force = false) {
+            const modal = document.getElementById('modalKelolaRekomendasi');
+            modal.classList.add('opacity-0');
+            modal.children[0].classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
         function toggleRekomendasi() {
             const radio = document.querySelector('input[name="kategori_rekomendasi"]:checked');
             const select = document.getElementById('selectTempatRekomendasi');
-            const btnTambah = document.getElementById('btnTambahRekomendasi');
-            const btnKelola = document.getElementById('btnKelolaRekomendasi');
-
-            select.disabled = false;
-            select.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
-            select.classList.add('bg-slate-50', 'text-slate-700');
-            btnTambah.disabled = false;
-            btnTambah.classList.remove('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
-            btnTambah.classList.add('bg-indigo-100', 'text-indigo-700', 'hover:bg-indigo-200');
-            btnKelola.disabled = false;
-            btnKelola.classList.remove('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
-            btnKelola.classList.add('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200');
 
             if (radio) {
+                select.disabled = false;
+                select.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                select.classList.add('bg-slate-50', 'text-slate-700');
+
                 const selectedCat = radio.value;
                 const options = select.querySelectorAll('option');
                 options.forEach(opt => {
-                    // Pakai style.display alih-alih class='hidden' Tailwind
                     if (opt.value === '') {
                         opt.style.display = '';
                         opt.disabled = false;
@@ -1387,11 +1569,30 @@
                 let currentVal = select.value;
                 let isValid = Array.from(options).some(opt => opt.value === currentVal && opt.style.display !== 'none');
                 if(!isValid) select.value = '';
+            } else {
+                select.disabled = true;
+                select.classList.remove('bg-slate-50', 'text-slate-700');
+                select.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
             }
             updateRekomendasiPreview();
         }
 
-        // FUNGSI JAVASCRIPT UNTUK TAMBAH REKOMENDASI (DIPERBAIKI)
+        function updateRekomendasiPreview() {
+            const radio = document.querySelector('input[name="kategori_rekomendasi"]:checked');
+            const select = document.getElementById('selectTempatRekomendasi');
+            const hiddenInput = document.getElementById('hidden_rekomendasi_input');
+            const preview = document.getElementById('teks_preview_rekomendasi');
+            if (radio) {
+                let finalValue = radio.value;
+                if (select.value && select.value !== 'Bawaan Sistem') { finalValue += ' - ' + select.value; }
+                hiddenInput.value = finalValue;
+                preview.innerHTML = `Hasil akhir Rekomendasi: <span class="font-bold text-indigo-600">${finalValue}</span>`;
+            } else {
+                hiddenInput.value = '';
+                preview.innerHTML = `Hasil akhir Rekomendasi: <span class="font-bold text-slate-400">Belum dipilih</span>`;
+            }
+        }
+
         function tambahRekomendasiJS(event) {
             event.preventDefault();
             const jenisRadio = document.querySelector('input[name="kategori_rekomendasi"]:checked');
@@ -1408,7 +1609,6 @@
                 newOption.value = detailVal;
                 newOption.textContent = detailVal;
                 newOption.setAttribute('data-kategori', jenisRadio.value);
-                // Langsung aktifkan tampilannya
                 newOption.style.display = '';
                 newOption.disabled = false;
 
@@ -1420,7 +1620,7 @@
                 const draftId = 'draft-rek-' + detailVal.replace(/\s+/g, '-').toLowerCase() + '-' + jenisRadio.value.replace(/\s+/g, '-').toLowerCase();
                 const draftHtml = `
                     <div data-kategori="${jenisRadio.value}" class="rekomendasi-item flex justify-between items-center p-4 border border-slate-200 rounded-2xl hover:bg-slate-50 transition-colors" id="${draftId}">
-                        <span class="text-sm font-bold text-slate-700">${fullValue}</span>
+                        <span class="text-sm font-bold text-slate-700">${detailVal}</span>
                         <button type="button" onclick="hapusDraftRekomendasi('${detailVal}', '${draftId}')" class="text-xs font-bold text-rose-500 bg-white hover:bg-rose-50 border border-rose-100 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button>
                     </div>
                 `;
@@ -1439,6 +1639,24 @@
             document.getElementById('inputRekomendasiDetail').value = '';
             saveFormDraft();
             alert('Rekomendasi "' + fullValue + '" berhasil ditambahkan ke pilihan dan tersimpan otomatis!');
+        }
+
+        function hapusDraftRekomendasi(val, elementId) {
+            if (!confirm('Apakah Anda yakin ingin menghapus data ini?')) return;
+            const selectElement = document.getElementById('selectTempatRekomendasi');
+            const optionToRemove = Array.from(selectElement.options).find(opt => opt.value === val);
+            if (optionToRemove) optionToRemove.remove();
+
+            const draftElement = document.getElementById(elementId);
+            if (draftElement) draftElement.remove();
+
+            selectElement.value = "";
+            updateRekomendasiPreview();
+            saveFormDraft();
+
+            let savedRek = JSON.parse(localStorage.getItem('customRekomendasi')) || [];
+            savedRek = savedRek.filter(item => item.val !== val);
+            localStorage.setItem('customRekomendasi', JSON.stringify(savedRek));
         }
 
     </script>
