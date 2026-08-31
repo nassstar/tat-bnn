@@ -1,4 +1,31 @@
 <x-app-layout>
+    <!-- CSS Custom untuk Scrollbar Dropdown -->
+    <style>
+        .custom-select-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-select-scroll::-webkit-scrollbar-track {
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+        .custom-select-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 8px;
+        }
+        .custom-select-scroll::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Animasi Indikator Autosave */
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .autosave-active {
+            animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+
     <div class="py-8 sm:py-10 bg-slate-50/50 min-h-screen">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
 
@@ -7,26 +34,31 @@
             <!-- ========================================== -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div class="flex items-center gap-4">
-                    <a href="{{ route('asesmen.index') }}" class="p-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-blue-600 transition-colors shadow-sm">
+                    <a href="{{ route('asesmen.index') }}" class="p-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-indigo-600 transition-colors shadow-sm">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     </a>
                     <div>
                         <div class="inline-flex items-center gap-2 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700 uppercase tracking-wider mb-1">
                             Mode Edit Data
                         </div>
-                        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">Edit Klien: {{ $asesmen->nama_lengkap }}</h1>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
+                            Edit Klien: {{ $asesmen->nama_lengkap }}
+                            <!-- Indikator Auto-Save -->
+                            <span id="autosaveIndicator" class="hidden text-[10px] font-bold text-emerald-600 bg-emerald-100 border border-emerald-200 px-2 py-1 rounded-md uppercase tracking-wider autosave-active">
+                                Perubahan Tersimpan Otomatis
+                            </span>
+                        </h1>
                     </div>
                 </div>
-                <div class="text-sm text-slate-500 bg-white px-4 py-2 rounded-lg border border-slate-200 shadow-sm hidden md:block">
+                <p class="text-sm text-slate-500 bg-white px-4 py-2 rounded-lg border border-slate-200 shadow-sm hidden md:block">
                     Perbarui data dengan teliti. Tanda <span class="text-rose-500 font-bold">*</span> wajib diisi.
-                </div>
+                </p>
             </div>
 
             <!-- ========================================== -->
             <!-- BANNER NOTIFIKASI (SUCCESS, ERROR & VALIDASI) -->
             <!-- ========================================== -->
 
-            <!-- 1. Notifikasi Sukses -->
             @if (session('success'))
                 <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-start shadow-sm">
                     <svg class="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
@@ -37,7 +69,6 @@
                 </div>
             @endif
 
-            <!-- 2. Notifikasi Error dari Controller (Ini yang akan memunculkan pesan gagal hapus) -->
             @if (session('error'))
                 <div class="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-xl flex items-start shadow-sm">
                     <svg class="w-5 h-5 text-rose-500 mt-0.5 flex-shrink-0 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
@@ -48,7 +79,6 @@
                 </div>
             @endif
 
-            <!-- 3. Notifikasi Validasi Form Input -->
             @if ($errors->any())
                 <div class="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-xl flex items-start shadow-sm">
                     <svg class="w-5 h-5 text-rose-500 mt-0.5 flex-shrink-0 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
@@ -63,7 +93,7 @@
                 </div>
             @endif
 
-            <form id="formEditKlien" action="{{ route('asesmen.update', $asesmen->id) }}" method="POST" class="space-y-8">
+            <form id="formEditKlien" action="{{ route('asesmen.update', $asesmen->id) }}" method="POST" enctype="multipart/form-data" class="space-y-8">
                 @csrf
                 @method('PUT')
 
@@ -80,54 +110,71 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-slate-700">No / BLN</label>
-                            <input type="text" name="no_bln" value="{{ old('no_bln', $asesmen->no_bln) }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            <input type="text" name="no_bln" value="{{ old('no_bln', $asesmen->no_bln) }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700">Asal Pengajuan</label>
-                            <input type="text" name="asal_pengajuan" value="{{ old('asal_pengajuan', $asesmen->asal_pengajuan) }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            <input type="text" name="asal_pengajuan" value="{{ old('asal_pengajuan', $asesmen->asal_pengajuan) }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700">Tanggal Surat</label>
-                            <input type="text" name="tgl_surat" value="{{ old('tgl_surat', $asesmen->tgl_surat ? \Carbon\Carbon::parse($asesmen->tgl_surat)->format('d-m-Y') : '') }}" class="datepicker-id mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Pilih Tanggal">
+                            <input type="text" name="tgl_surat" value="{{ old('tgl_surat', $asesmen->tgl_surat ? \Carbon\Carbon::parse($asesmen->tgl_surat)->format('d-m-Y') : '') }}" class="datepicker-id mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Pilih Tanggal">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700">Tanggal Berkas Diterima</label>
-                            <input type="text" name="tgl_berkas" value="{{ old('tgl_berkas', $asesmen->tgl_berkas ? \Carbon\Carbon::parse($asesmen->tgl_berkas)->format('d-m-Y') : '') }}" class="datepicker-id mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Pilih Tanggal">
+                            <input type="text" name="tgl_berkas" value="{{ old('tgl_berkas', $asesmen->tgl_berkas ? \Carbon\Carbon::parse($asesmen->tgl_berkas)->format('d-m-Y') : '') }}" class="datepicker-id mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Pilih Tanggal">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700">Tanggal Pelaksanaan</label>
-                            <input type="text" name="tgl_pelaksanaan" value="{{ old('tgl_pelaksanaan', $asesmen->tgl_pelaksanaan ? \Carbon\Carbon::parse($asesmen->tgl_pelaksanaan)->format('d-m-Y') : '') }}" class="datepicker-id mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Pilih Tanggal">
+                            <input type="text" name="tgl_pelaksanaan" value="{{ old('tgl_pelaksanaan', $asesmen->tgl_pelaksanaan ? \Carbon\Carbon::parse($asesmen->tgl_pelaksanaan)->format('d-m-Y') : '') }}" class="datepicker-id mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Pilih Tanggal">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700">No. Surat Pengajuan</label>
-                            <input type="text" name="no_surat_pengajuan" value="{{ old('no_surat_pengajuan', $asesmen->no_surat_pengajuan) }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            <input type="text" name="no_surat_pengajuan" value="{{ old('no_surat_pengajuan', $asesmen->no_surat_pengajuan) }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700">No. LKN / LP / LI</label>
-                            <input type="text" name="no_lkn" value="{{ old('no_lkn', $asesmen->no_lkn) }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            <input type="text" name="no_lkn" value="{{ old('no_lkn', $asesmen->no_lkn) }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700">Tanggal Penangkapan</label>
-                            <input type="text" name="tgl_tangkap" value="{{ old('tgl_tangkap', $asesmen->tgl_tangkap ? \Carbon\Carbon::parse($asesmen->tgl_tangkap)->format('d-m-Y') : '') }}" class="datepicker-id mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Pilih Tanggal">
+                            <input type="text" name="tgl_tangkap" value="{{ old('tgl_tangkap', $asesmen->tgl_tangkap ? \Carbon\Carbon::parse($asesmen->tgl_tangkap)->format('d-m-Y') : '') }}" class="datepicker-id mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Pilih Tanggal">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700">No. Register</label>
-                            <input type="text" name="no_register" value="{{ old('no_register', $asesmen->no_register) }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            <input type="text" name="no_register" value="{{ old('no_register', $asesmen->no_register) }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                         </div>
                     </div>
                 </div>
 
                 <!-- ========================================== -->
-                <!-- SEKSI 2: IDENTITAS KLIEN -->
+                <!-- SEKSI 2: IDENTITAS KLIEN & UPLOAD FOTO -->
                 <!-- ========================================== -->
-                <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-full h-1.5 bg-blue-500"></div>
+                <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm relative z-30">
+                    <div class="absolute top-0 left-0 w-full h-1.5 bg-blue-500 rounded-t-2xl"></div>
                     <h3 class="text-sm font-extrabold text-slate-800 uppercase tracking-wider mb-6 border-b border-slate-100 pb-3 flex items-center gap-2 mt-1">
                         <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                         2. Identitas Profil Klien
                     </h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+                        <!-- FITUR UPLOAD FOTO (MENDUKUNG FOTO LAMA) -->
+                        <div class="md:col-span-2 lg:col-span-3 mb-4 bg-slate-50 p-4 rounded-2xl border border-slate-200 shadow-sm">
+                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-3">Pas Foto Klien <span class="text-slate-400 font-normal lowercase">(Opsional)</span></label>
+                            <div class="flex flex-col sm:flex-row items-center gap-5">
+                                <div class="shrink-0 w-24 h-32 bg-white rounded-xl border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden relative group shadow-sm">
+                                    <!-- Menampilkan Foto Lama Jika Ada -->
+                                    <img id="previewFoto" src="{{ $asesmen->foto_klien ? asset('storage/' . $asesmen->foto_klien) : '#' }}" alt="Preview" class="{{ $asesmen->foto_klien ? 'w-full h-full object-cover' : 'hidden w-full h-full object-cover' }}">
+                                    <svg id="iconPlaceholder" class="{{ $asesmen->foto_klien ? 'hidden' : '' }} w-8 h-8 text-slate-300 group-hover:text-blue-400 transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                                </div>
+                                <div class="w-full">
+                                    <input type="file" name="foto_klien" id="foto_klien" accept="image/jpeg, image/png, image/jpg" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200 transition-all cursor-pointer" onchange="previewImage(event)">
+                                    <p class="text-[11px] font-medium text-slate-400 mt-2 leading-relaxed">Format yang didukung: JPG, JPEG, PNG.<br>Tidak ada batasan ukuran file.</p>
+                                </div>
+                            </div>
+                        </div>
+
                         <div>
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Nama Lengkap <span class="text-rose-500">*</span></label>
                             <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap', $asesmen->nama_lengkap) }}" required class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
@@ -178,7 +225,7 @@
                         </div>
                         <div>
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Kewarganegaraan</label>
-                            <input type="text" name="kewarganegaraan" value="{{ old('kewarganegaraan', $asesmen->kewarganegaraan) }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
+                            <input type="text" name="kewarganegaraan" value="{{ old('kewarganegaraan', $asesmen->kewarganegaraan ?? 'WNI') }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
                         </div>
                         <div>
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Agama</label>
@@ -200,9 +247,11 @@
                                 <select name="pendidikan_input" id="selectPendidikan" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
                                     <option value="">-- Pilih Pendidikan --</option>
                                     @foreach($masterPendidikan ?? [] as $p)
-                                        <option value="{{ $p->nama_pendidikan }}" {{ old('pendidikan_input', $asesmen->pendidikan_input ?? ($asesmen->pendidikan->nama_pendidikan ?? '')) == $p->nama_pendidikan ? 'selected' : '' }}>
-                                            {{ $p->nama_pendidikan }}
-                                        </option>
+                                        @if(trim($p->nama_pendidikan) !== '')
+                                            <option value="{{ $p->nama_pendidikan }}" {{ old('pendidikan_input', $asesmen->pendidikan_input ?? ($asesmen->pendidikan->nama_pendidikan ?? '')) == $p->nama_pendidikan ? 'selected' : '' }}>
+                                                {{ $p->nama_pendidikan }}
+                                            </option>
+                                        @endif
                                     @endforeach
                                 </select>
                                 <button type="button" onclick="openModalTambahPendidikan()" class="shrink-0 px-3 py-2 bg-blue-100 text-blue-700 font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider rounded-xl hover:bg-blue-200 transition-colors shadow-sm">+ Tambah</button>
@@ -249,7 +298,7 @@
                             <div id="blok_otomatis_ktp" class="hidden space-y-4">
                                 <div>
                                     <label class="block font-medium text-sm text-gray-700">Detail Alamat (Jalan / RT RW)</label>
-                                    <input type="text" id="jalan_ktp" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Cth: Jl. Diponegoro RT 14 RW 02" />
+                                    <input type="text" id="jalan_ktp" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Cth: Jl. Diponegoro RT 14 RW 02" autocomplete="off" />
                                 </div>
 
                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -260,9 +309,17 @@
                                                 <option value="Desa">Desa</option>
                                                 <option value="Kelurahan">Kelurahan</option>
                                             </select>
-                                            <select id="desa_ktp" class="w-[55%] border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm">
-                                                <option value="">-- Pilih --</option>
-                                            </select>
+
+                                            <!-- FITUR BARU: CUSTOM SEARCHABLE DROPDOWN KTP -->
+                                            <div class="relative w-[55%]">
+                                                <input type="text" id="desa_ktp" class="w-full border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm pr-8 cursor-pointer" placeholder="Ketik/Pilih..." autocomplete="off">
+                                                <div class="absolute inset-y-0 right-0 flex items-center px-2 cursor-pointer text-slate-400 hover:text-slate-600 toggle-dropdown-ktp">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                                </div>
+                                                <div id="list_desa_ktp" class="hidden absolute z-[60] w-full mt-1 bg-white border border-slate-200 shadow-lg rounded-md py-1 text-sm custom-select-scroll" style="max-height: 200px; overflow-y: auto;">
+                                                    <!-- Javascript merender daftar desa/kelurahan di sini -->
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div>
@@ -354,7 +411,7 @@
                             <div id="blok_otomatis_domisili" class="hidden space-y-4">
                                 <div>
                                     <label class="block font-medium text-sm text-gray-700">Detail Alamat (Jalan / RT RW)</label>
-                                    <input type="text" id="jalan_domisili" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Cth: Jl. Diponegoro RT 14 RW 02" />
+                                    <input type="text" id="jalan_domisili" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Cth: Jl. Diponegoro RT 14 RW 02" autocomplete="off" />
                                 </div>
 
                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -365,9 +422,18 @@
                                                 <option value="Desa">Desa</option>
                                                 <option value="Kelurahan">Kelurahan</option>
                                             </select>
-                                            <select id="desa_domisili" class="w-[55%] border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm">
-                                                <option value="">-- Pilih --</option>
-                                            </select>
+
+                                            <!-- FITUR BARU: CUSTOM SEARCHABLE DROPDOWN DOMISILI -->
+                                            <div class="relative w-[55%]">
+                                                <input type="text" id="desa_domisili" class="w-full border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm pr-8 cursor-pointer" placeholder="Ketik/Pilih..." autocomplete="off">
+                                                <div class="absolute inset-y-0 right-0 flex items-center px-2 cursor-pointer text-slate-400 hover:text-slate-600 toggle-dropdown-dom">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                                </div>
+                                                <div id="list_desa_domisili" class="hidden absolute z-[60] w-full mt-1 bg-white border border-slate-200 shadow-lg rounded-md py-1 text-sm custom-select-scroll" style="max-height: 200px; overflow-y: auto;">
+                                                    <!-- Javascript merender daftar desa/kelurahan di sini -->
+                                                </div>
+                                            </div>
+
                                         </div>
                                     </div>
                                     <div>
@@ -492,7 +558,7 @@
                 <!-- ========================================== -->
                 <!-- SEKSI 4: HASIL TAT AWAL -->
                 <!-- ========================================== -->
-                <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
+                <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden z-20">
                     <div class="absolute top-0 left-0 w-full h-1.5 bg-slate-400"></div>
                     <h3 class="text-sm font-extrabold text-slate-800 uppercase tracking-wider mb-6 border-b border-slate-100 pb-3 flex items-center gap-2 mt-1">
                         <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
@@ -508,10 +574,61 @@
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Hasil Asesmen Medis</label>
                             <textarea name="hasil_asesmen_medis" rows="4" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-slate-500 focus:ring-2 focus:ring-slate-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="Ketik kronologi mentah asesmen medis...">{{ old('hasil_asesmen_medis', $asesmen->hasil_asesmen_medis) }}</textarea>
                         </div>
-                        <div>
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Rekomendasi TAT</label>
-                            <input type="text" name="rekomendasi_input" value="{{ old('rekomendasi_input', $asesmen->rekomendasi_input) }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-slate-500 focus:ring-2 focus:ring-slate-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="Cth: Rawat Inap RSJ">
+
+                        <!-- FITUR BARU: DROPDOWN REKOMENDASI TAT (OPSI RAWAT JALAN & INAP CANGGIH) -->
+                        <div class="md:col-span-2">
+                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-2">Rekomendasi TAT <span class="text-rose-500">*</span></label>
+
+                            <div class="flex gap-4 p-3 bg-slate-50 border border-slate-200 rounded-xl mb-3">
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="kategori_rekomendasi" value="Rawat Jalan" class="text-indigo-600 focus:ring-indigo-500 w-4 h-4" onchange="toggleRekomendasi()">
+                                    <span class="ml-2 text-sm font-bold text-slate-700">Rawat Jalan</span>
+                                </label>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="radio" name="kategori_rekomendasi" value="Rawat Inap" class="text-indigo-600 focus:ring-indigo-500 w-4 h-4" onchange="toggleRekomendasi()">
+                                    <span class="ml-2 text-sm font-bold text-slate-700">Rawat Inap</span>
+                                </label>
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <select id="selectTempatRekomendasi" disabled class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-slate-500 focus:ring-2 focus:ring-slate-100 sm:text-sm transition-all bg-slate-100 text-slate-400 cursor-not-allowed" onchange="updateRekomendasiPreview()">
+                                    <option value="">-- Pilih Tempat / Instansi --</option>
+
+                                    <option value="Bawaan Sistem" data-kategori="Rawat Jalan" class="hidden">Hanya Rawat Jalan (Tanpa Instansi)</option>
+                                    <option value="Bawaan Sistem" data-kategori="Rawat Inap" class="hidden">Hanya Rawat Inap (Tanpa Instansi)</option>
+
+                                    @foreach($masterRekomendasi ?? [] as $r)
+                                        <!-- PERBAIKAN: Membaca dari data master -->
+                                        @php $namaRekomendasi = $r->tempat_rehabilitasi ?? $r->nama_rekomendasi ?? ''; @endphp
+                                        @if(trim($namaRekomendasi) !== '')
+                                            @php
+                                                $kategoriItem = 'Semua';
+                                                $namaItem = $namaRekomendasi;
+
+                                                if (str_starts_with($namaItem, 'Rawat Jalan - ')) {
+                                                    $kategoriItem = 'Rawat Jalan';
+                                                    $namaItem = trim(substr($namaItem, 14));
+                                                } elseif (str_starts_with($namaItem, 'Rawat Inap - ')) {
+                                                    $kategoriItem = 'Rawat Inap';
+                                                    $namaItem = trim(substr($namaItem, 13));
+                                                }
+                                            @endphp
+                                            <option value="{{ $namaItem }}" data-kategori="{{ $kategoriItem }}" data-full="{{ $namaRekomendasi }}" class="hidden">
+                                                {{ $namaItem }}
+                                            </option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                                <div class="flex gap-2">
+                                    <button type="button" id="btnTambahRekomendasi" disabled onclick="openModalTambahRekomendasi()" class="flex-1 sm:flex-none px-4 py-2 bg-slate-200 text-slate-400 font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider rounded-xl transition-colors shadow-sm cursor-not-allowed">+ Tambah</button>
+                                    <button type="button" id="btnKelolaRekomendasi" disabled onclick="openModalKelolaRekomendasi()" class="flex-1 sm:flex-none px-4 py-2 bg-slate-100 text-slate-600 font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider rounded-xl transition-colors shadow-sm cursor-not-allowed">Kelola</button>
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="rekomendasi_input" id="hidden_rekomendasi_input" value="{{ old('rekomendasi_input', $asesmen->rekomendasi->tempat_rehabilitasi ?? $asesmen->rekomendasi_input) }}">
+                            <p class="text-[11px] text-slate-500 italic mt-2" id="teks_preview_rekomendasi">Hasil akhir Rekomendasi: <span class="font-bold text-slate-400">Belum dipilih</span></p>
                         </div>
+
                         <div>
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Status Pelaksanaan Rekomendasi</label>
                             <select name="pelaksanaan" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-slate-500 focus:ring-2 focus:ring-slate-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
@@ -654,6 +771,89 @@
         </div>
     </div>
 
+    <!-- ========================================== -->
+    <!-- MODAL TAMBAH REKOMENDASI TAT -->
+    <!-- ========================================== -->
+    <div id="modalTambahRekomendasi" class="fixed inset-0 z-[99] hidden bg-slate-900/50 backdrop-blur-sm overflow-y-auto items-center justify-center transition-all opacity-0">
+        <div class="bg-white w-full max-w-md p-6 sm:p-8 rounded-3xl shadow-2xl transform scale-95 transition-all relative">
+            <button type="button" onclick="closeModalTambahRekomendasi()" class="absolute top-5 right-5 text-slate-400 hover:text-rose-500 transition-colors">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h3 class="text-xl font-extrabold text-slate-900 mb-6">Tambah Opsi Rekomendasi</h3>
+
+            <form onsubmit="tambahRekomendasiJS(event)">
+                <div class="mb-4">
+                    <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-2">Kategori Perawatan Saat Ini</label>
+                    <div class="flex gap-4 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                        <span id="tambahKategoriDisplay" class="text-sm font-black text-indigo-700">Pilih Radio Dahulu</span>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-2">Nama Instansi / Detail Spesifik <span class="text-rose-500">*</span></label>
+                    <input type="text" id="inputRekomendasiDetail" required placeholder="Cth: Klinik Pratama BNNK" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-slate-500 focus:ring-2 focus:ring-slate-100 sm:text-sm transition-all bg-slate-50 focus:bg-white p-3">
+                </div>
+                <div class="flex flex-col-reverse sm:flex-row justify-end gap-3">
+                    <button type="button" onclick="closeModalTambahRekomendasi()" class="px-6 py-3 bg-white border border-slate-200 text-slate-700 font-extrabold text-sm rounded-2xl hover:bg-slate-50 transition-colors shadow-sm">Batal</button>
+                    <button type="submit" class="px-6 py-3 bg-slate-800 text-white font-extrabold text-sm rounded-2xl hover:bg-slate-900 transition-colors shadow-sm">Tambahkan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL KELOLA REKOMENDASI TAT -->
+    <!-- ========================================== -->
+    <div id="modalKelolaRekomendasi" class="fixed inset-0 z-[99] hidden bg-slate-900/50 backdrop-blur-sm overflow-y-auto items-center justify-center transition-all opacity-0">
+        <div class="bg-white w-full max-w-lg p-6 sm:p-8 rounded-3xl shadow-2xl transform scale-95 transition-all relative">
+            <button type="button" onclick="closeModalKelolaRekomendasi(true)" class="absolute top-5 right-5 text-slate-400 hover:text-rose-500 transition-colors">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h3 id="modalKelolaRekomendasiTitle" class="text-xl font-extrabold text-slate-900 mb-6">Kelola Opsi Rekomendasi</h3>
+
+            <div id="listKelolaRekomendasi" class="max-h-[60vh] overflow-y-auto pr-2 space-y-3 mb-8 custom-scrollbar">
+
+                <!-- Bawaan Sistem Tidak Bisa Dihapus -->
+                <div data-kategori="Rawat Jalan" class="rekomendasi-item flex justify-between items-center p-4 border border-slate-100 bg-slate-50 rounded-2xl opacity-70 hidden">
+                    <span class="text-sm font-bold text-slate-500">Rawat Jalan <span class="ml-2 text-[9px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full uppercase">Bawaan Sistem</span></span>
+                    <button type="button" disabled class="text-xs font-bold text-slate-300 px-4 py-2 cursor-not-allowed">Tetap</button>
+                </div>
+                <div data-kategori="Rawat Inap" class="rekomendasi-item flex justify-between items-center p-4 border border-slate-100 bg-slate-50 rounded-2xl opacity-70 hidden">
+                    <span class="text-sm font-bold text-slate-500">Rawat Inap <span class="ml-2 text-[9px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full uppercase">Bawaan Sistem</span></span>
+                    <button type="button" disabled class="text-xs font-bold text-slate-300 px-4 py-2 cursor-not-allowed">Tetap</button>
+                </div>
+
+                <!-- Tarikan dari Database -->
+                @foreach($masterRekomendasi ?? [] as $r)
+                    @php $namaRekomendasi = $r->tempat_rehabilitasi ?? $r->nama_rekomendasi ?? ''; @endphp
+                    @if(trim($namaRekomendasi) !== '')
+                        @php
+                            $kategoriItem = 'Semua';
+                            if (str_starts_with($namaRekomendasi, 'Rawat Jalan - ')) {
+                                $kategoriItem = 'Rawat Jalan';
+                            } elseif (str_starts_with($namaRekomendasi, 'Rawat Inap - ')) {
+                                $kategoriItem = 'Rawat Inap';
+                            }
+                        @endphp
+                        <div data-kategori="{{ $kategoriItem }}" class="rekomendasi-item flex justify-between items-center p-4 border border-slate-200 rounded-2xl hover:bg-slate-50 transition-colors hidden">
+                            <span class="text-sm font-bold text-slate-700">{{ $namaRekomendasi }}</span>
+                            <form action="{{ Route::has('rekomendasi.destroy') ? route('rekomendasi.destroy', $r->id) : url('rekomendasi/'.$r->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-xs font-bold text-rose-500 bg-white hover:bg-rose-50 border border-rose-100 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button>
+                            </form>
+                        </div>
+                    @endif
+                @endforeach
+
+                <div id="emptyMsgRekomendasi" class="hidden text-sm text-slate-500 text-center py-6 italic">Belum ada data opsi rekomendasi tambahan.</div>
+            </div>
+
+            <div class="flex justify-center">
+                <button type="button" onclick="closeModalKelolaRekomendasi(true)" class="px-6 py-3 bg-white border border-slate-200 text-slate-700 font-extrabold text-sm rounded-2xl hover:bg-slate-50 transition-colors w-full sm:w-auto shadow-sm">Tutup Kelola</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Script JavaScript Terintegrasi -->
     <script>
         // Modal Handlers
@@ -774,34 +974,84 @@
 
         // Database Desa dan Kelurahan Kabupaten Malang
         const daftarKelurahan = [ "Ardirejo", "Candirenggo", "Cepokomulyo", "Dampit", "Kalirejo", "Kepanjen", "Lawang", "Losari", "Pagentan", "Penarukan", "Sedayu", "Turen" ];
-        const daftarDesa = [ "Amadanom", "Ampeldento (Karangploso)", "Ampeldento (Pakis)", "Ampelgading", "Ardimulyo", "Argosari", "Argosuko", "Argotirto", "Argoyuwono", "Arjosari", "Arjowilangun", "Asrikaton", "Babadan", "Bakalan", "Balearjo", "Balesari", "Bambang", "Bandungrejo", "Bangelan", "Banjararum", "Banjarejo (Donomulyo)", "Banjarejo (Ngantang)", "Banjarejo (Pagelaran)", "Banjarejo (Pakis)", "Banjarsari", "Bantur", "Banturejo", "Baturetno (Dampit)", "Baturetno (Singosari)", "Bayem", "Bedali", "Belung", "Bendosari", "Benjor", "Blayu", "Bocek", "Bokor", "Bringin", "Brongkal", "Bululawang", "Bulupitu", "Bumirejo", "Bunutwetan", "Clumprit", "Codo", "Curungrejo", "Dadapan", "Dalisodo", "Dawuhan", "Dengkol", "Dilem", "Donomulyo", "Donowarih", "Druju", "Duwet", "Duwet Krajan", "Gading", "Gadingkembar", "Gadingkulon", "Gadungsari", "Gajahrejo", "Gampingan", "Ganjaran", "Gedangan", "Gedog Kulon", "Gedog Wetan", "Genengan", "Girimoyo", "Girimulyo", "Glanggang", "Gondanglegi Kulon", "Gondanglegi Wetan", "Gondowangi", "Gubukklakah", "Gunung Jati", "Gunungrejo", "Gunungronggo", "Gunungsari", "Harjokuncaran", "Jabung", "Jambangan", "Jambearjo", "Jambesari", "Jambuwer", "Jatiguwi", "Jatikerto", "Jatirejoyoso", "Jatisari (Pakisaji)", "Jatisari (Tajinan)", "Jedong", "Jenggolo", "Jeru (Tumpang)", "Jeru (Turen)", "Jogomulyan", "Jombok", "Kademangan", "Kaliasri", "Kalipare", "Kalirejo", "Kalisongo", "Kambingan", "Kanigoro", "Karanganyar", "Karangduren", "Karangkates", "Karangnongko", "Karangpandan", "Karangrejo", "Karangsari", "Karangsuko", "Karangwidoro", "Kasembon (Bululawang)", "Kasembon (Kasembon)", "Kasri", "Kaumrejo", "Kebobang", "Kebonagung", "Kedok", "Kedungbanteng", "Kedungpedaringan", "Kedungrejo", "Kedungsalam", "Kemantren", "Kemiri (Jabung)", "Kemiri (Kepanjen)", "Kemulan", "Kendalpayak", "Kenongo", "Kepatihan", "Kepuharjo", "Kesamben", "Ketawang", "Ketindan", "Kidal", "Kidangbang", "Klampok", "Klepu", "Kluwut", "Kranggan", "Krebet", "Krebet Senggrong", "Kromengan", "Kucur", "Kuwolu", "Landungsari", "Lang-Lang", "Lebakharjo", "Lumbangsari", "Madiredo", "Maguan", "Majangtengah", "Malangsuko", "Mangliawan", "Mangunrejo", "Mendalanwangi", "Mentaraman", "Mojosari", "Mulyoagung", "Mulyoarjo", "Mulyoasri", "Mulyorejo", "Ngabab", "Ngadas", "Ngadilangkung", "Ngadirejo (Jabung)", "Ngadirejo (Kromengan)", "Ngadireso", "Ngajum", "Ngantru", "Ngasem", "Ngawonggo", "Ngebruk (Poncokusumo)", "Ngebruk (Sumberpucung)", "Ngembal", "Ngenep", "Ngijo", "Ngingit", "Ngroto", "Pagedangan", "Pagersari", "Pait", "Pajaran", "Pakisaji", "Pakisjajar", "Pakiskembar", "Palaan", "Pamotan", "Pandanajeng", "Pandanlandung", "Pandanmulyo", "Pandanrejo (Pagak)", "Pandanrejo (Wagir)", "Pandansari (Ngantang)", "Pandansari (Poncokusumo)", "Pandansari Lor", "Pandesari", "Panggungrejo (Gondanglegi)", "Panggungrejo (Kepanjen)", "Parangargo", "Patokpicis", "Peniwen", "Permanu", "Petungsewu (Dau)", "Petungsewu (Wagir)", "Plandi", "Plaosan", "Pojok", "Poncokusumo", "Pondokagung", "Pringgodani", "Pringu", "Pucangsongo", "Pujiharjo", "Pujon Kidul", "Pujon Lor", "Pulungdowo", "Purwoasri", "Purwodadi (Donomulyo)", "Purwodadi (Tirtoyudo)", "Purwoharjo", "Purworejo (Donomulyo)", "Purworejo (Ngantang)", "Purwosekar", "Putat Kidul", "Putat Lor", "Putukrejo (Gondanglegi)", "Putukrejo (Kalipare)", "Randuagung", "Randugading", "Rejosari", "Rejoyoso", "Rembun", "Ringinkembar", "Ringinsari", "Sambigede", "Sanankerto", "Sananrejo", "Saptorenggo", "Sawahan", "Segaran", "Sekarbanyu", "Sekarpuro", "Selorejo", "Sempalwadak", "Sempol", "Senggreng", "Sengguruh", "Sepanjang", "Sidoasri", "Sidodadi (Gedangan)", "Sidodadi (Lawang)", "Sidodadi (Ngantang)", "Sidoluhur", "Sidomulyo", "Sidorahayu", "Sidorejo (Jabung)", "Sidorejo (Pagelaran)", "Sidorenggo", "Simojayan", "Sindurejo", "Sitiarjo", "Sitirejo", "Slamet", "Slamparejo", "Slorok", "Sonowangi", "Srigading", "Srigonco", "Srimulyo", "Sudimoro", "Sukoanyar (Pakis)", "Sukoanyar (Wajak)", "Sukodadi", "Sukodono", "Sukolilo (Jabung)", "Sukolilo (Wajak)", "Sukomulyo", "Sukonolo", "Sukopuro", "Sukoraharjo", "Sukorejo (Gondanglegi)", "Sukorejo (Tirtoyudo)", "Sukosari (Gondanglegi)", "Sukosari (Kasembon)", "Sukowilangun", "Sumberagung (Ngantang)", "Sumberagung (Sumbermanjing Wetan)", "Sumberbening", "Sumberdem", "Sumberejo (Gedangan)", "Sumberejo (Pagak)", "Sumberejo (Poncokusumo)", "Sumberjaya", "Sumberkerto", "Sumberkradenan", "Sumbermanjing Kulon", "Sumbermanjing Wetan", "Sumberngepoh", "Sumberoto", "Sumberpasir", "Sumberpetung", "Sumberporong", "Sumberpucung", "Sumberputih", "Sumbersekar", "Sumbersuko (Dampit)", "Sumbersuko (Tajinan)", "Sumbersuko (Wagir)", "Sumbertangkil", "Sumbertempur", "Sutojayan", "Suwaru", "Taji", "Tajinan", "Talangagung", "Talangsuko", "Talok", "Tamanasri", "Tamanharjo", "Tamankuncaran", "Tamansari", "Tamansatriyan", "Tambakasri (Sumbermanjing Wetan)", "Tambakasri (Tajinan)", "Tambakrejo", "Tanggung", "Tangkilsari", "Tawangagung", "Tawangargo", "Tawangrejeni", "Tawangsari", "Tegalgondo", "Tegalrejo", "Tegalsari", "Tegalweru", "Tempursari", "Ternyang", "Tirtomarto", "Tirtomoyo (Ampelgading)", "Tirtomoyo (Pakis)", "Tirtoyudo", "Tlogorejo", "Tlogosari (Donomulyo)", "Tlogosari (Tirtoyudo)", "Toyomarto", "Tulungrejo (Donomulyo)", "Tulungrejo (Ngantang)", "Tulusbesar", "Tumpakrejo (Gedangan)", "Tumpakrejo (Kalipare)", "Tumpang", "Tumpukrenteng", "Tunjungtirto", "Turirejo", "Undaan", "Urek-Urek", "Wadung", "Wajak", "Wandanpuro", "Watugede", "Waturejo", "Wirotaman", "Wiyurejo", "Wonoagung (Kasembon)", "Wonoagung (Tirtoyudo)", "Wonoayu", "Wonokerso", "Wonokerto", "Wonomulyo", "Wonorejo (Bantur)", "Wonorejo (Lawang)", "Wonorejo (Poncokusumo)", "Wonorejo (Singosari)", "Wonosari", "Wringinanom", "Wringinsongo" ];
+        const daftarDesa = [ "Amadanom", "Ampeldento (Karangploso)", "Ampeldento (Pakis)", "Ampelgading", "Ardimulyo", "Argosari", "Argosuko", "Argotirto", "Argoyuwono", "Arjosari", "Arjowilangun", "Asrikaton", "Babadan", "Bakalan", "Balearjo", "Balesari", "Bambang", "Bandungrejo", "Bangelan", "Banjararum", "Banjarejo (Donomulyo)", "Banjarejo (Ngantang)", "Banjarejo (Pagelaran)", "Banjarejo (Pakis)", "Banjarsari", "Bantur", "Banturejo", "Baturetno (Dampit)", "Baturetno (Singosari)", "Bayem", "Bedali", "Belung", "Bendosari", "Benjor", "Blayu", "Bocek", "Bokor", "Bringin", "Brongkal", "Bululawang", "Bulupitu", "Bumirejo", "Bunutwetan", "Clumprit", "Codo", "Curungrejo", "Dadapan", "Dalisodo", "Dawuhan", "Dengkol", "Dilem", "Donomulyo", "Donowarih", "Druju", "Duwet", "Duwet Krajan", "Gading", "Gadingkembar", "Gadingkulon", "Gadungsari", "Gajahrejo", "Gampingan", "Ganjaran", "Gedangan", "Gedog Kulon", "Gedog Wetan", "Genengan", "Girimoyo", "Girimulyo", "Glanggang", "Gondanglegi Kulon", "Gondanglegi Wetan", "Gondowangi", "Gubukklakah", "Gunung Jati", "Gunungrejo", "Gunungronggo", "Gunungsari", "Harjokuncaran", "Jabung", "Jambangan", "Jambearjo", "Jambesari", "Jambuwer", "Jatiguwi", "Jatikerto", "Jatirejoyoso", "Jatisari (Pakisaji)", "Jatisari (Tajinan)", "Jedong", "Jenggolo", "Jeru (Tumpang)", "Jeru (Turen)", "Jogomulyan", "Jombok", "Kademangan", "Kaliasri", "Kalipare", "Kalirejo", "Kalisongo", "Kambingan", "Kanigoro", "Karanganyar", "Karangduren", "Karangkates", "Karangnongko", "Karangpandan", "Karangrejo", "Karangsari", "Karangsuko", "Karangwidoro", "Kasembon (Bululawang)", "Kasembon (Kasembon)", "Kasri", "Kaumrejo", "Kebobang", "Kebonagung", "Kedok", "Kedungbanteng", "Kedungpedaringan", "Kedungrejo", "Kedungsalam", "Kemantren", "Kemiri (Jabung)", "Kemiri (Kepanjen)", "Kemulan", "Kendalpayak", "Kenongo", "Kepatihan", "Kepuharjo", "Kesamben", "Ketawang", "Ketindan", "Kidal", "Kidangbang", "Klampok", "Klepu", "Kluwut", "Kranggan", "Krebet", "Krebet Senggrong", "Kromengan", "Kucur", "Kuwolu", "Landungsari", "Lang-Lang", "Lebakharjo", "Lumbangsari", "Madiredo", "Maguan", "Majangtengah", "Malangsuko", "Mangliawan", "Mangunrejo", "Mendalanwangi", "Mentaraman", "Mojosari", "Mulyoagung", "Mulyoarjo", "Mulyoasri", "Mulyorejo", "Ngabab", "Ngadas", "Ngadilangkung", "Ngadirejo (Jabung)", "Ngadirejo (Kromengan)", "Ngadireso", "Ngajum", "Ngantru", "Ngasem", "Ngawonggo", "Ngebruk (Poncokusumo)", "Ngebruk (Sumberpucung)", "Ngembal", "Ngenep", "Ngijo", "Ngingit", "Ngroto", "Pagak", "Pagedangan", "Pagelaran", "Pagersari", "Pait", "Pajaran", "Pakisaji", "Pakisjajar", "Pakiskembar", "Palaan", "Pamotan", "Pandanajeng", "Pandanlandung", "Pandanmulyo", "Pandanrejo (Pagak)", "Pandanrejo (Wagir)", "Pandansari (Ngantang)", "Pandansari (Poncokusumo)", "Pandansari Lor", "Pandesari", "Panggungrejo (Gondanglegi)", "Panggungrejo (Kepanjen)", "Parangargo", "Patokpicis", "Peniwen", "Permanu", "Petungsewu (Dau)", "Petungsewu (Wagir)", "Plandi", "Plaosan", "Pojok", "Poncokusumo", "Pondokagung", "Pringgodani", "Pringu", "Pucangsongo", "Pujiharjo", "Pujon Kidul", "Pujon Lor", "Pulungdowo", "Purwoasri", "Purwodadi (Donomulyo)", "Purwodadi (Tirtoyudo)", "Purwoharjo", "Purworejo (Donomulyo)", "Purworejo (Ngantang)", "Purwosekar", "Putat Kidul", "Putat Lor", "Putukrejo (Gondanglegi)", "Putukrejo (Kalipare)", "Randuagung", "Randugading", "Rejosari", "Rejoyoso", "Rembun", "Ringinkembar", "Ringinsari", "Sambigede", "Sanankerto", "Sananrejo", "Saptorenggo", "Sawahan", "Segaran", "Sekarbanyu", "Sekarpuro", "Selorejo", "Sempalwadak", "Sempol", "Senggreng", "Sengguruh", "Sepanjang", "Sidoasri", "Sidodadi (Gedangan)", "Sidodadi (Lawang)", "Sidodadi (Ngantang)", "Sidoluhur", "Sidomulyo", "Sidorahayu", "Sidorejo (Jabung)", "Sidorejo (Pagelaran)", "Sidorenggo", "Simojayan", "Sindurejo", "Sitiarjo", "Sitirejo", "Slamet", "Slamparejo", "Slorok", "Sonowangi", "Srigading", "Srigonco", "Srimulyo", "Sudimoro", "Sukoanyar (Pakis)", "Sukoanyar (Wajak)", "Sukodadi", "Sukodono", "Sukolilo (Jabung)", "Sukolilo (Wajak)", "Sukomulyo", "Sukonolo", "Sukopuro", "Sukoraharjo", "Sukorejo (Gondanglegi)", "Sukorejo (Tirtoyudo)", "Sukosari (Gondanglegi)", "Sukosari (Kasembon)", "Sukowilangun", "Sumberagung (Ngantang)", "Sumberagung (Sumbermanjing Wetan)", "Sumberbening", "Sumberdem", "Sumberejo (Gedangan)", "Sumberejo (Pagak)", "Sumberejo (Poncokusumo)", "Sumberjaya", "Sumberkerto", "Sumberkradenan", "Sumbermanjing Kulon", "Sumbermanjing Wetan", "Sumberngepoh", "Sumberoto", "Sumberpasir", "Sumberpetung", "Sumberporong", "Sumberpucung", "Sumberputih", "Sumbersekar", "Sumbersuko (Dampit)", "Sumbersuko (Tajinan)", "Sumbersuko (Wagir)", "Sumbertangkil", "Sumbertempur", "Sutojayan", "Suwaru", "Taji", "Tajinan", "Talangagung", "Talangsuko", "Talok", "Tamanasri", "Tamanharjo", "Tamankuncaran", "Tamansari", "Tamansatriyan", "Tambakasri (Sumbermanjing Wetan)", "Tambakasri (Tajinan)", "Tambakrejo", "Tanggung", "Tangkilsari", "Tawangagung", "Tawangargo", "Tawangrejeni", "Tawangsari", "Tegalgondo", "Tegalrejo", "Tegalsari", "Tegalweru", "Tempursari", "Ternyang", "Tirtomarto", "Tirtomoyo (Ampelgading)", "Tirtomoyo (Pakis)", "Tirtoyudo", "Tlogorejo", "Tlogosari (Donomulyo)", "Tlogosari (Tirtoyudo)", "Toyomarto", "Tulungrejo (Donomulyo)", "Tulungrejo (Ngantang)", "Tulusbesar", "Tumpakrejo (Gedangan)", "Tumpakrejo (Kalipare)", "Tumpang", "Tumpukrenteng", "Tunjungtirto", "Turirejo", "Undaan", "Urek-Urek", "Wadung", "Wajak", "Wandanpuro", "Watugede", "Waturejo", "Wirotaman", "Wiyurejo", "Wonoagung (Kasembon)", "Wonoagung (Tirtoyudo)", "Wonoayu", "Wonokerso", "Wonokerto", "Wonomulyo", "Wonorejo (Bantur)", "Wonorejo (Lawang)", "Wonorejo (Poncokusumo)", "Wonorejo (Singosari)", "Wonosari", "Wringinanom", "Wringinsongo" ];
 
-        // Fungsi Memuat Opsi Desa/Kelurahan ke Dropdown
-        function populateDesa(tipeId, targetId) {
-            try {
-                const tipe = document.getElementById(tipeId).value;
-                const select = document.getElementById(targetId);
+        // FITUR BARU: INIT SEARCHABLE DROPDOWN
+        function initSearchableDropdown(inputId, listId, tipeId, updateFunc) {
+            const input = document.getElementById(inputId);
+            const list = document.getElementById(listId);
+            const tipe = document.getElementById(tipeId);
+            const toggleIcon = list.previousElementSibling;
 
-                const currentVal = select.value;
+            function render(filter = '') {
+                list.innerHTML = '';
+                const isKelurahan = tipe.value === 'Kelurahan';
+                const data = isKelurahan ? daftarKelurahan : daftarDesa;
 
-                select.innerHTML = '<option value="">-- Pilih --</option>';
+                const filtered = data.filter(item => item.toLowerCase().includes(filter.toLowerCase()));
 
-                const dataToLoad = tipe === 'Kelurahan' ? daftarKelurahan : daftarDesa;
-
-                dataToLoad.forEach(function(item) {
-                    const opt = document.createElement('option');
-                    opt.value = item;
-                    opt.textContent = item;
-                    select.appendChild(opt);
-                });
-
-                if (dataToLoad.includes(currentVal)) {
-                    select.value = currentVal;
+                if (filtered.length === 0) {
+                    list.innerHTML = '<div class="px-3 py-2 text-slate-400 italic text-xs">Tidak ditemukan</div>';
+                    return;
                 }
-            } catch (e) {
-                console.error("Error populateDesa:", e);
+
+                filtered.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'px-3 py-2 hover:bg-indigo-50 cursor-pointer text-slate-700 transition-colors text-sm border-b border-slate-50 last:border-0';
+                    div.textContent = item;
+                    div.onclick = function() {
+                        input.value = item;
+                        list.classList.add('hidden');
+                        updateFunc();
+                    };
+                    list.appendChild(div);
+                });
             }
+
+            input.addEventListener('focus', function() {
+                render(this.value);
+                list.classList.remove('hidden');
+            });
+
+            input.addEventListener('input', function() {
+                render(this.value);
+                list.classList.remove('hidden');
+                updateFunc();
+            });
+
+            toggleIcon.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (list.classList.contains('hidden')) {
+                    render(input.value);
+                    list.classList.remove('hidden');
+                    input.focus();
+                } else {
+                    list.classList.add('hidden');
+                }
+            });
+
+            tipe.addEventListener('change', function() {
+                input.value = '';
+                render();
+                updateFunc();
+            });
         }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            ['list_desa_ktp', 'list_desa_domisili'].forEach(id => {
+                const list = document.getElementById(id);
+                const inputId = id.replace('list_', '');
+                const input = document.getElementById(inputId);
+
+                if (list && input) {
+                    const toggleIcon = list.previousElementSibling;
+                    if (!input.contains(e.target) && !list.contains(e.target) && !toggleIcon.contains(e.target)) {
+                        list.classList.add('hidden');
+                    }
+                }
+            });
+        });
 
         // Toggles Animasi Form KTP
         function toggleModeKtp() {
@@ -847,9 +1097,11 @@
                         document.getElementById('jalan_domisili').value = document.getElementById('jalan_ktp').value;
                         document.getElementById('tipe_desa_domisili').value = document.getElementById('tipe_desa_ktp').value;
 
-                        populateDesa('tipe_desa_domisili', 'desa_domisili');
+                        // Trigger perenderan agar daftar list cocok dengan tipe baru
+                        const ddlInput = document.getElementById('desa_domisili');
+                        const ddlList = document.getElementById('list_desa_domisili');
+                        ddlInput.value = document.getElementById('desa_ktp').value;
 
-                        document.getElementById('desa_domisili').value = document.getElementById('desa_ktp').value;
                         document.getElementById('kecamatan_domisili').value = document.getElementById('kecamatan_ktp').value;
                     } else {
                         document.getElementById('manual_domisili').value = document.getElementById('manual_ktp').value;
@@ -870,20 +1122,31 @@
             toggleModeKtp();
             toggleModeDomisili();
 
-            // Render awal daftar desa saat halaman pertama kali dimuat
-            populateDesa('tipe_desa_ktp', 'desa_ktp');
-            populateDesa('tipe_desa_domisili', 'desa_domisili');
+            // Jalankan Searchable Dropdown
+            initSearchableDropdown('desa_ktp', 'list_desa_ktp', 'tipe_desa_ktp', updateAlamatKtp);
+            initSearchableDropdown('desa_domisili', 'list_desa_domisili', 'tipe_desa_domisili', updateAlamatDomisili);
 
-            // Trigger perubahan tipe (Desa <-> Kelurahan)
-            document.getElementById('tipe_desa_ktp').addEventListener('change', function() {
-                populateDesa('tipe_desa_ktp', 'desa_ktp');
-                updateAlamatKtp();
-            });
+            // Inisialisasi State Awal Form Edit
+            updateRekomendasiPreview();
 
-            document.getElementById('tipe_desa_domisili').addEventListener('change', function() {
-                populateDesa('tipe_desa_domisili', 'desa_domisili');
-                updateAlamatDomisili();
-            });
+            // Sisa Inisialisasi Rekomendasi
+            let oldRek = "{{ old('rekomendasi_input', $asesmen->rekomendasi->tempat_rehabilitasi ?? $asesmen->rekomendasi_input) }}";
+            if (oldRek) {
+                if (oldRek.startsWith('Rawat Jalan')) {
+                    let radio = document.querySelector('input[name="kategori_rekomendasi"][value="Rawat Jalan"]');
+                    if(radio) radio.checked = true; toggleRekomendasi();
+                    let tempat = oldRek.substring(11).replace(/^ - /, '').trim();
+                    if(tempat) document.getElementById('selectTempatRekomendasi').value = tempat;
+                    else document.getElementById('selectTempatRekomendasi').value = 'Bawaan Sistem';
+                } else if (oldRek.startsWith('Rawat Inap')) {
+                    let radio = document.querySelector('input[name="kategori_rekomendasi"][value="Rawat Inap"]');
+                    if(radio) radio.checked = true; toggleRekomendasi();
+                    let tempat = oldRek.substring(10).replace(/^ - /, '').trim();
+                    if(tempat) document.getElementById('selectTempatRekomendasi').value = tempat;
+                    else document.getElementById('selectTempatRekomendasi').value = 'Bawaan Sistem';
+                }
+                updateRekomendasiPreview();
+            }
 
             // Format Rupiah
             var penghasilanInput = document.getElementById('penghasilan_rupiah');
@@ -924,12 +1187,10 @@
                         return;
                     }
 
-                    // Ambil angka mentahnya, membuang jam jika ikut terbawa dari database
                     let rawDate = tglLahirInput.split(' ')[0];
                     let parts = rawDate.split('-');
                     let dob;
 
-                    // Cek Cerdas Format YYYY-MM-DD vs DD-MM-YYYY
                     if (parts.length === 3) {
                         let p0 = parts[0];
                         let p2 = parts[2];
@@ -940,7 +1201,6 @@
                         }
                     }
 
-                    // Fallback jika aneh
                     if (!dob || isNaN(dob.getTime())) {
                         dob = new Date(rawDate);
                     }
@@ -949,7 +1209,6 @@
                         return;
                     }
 
-                    // Ambil Tanggal saat pendaftaran dari PHP (Jika belum ada, pakai hari ini)
                     let refDateStr = "{{ $asesmen->created_at ? \Carbon\Carbon::parse($asesmen->created_at)->format('Y-m-d') : now()->format('Y-m-d') }}";
                     let refDate = new Date(refDateStr);
 
@@ -968,16 +1227,14 @@
                 }
             }
 
-            // Memasang pendeteksi standar untuk kolom tanggal
             const tglLahirEl = document.getElementById('tgl_lahir');
             if(tglLahirEl) {
                 tglLahirEl.addEventListener('change', hitungUsia);
                 tglLahirEl.addEventListener('input', hitungUsia);
                 tglLahirEl.addEventListener('blur', hitungUsia);
-                hitungUsia(); // Eksekusi saat halaman pertama dimuat
+                hitungUsia();
             }
 
-            // Interval Kuat Khusus Datepicker Form
             let lastTgl = tglLahirEl ? tglLahirEl.value : '';
             setInterval(function() {
                 let currentTgl = tglLahirEl ? tglLahirEl.value : '';
@@ -996,7 +1253,7 @@
                     if (mode === 'otomatis') {
                         const jalan = document.getElementById('jalan_ktp').value.trim();
                         const tipeDesa = document.getElementById('tipe_desa_ktp').value;
-                        const desa = document.getElementById('desa_ktp').value;
+                        const desa = document.getElementById('desa_ktp').value.trim();
                         const kec = document.getElementById('kecamatan_ktp').value;
                         const kab = document.getElementById('kabupaten_ktp').value;
 
@@ -1025,7 +1282,7 @@
                     if (mode === 'otomatis') {
                         const jalan = document.getElementById('jalan_domisili').value.trim();
                         const tipeDesa = document.getElementById('tipe_desa_domisili').value;
-                        const desa = document.getElementById('desa_domisili').value;
+                        const desa = document.getElementById('desa_domisili').value.trim();
                         const kec = document.getElementById('kecamatan_domisili').value;
                         const kab = document.getElementById('kabupaten_domisili').value;
 
@@ -1045,8 +1302,7 @@
                 } catch(e) { console.error(e); }
             }
 
-            // Pasang pendeteksi perubahan untuk input otomatis
-            const otomatisKtpFields = ['jalan_ktp', 'tipe_desa_ktp', 'desa_ktp', 'kecamatan_ktp', 'kabupaten_ktp'];
+            const otomatisKtpFields = ['jalan_ktp', 'kecamatan_ktp', 'kabupaten_ktp'];
             otomatisKtpFields.forEach(function(id) {
                 const el = document.getElementById(id);
                 if (el) {
@@ -1055,7 +1311,7 @@
                 }
             });
 
-            const otomatisDomisiliFields = ['jalan_domisili', 'tipe_desa_domisili', 'desa_domisili', 'kecamatan_domisili', 'kabupaten_domisili'];
+            const otomatisDomisiliFields = ['jalan_domisili', 'kecamatan_domisili', 'kabupaten_domisili'];
             otomatisDomisiliFields.forEach(function(id) {
                 const el = document.getElementById(id);
                 if (el) {
@@ -1064,16 +1320,37 @@
                 }
             });
 
-            // Pasang pendeteksi perubahan untuk input manual
             document.getElementById('manual_ktp').addEventListener('input', updateAlamatKtp);
             document.getElementById('manual_domisili').addEventListener('input', updateAlamatDomisili);
 
-            // Validasi darurat saat form di-submit
+            // Mencegah data gagal simpan saat submit
             document.getElementById('formEditKlien').addEventListener('submit', function(e) {
                 updateAlamatKtp();
                 updateAlamatDomisili();
+                updateRekomendasiPreview();
             });
 
         });
+
+        // PREVIEW FOTO
+        function previewImage(event) {
+            const input = event.target;
+            const preview = document.getElementById('previewFoto');
+            const placeholder = document.getElementById('iconPlaceholder');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                }
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.src = '#';
+                preview.classList.add('hidden');
+                placeholder.classList.remove('hidden');
+            }
+        }
     </script>
 </x-app-layout>

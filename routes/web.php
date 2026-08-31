@@ -64,6 +64,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/asesmen/{id}/update-tanggal', [AsesmenController::class, 'updateTanggal'])->name('asesmen.update-tanggal');
 // Route untuk menghapus master data Pendidikan
 Route::delete('/pendidikan/{id}', [App\Http\Controllers\AsesmenController::class, 'destroyPendidikan'])->name('pendidikan.destroy');
+// Route untuk menghapus master data Rekomendasi TAT
+Route::delete('/rekomendasi/{id}', [App\Http\Controllers\AsesmenController::class, 'destroyRekomendasi'])->name('rekomendasi.destroy');
 });
 
 // 3. Route bawaan Laravel Breeze untuk autentikasi (Login, Register, Logout)

@@ -10,6 +10,7 @@ use App\Models\Narkotika;
 use App\Models\Rekomendasi;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
 use Exception;
 use Carbon\Carbon;
 use App\Exports\AsesmenExport;
@@ -99,7 +100,8 @@ class AsesmenController extends Controller
         ]);
 
         $validatedData = $request->validate([
-            // Identitas Dasar
+            // Identitas Dasar & Foto
+            'foto_klien' => 'nullable|image|mimes:jpeg,png,jpg',
             'nama_lengkap' => 'required|string|max:255',
             'nik' => 'required|string|max:16',
             'tempat_lahir' => 'nullable|string|max:255',
@@ -154,14 +156,17 @@ class AsesmenController extends Controller
             'aspek_medis' => 'nullable|string',
         ]);
 
+        // LOGIKA PENYIMPANAN FOTO KLIEN
+        if ($request->hasFile('foto_klien')) {
+            $validatedData['foto_klien'] = $request->file('foto_klien')->store('foto-klien', 'public');
+        }
+
         // LOGIKA PENYIMPANAN OTOMATIS MASTER PENDIDIKAN
         if ($request->filled('pendidikan_input')) {
-            // Hanya buat relasi ID untuk keperluan internal, tapi TETAP simpan teks inputnya
             $pendidikan = Pendidikan::firstOrCreate([
                 'nama_pendidikan' => $request->pendidikan_input
             ]);
             $validatedData['pendidikan_id'] = $pendidikan->id;
-            // PERBAIKAN FATAL: BARIS "UNSET" DIHAPUS agar pendidikan_input ikut terekam ke database
         }
 
         // LOGIKA PENYIMPANAN OTOMATIS MASTER PEKERJAAN
@@ -170,7 +175,6 @@ class AsesmenController extends Controller
                 'nama_pekerjaan' => $request->pekerjaan_input
             ]);
             $validatedData['pekerjaan_id'] = $pekerjaan->id;
-            // PERBAIKAN FATAL: BARIS "UNSET" DIHAPUS
         }
 
         // LOGIKA PENYIMPANAN OTOMATIS MASTER REKOMENDASI TAT
@@ -179,7 +183,6 @@ class AsesmenController extends Controller
                 'tempat_rehabilitasi' => $request->rekomendasi_input
             ]);
             $validatedData['rekomendasi_id'] = $rekomendasi->id;
-            // PERBAIKAN FATAL: BARIS "UNSET" DIHAPUS
         }
 
         Asesmen::create($validatedData);
@@ -220,7 +223,6 @@ class AsesmenController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // Validasi NIK yang sama untuk dirinya sendiri diabaikan
         $request->validate([
             'nik' => 'required|max:16|unique:asesmens,nik,' . $id,
         ], [
@@ -228,7 +230,8 @@ class AsesmenController extends Controller
         ]);
 
         $validatedData = $request->validate([
-            // Identitas Dasar
+            // Identitas Dasar & Foto
+            'foto_klien' => 'nullable|image|mimes:jpeg,png,jpg',
             'nama_lengkap' => 'required|string|max:255',
             'nik' => 'required|string|max:16',
             'tempat_lahir' => 'nullable|string|max:255',
@@ -283,13 +286,23 @@ class AsesmenController extends Controller
             'aspek_medis' => 'nullable|string',
         ]);
 
+        $asesmen = Asesmen::findOrFail($id);
+
+        // LOGIKA PENYIMPANAN FOTO KLIEN
+        if ($request->hasFile('foto_klien')) {
+            // Hapus foto lama jika ada
+            if ($asesmen->foto_klien) {
+                Storage::disk('public')->delete($asesmen->foto_klien);
+            }
+            $validatedData['foto_klien'] = $request->file('foto_klien')->store('foto-klien', 'public');
+        }
+
         // LOGIKA PENYIMPANAN OTOMATIS MASTER PENDIDIKAN
         if ($request->filled('pendidikan_input')) {
             $pendidikan = Pendidikan::firstOrCreate([
                 'nama_pendidikan' => $request->pendidikan_input
             ]);
             $validatedData['pendidikan_id'] = $pendidikan->id;
-            // PERBAIKAN FATAL: BARIS "UNSET" DIHAPUS
         }
 
         // LOGIKA PENYIMPANAN OTOMATIS MASTER PEKERJAAN
@@ -298,7 +311,6 @@ class AsesmenController extends Controller
                 'nama_pekerjaan' => $request->pekerjaan_input
             ]);
             $validatedData['pekerjaan_id'] = $pekerjaan->id;
-            // PERBAIKAN FATAL: BARIS "UNSET" DIHAPUS
         }
 
         // LOGIKA PENYIMPANAN OTOMATIS MASTER REKOMENDASI TAT
@@ -307,10 +319,8 @@ class AsesmenController extends Controller
                 'tempat_rehabilitasi' => $request->rekomendasi_input
             ]);
             $validatedData['rekomendasi_id'] = $rekomendasi->id;
-            // PERBAIKAN FATAL: BARIS "UNSET" DIHAPUS
         }
 
-        $asesmen = Asesmen::findOrFail($id);
         $asesmen->update($validatedData);
 
         return redirect()->route('asesmen.index')->with('success', 'Data Asesmen berhasil diperbarui!');
@@ -322,6 +332,12 @@ class AsesmenController extends Controller
     public function destroy(string $id)
     {
         $asesmen = Asesmen::findOrFail($id);
+
+        // Menghapus file foto jika ada
+        if ($asesmen->foto_klien) {
+            Storage::disk('public')->delete($asesmen->foto_klien);
+        }
+
         $asesmen->delete();
 
         return redirect()->route('asesmen.index')->with('success', 'Data Asesmen berhasil dihapus!');
@@ -453,8 +469,8 @@ class AsesmenController extends Controller
             'tgl_lahir' => $asesmen->tgl_lahir ? \Carbon\Carbon::parse($asesmen->tgl_lahir)->translatedFormat('d F Y') : '-',
             'jk' => $asesmen->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan',
             'agama' => $asesmen->agama ?? '-',
-            'pendidikan' => $asesmen->pendidikan_input ?? '-', // PERBAIKAN: Tarik nilai input mentah langsung
-            'pekerjaan' => $asesmen->pekerjaan_input ?? '-',   // PERBAIKAN: Tarik nilai input mentah langsung
+            'pendidikan' => $asesmen->pendidikan_input ?? '-',
+            'pekerjaan' => $asesmen->pekerjaan_input ?? '-',
             'alamat_ktp' => $asesmen->alamat_ktp ?? '-',
             'alamat_domisili' => $asesmen->alamat_domisili ?? '-',
         ];
@@ -751,18 +767,6 @@ class AsesmenController extends Controller
     /**
      * Menghapus master data Pendidikan (Dari Modal Kelola)
      */
-    /**
-     * Menghapus master data Pendidikan (Dari Modal Kelola)
-     */
-    /**
-     * Menghapus master data Pendidikan (Dari Modal Kelola)
-     */
-    /**
-     * Menghapus master data Pendidikan (Dari Modal Kelola)
-     */
-    /**
-     * Menghapus master data Pendidikan (Dari Modal Kelola)
-     */
     public function destroyPendidikan(string $id)
     {
         try {
@@ -777,6 +781,27 @@ class AsesmenController extends Controller
                 return redirect()->back()->with('error', 'Gagal menghapus! Pilihan pendidikan ini tidak bisa dihapus karena pilihan ini sudah digunakan dalam penambahan data Klien.');
             }
 
+            return redirect()->back()->with('error', 'Terjadi kesalahan database: ' . $e->getMessage());
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Menghapus master data Rekomendasi TAT
+     */
+    public function destroyRekomendasi(string $id)
+    {
+        try {
+            $rekomendasi = \App\Models\Rekomendasi::findOrFail($id);
+            $rekomendasi->delete();
+
+            return redirect()->back()->with('success', 'Opsi Rekomendasi berhasil dihapus secara permanen dari sistem!');
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() == '23000') {
+                return redirect()->back()->with('error', 'Gagal menghapus! Pilihan rekomendasi ini tidak bisa dihapus karena sudah digunakan dalam data Klien.');
+            }
             return redirect()->back()->with('error', 'Terjadi kesalahan database: ' . $e->getMessage());
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());

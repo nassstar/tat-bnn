@@ -11,6 +11,7 @@ class Asesmen extends Model
     use HasFactory;
 
     // Mengizinkan semua kolom diisi secara massal kecuali kolom 'id'
+    // Otomatis mengizinkan penyimpanan 'foto_klien'
     protected $guarded = ['id'];
 
     // Menentukan nama tabel secara eksplisit
@@ -32,7 +33,6 @@ class Asesmen extends Model
     }
 
     // --- Relasi BelongsTo ke Tabel Master ---
-
     public function pekerjaan()
     {
         return $this->belongsTo(Pekerjaan::class, 'pekerjaan_id');
@@ -65,7 +65,7 @@ class Asesmen extends Model
         $attributes = $this->getAttributes();
 
         // Daftar kolom sistem yang tidak perlu dicek kelengkapannya
-        $exclude = ['id', 'created_at', 'updated_at', 'created_by'];
+        $exclude = ['id', 'created_at', 'updated_at', 'created_by', 'foto_klien'];
 
         foreach ($attributes as $key => $value) {
             if (!in_array($key, $exclude)) {

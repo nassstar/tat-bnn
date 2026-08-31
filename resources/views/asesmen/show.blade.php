@@ -58,10 +58,27 @@
                     <!-- Card 2: Profil Klien -->
                     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden w-full">
                         <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500"></div>
-                        <h3 class="text-[13px] font-extrabold text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2 ml-2 flex items-center gap-2">
-                            <svg class="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                            2. Profil Klien
-                        </h3>
+
+                        <!-- FOTO KLIEN & HEADER -->
+                        <div class="flex items-center gap-4 border-b border-slate-100 pb-4 mb-4 ml-2">
+                            <div class="w-16 h-20 shrink-0 bg-slate-100 rounded-lg overflow-hidden border border-slate-200 shadow-inner">
+                                @if(!empty($asesmen->foto_klien))
+                                    <img src="{{ asset('storage/' . $asesmen->foto_klien) }}" alt="Foto Klien" class="w-full h-full object-cover">
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center bg-slate-100">
+                                        <svg class="w-8 h-8 text-slate-300" fill="currentColor" viewBox="0 0 24 24"><path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                                    </div>
+                                @endif
+                            </div>
+                            <div>
+                                <h3 class="text-[13px] font-extrabold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                    2. Profil Klien
+                                </h3>
+                                <span class="text-xs text-slate-500 font-medium mt-1 inline-block">No. Reg: {{ $asesmen->no_register ?? '-' }}</span>
+                            </div>
+                        </div>
+
                         <div class="space-y-3 text-[13px] ml-2">
                             <div class="flex flex-col border-b border-slate-50 pb-1.5"><span class="text-slate-500 font-medium mb-1">Nama Lengkap</span> <span class="font-bold text-slate-800">{{ $asesmen->nama_lengkap }}</span></div>
                             <div class="flex flex-col border-b border-slate-50 pb-1.5"><span class="text-slate-500 font-medium mb-1">NIK</span> <span class="font-bold text-slate-800">{{ $asesmen->nik }}</span></div>
@@ -86,7 +103,6 @@
                             <div class="flex flex-col border-b border-slate-50 pb-1.5"><span class="text-slate-500 font-medium mb-1">Jenis Kelamin</span> <span class="font-bold text-slate-800">{{ $asesmen->jenis_kelamin == 'L' ? 'Laki-Laki' : 'Perempuan' }}</span></div>
                             <div class="flex flex-col border-b border-slate-50 pb-1.5"><span class="text-slate-500 font-medium mb-1">Agama & WN</span> <span class="font-bold text-slate-800">{{ $asesmen->agama ?? '-' }} | {{ $asesmen->kewarganegaraan ?? '-' }}</span></div>
 
-                            <!-- PERBAIKAN: Memanggil Relasi Dari Database, Bukan _input -->
                             <div class="flex flex-col border-b border-slate-50 pb-1.5">
                                 <span class="text-slate-500 font-medium mb-1">Pendidikan</span>
                                 <span class="font-bold text-slate-800">{{ $asesmen->pendidikan->nama_pendidikan ?? '-' }}</span>
@@ -319,28 +335,67 @@
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                        <!-- KEPUTUSAN TEMPAT REHAB (FINAL) -->
                         <div>
-                            <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">Keputusan Tempat Rehab (Final)</span>
-                            <div class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-6 text-white shadow-lg">
-                                <div class="flex items-start gap-4 mb-4">
-                                    <div class="p-3 bg-white/20 rounded-xl shrink-0"><svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg></div>
+                            <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-3">Keputusan Tempat Rehab (Final)</label>
+
+                            @php
+                                // Logika Pintar Pemisah String Rekomendasi
+                                // PERBAIKAN: Mengambil dari relasi database master rekomendasi (tempat_rehabilitasi)
+                                $rawRek = $asesmen->rekomendasi->tempat_rehabilitasi ?? $asesmen->rekomendasi_input ?? '';
+                                $katRek = 'Belum Ada Keputusan';
+                                $tempatRek = '-';
+
+                                if (str_starts_with($rawRek, 'Rawat Jalan')) {
+                                    $katRek = 'Rawat Jalan';
+                                    $tempatRek = trim(str_replace('Rawat Jalan', '', $rawRek));
+                                } elseif (str_starts_with($rawRek, 'Rawat Inap')) {
+                                    $katRek = 'Rawat Inap';
+                                    $tempatRek = trim(str_replace('Rawat Inap', '', $rawRek));
+                                } else {
+                                    // Jika format manual
+                                    $tempatRek = $rawRek;
+                                }
+
+                                // Hilangkan spasi dan strip (-) yang tersisa di awal teks tempat
+                                $tempatRek = trim(ltrim($tempatRek, ' -'));
+
+                                // Jika user hanya memilih "Rawat Jalan" tanpa tempat
+                                if (empty($tempatRek) && $rawRek != '') {
+                                    $tempatRek = 'Belum Ditentukan Instansinya';
+                                } elseif (empty($tempatRek)) {
+                                    $tempatRek = '-';
+                                }
+                            @endphp
+
+                            <div class="bg-emerald-500 rounded-xl p-5 text-white shadow-sm flex flex-col justify-between h-full relative overflow-hidden">
+                                <!-- Ornamen Background Kotak -->
+                                <div class="absolute -right-4 -top-4 w-24 h-24 bg-white opacity-10 rounded-full blur-2xl pointer-events-none"></div>
+
+                                <div class="flex items-start gap-4 relative z-10">
+                                    <div class="p-3 bg-white/20 rounded-lg shrink-0">
+                                        <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                                    </div>
                                     <div>
-                                        <div class="text-[12px] font-medium text-emerald-100 uppercase tracking-wider mb-1">Ditempatkan di:</div>
-                                        <div class="text-xl md:text-2xl font-extrabold leading-tight">
-                                            {{ $asesmen->rekomendasi->tempat_rehabilitasi ?? 'Belum ditentukan' }}
+                                        <!-- Status (Rawat Jalan / Rawat Inap) -->
+                                        <div class="text-sm font-black text-emerald-50 mb-1 border-b border-emerald-400/50 pb-1 inline-block uppercase tracking-wider">
+                                            {{ $katRek }}
                                         </div>
+
+                                        <!-- Ditempatkan Di: Kepanjen -->
+                                        <p class="text-[10px] text-emerald-200 uppercase tracking-widest mt-1 mb-0.5 font-bold">Ditempatkan Di:</p>
+                                        <h4 class="text-lg font-extrabold text-white leading-tight capitalize">{{ $tempatRek }}</h4>
                                     </div>
                                 </div>
-                                <div class="border-t border-emerald-400/50 pt-3 mt-3">
-                                    <div class="text-[13px] font-medium text-emerald-100">
-                                        Durasi Perawatan Terpadu:
-                                        <span class="font-extrabold text-white text-base ml-2 px-3 py-1 bg-black/10 rounded-lg">
-                                            {{ $asesmen->lama_perawatan ?? '-' }}
-                                        </span>
-                                    </div>
+
+                                <div class="mt-4 pt-3 border-t border-emerald-400/50 flex justify-between items-center text-xs relative z-10">
+                                    <span class="text-emerald-100 font-medium">Durasi Perawatan Terpadu:</span>
+                                    <span class="font-bold bg-emerald-600/50 px-2 py-0.5 rounded text-white">{{ $asesmen->lama_perawatan ?? '-' }}</span>
                                 </div>
                             </div>
                         </div>
+                        <!-- END KEPUTUSAN TEMPAT REHAB -->
 
                         <div class="space-y-4">
                             <div class="bg-white/80 backdrop-blur-sm p-5 rounded-2xl border border-white shadow-sm">
