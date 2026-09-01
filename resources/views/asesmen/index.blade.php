@@ -185,11 +185,19 @@
                                         {{ $asesmens->firstItem() + $index }}
                                     </td>
 
-                                    <!-- Kolom Identitas -->
+                                    <!-- Kolom Identitas dengan Cek Foto -->
                                     <td class="px-6 py-5 align-top">
                                         <div class="flex items-start gap-3">
-                                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 font-bold flex items-center justify-center text-lg mt-0.5 border border-indigo-100">
-                                                {{ strtoupper(substr($item->nama_lengkap ?? 'A', 0, 1)) }}
+                                            <div class="flex-shrink-0 w-10 h-10 mt-0.5 relative">
+                                                @if ($item->foto_klien)
+                                                    <img class="w-full h-full rounded-full object-cover border border-slate-200 shadow-sm"
+                                                         src="{{ asset('storage/' . $item->foto_klien) }}"
+                                                         alt="Foto {{ $item->nama_lengkap }}">
+                                                @else
+                                                    <div class="w-full h-full rounded-full bg-indigo-50 text-indigo-600 font-bold flex items-center justify-center text-lg border border-indigo-100 shadow-sm">
+                                                        {{ strtoupper(substr($item->nama_lengkap ?? 'A', 0, 1)) }}
+                                                    </div>
+                                                @endif
                                             </div>
                                             <div>
                                                 <div class="font-bold text-slate-900 text-sm">{{ $item->nama_lengkap }}</div>
@@ -212,8 +220,8 @@
                                                             <span class="text-[11px] font-bold text-slate-700">{{ $item->created_at ? $item->created_at->format('d M Y') : '-' }}</span>
 
                                                             <button type="button" onclick="toggleEditTanggal('{{ $item->id }}', true)" class="text-indigo-400 hover:text-indigo-600 transition-colors" title="Edit Tanggal">
-    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-</button>
+                                                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                                                            </button>
                                                         </div>
 
                                                         <form id="form-tanggal-{{ $item->id }}" action="{{ route('asesmen.update-tanggal', $item->id) }}" method="POST" class="hidden items-center gap-1.5">

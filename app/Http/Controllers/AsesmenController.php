@@ -552,6 +552,21 @@ class AsesmenController extends Controller
 
         $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($templatePath);
 
+        // --- PEMOTONGAN STRING (STRING PARSING) UNTUK TEMPAT REHABILITASI ---
+        $rawTempat = $asesmen->rekomendasi_tempat_rehab ?? $asesmen->rekomendasi->tempat_rehabilitasi ?? $asesmen->rekomendasi_input ?? '-';
+        $tempatBersih = $rawTempat;
+
+        if (str_starts_with($rawTempat, 'Rawat Jalan')) {
+            $tempatBersih = trim(str_replace('Rawat Jalan', '', $rawTempat));
+            $tempatBersih = ltrim($tempatBersih, ' -');
+        } elseif (str_starts_with($rawTempat, 'Rawat Inap')) {
+            $tempatBersih = trim(str_replace('Rawat Inap', '', $rawTempat));
+            $tempatBersih = ltrim($tempatBersih, ' -');
+        }
+
+        $tempatBersih = empty($tempatBersih) ? 'Tanpa Instansi' : $tempatBersih;
+        // ----------------------------------------------------------------------
+
         // --- MAPPING IDENTITAS DASAR ---
         $templateProcessor->setValue('nama_lengkap', $asesmen->nama_lengkap ?? '-');
         $templateProcessor->setValue('no_register', $asesmen->no_register ?? '-');
@@ -624,7 +639,7 @@ class AsesmenController extends Controller
         $templateProcessor->setValue('kesimpulan_pola_pakai', $asesmen->kesimpulan_pola_pakai ?? '-');
         $templateProcessor->setValue('kesimpulan_kategori', $asesmen->kesimpulan_kategori ?? '-');
         $templateProcessor->setValue('diagnosis_medis', $asesmen->diagnosis_medis ?? '-');
-        $templateProcessor->setValue('rekomendasi_tempat_rehab', $asesmen->rekomendasi_tempat_rehab ?? '-');
+        $templateProcessor->setValue('rekomendasi_tempat_rehab', $tempatBersih); // Variabel Bersih Digunakan
         $templateProcessor->setValue('rekomendasi_durasi', $asesmen->rekomendasi_durasi ?? '-');
         $templateProcessor->setValue('rekomendasi_keterangan', $asesmen->rekomendasi_keterangan ?? '-');
 
@@ -674,6 +689,9 @@ class AsesmenController extends Controller
         $asesmen->lama_perawatan       = $request->input('lama_perawatan');
         $asesmen->keterangan_diagnosis = $request->input('keterangan_diagnosis');
 
+        // Simpan input tempat rekomendasi rehab
+        $asesmen->rekomendasi_tempat_rehab = $request->input('rekomendasi_tempat_rehab');
+
         // EKSEKUSI SIMPAN KE DATABASE
         $asesmen->save();
 
@@ -691,6 +709,21 @@ class AsesmenController extends Controller
         }
 
         $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($templatePath);
+
+        // --- PEMOTONGAN STRING (STRING PARSING) UNTUK TEMPAT REHABILITASI ---
+        $rawTempatRek = $asesmen->rekomendasi_tempat_rehab ?? $asesmen->rekomendasi->tempat_rehabilitasi ?? $asesmen->rekomendasi_input ?? '-';
+        $tempatBersihRek = $rawTempatRek;
+
+        if (str_starts_with($rawTempatRek, 'Rawat Jalan')) {
+            $tempatBersihRek = trim(str_replace('Rawat Jalan', '', $rawTempatRek));
+            $tempatBersihRek = ltrim($tempatBersihRek, ' -');
+        } elseif (str_starts_with($rawTempatRek, 'Rawat Inap')) {
+            $tempatBersihRek = trim(str_replace('Rawat Inap', '', $rawTempatRek));
+            $tempatBersihRek = ltrim($tempatBersihRek, ' -');
+        }
+
+        $tempatBersihRek = empty($tempatBersihRek) ? 'Tanpa Instansi' : $tempatBersihRek;
+        // ----------------------------------------------------------------------
 
         // Mapping Data Input Manual
         $templateProcessor->setValue('no_surat_rekomendasi', $asesmen->no_surat_rekomendasi ?? '-');
@@ -724,7 +757,7 @@ class AsesmenController extends Controller
         $templateProcessor->setValue('hari', $hari_pelaksanaan);
         $templateProcessor->setValue('jenis_narkotika', $asesmen->narkotika->jenis_narkotika ?? '-');
         $templateProcessor->setValue('tingkat_ketergantungan', $asesmen->tingkat_ketergantungan ?? '-');
-        $templateProcessor->setValue('rekomendasi_tat', $asesmen->rekomendasi->tempat_rehabilitasi ?? '-');
+        $templateProcessor->setValue('rekomendasi_tat', $tempatBersihRek); // Variabel Bersih Digunakan
 
         // Proses Unduh File
         $fileName = 'Surat_Rekomendasi_TAT_' . str_replace(' ', '_', $asesmen->nama_lengkap) . '.docx';

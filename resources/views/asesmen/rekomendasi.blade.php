@@ -53,10 +53,34 @@
                         <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Jenis Narkotika</span>
                         <span class="font-bold text-slate-800 text-sm">{{ $asesmen->narkotika->jenis_narkotika ?? '-' }}</span>
                     </div>
+
+                    @php
+                        // Logika Pembersihan Prefix (Rawat Jalan / Rawat Inap)
+                        $rawTempat = $asesmen->rekomendasi->tempat_rehabilitasi ?? 'Belum ada data tempat rehabilitasi';
+                        $tempatBersih = $rawTempat;
+
+                        if (str_starts_with($rawTempat, 'Rawat Jalan')) {
+                            $tempatBersih = trim(str_replace('Rawat Jalan', '', $rawTempat));
+                            $tempatBersih = ltrim($tempatBersih, ' -');
+                        } elseif (str_starts_with($rawTempat, 'Rawat Inap')) {
+                            $tempatBersih = trim(str_replace('Rawat Inap', '', $rawTempat));
+                            $tempatBersih = ltrim($tempatBersih, ' -');
+                        }
+
+                        if (empty($tempatBersih)) {
+                            $tempatBersih = 'Tanpa Instansi';
+                        }
+
+                        if ($rawTempat === 'Belum ada data tempat rehabilitasi') {
+                            $tempatBersih = $rawTempat;
+                        }
+                    @endphp
+
                     <div class="md:col-span-4 bg-gradient-to-r from-purple-500 to-indigo-600 p-4 rounded-xl shadow-md text-white flex items-center justify-between">
                         <div>
                             <span class="block text-[11px] font-medium text-purple-100 uppercase tracking-wider mb-0.5">Keputusan Tempat Rehabilitasi</span>
-                            <span class="font-extrabold text-lg">{{ $asesmen->rekomendasi->tempat_rehabilitasi ?? 'Belum ada data tempat rehabilitasi' }}</span>
+                            <!-- Menggunakan variabel yang sudah dibersihkan -->
+                            <span class="font-extrabold text-lg">{{ $tempatBersih }}</span>
                         </div>
                         <svg class="w-8 h-8 text-white/50 hidden sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                     </div>
@@ -278,7 +302,7 @@
                         <input type="text" id="tambah_input" class="w-full rounded-xl border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition text-sm py-2.5" placeholder="Ketik di sini...">
                     </div>
                     <div class="bg-slate-50 px-4 py-4 sm:flex sm:flex-row-reverse sm:px-6 border-t border-slate-100 gap-2">
-                        <button type="button" onclick="simpanOpsiBaru()" class="w-full inline-flex justify-center rounded-lg border border-transparent bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 sm:w-auto transition-colors">Simpan</button>
+                        <button type="button" onclick="simpanOpsiBaruKhusus()" class="w-full inline-flex justify-center rounded-lg border border-transparent bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 sm:w-auto transition-colors">Simpan</button>
                         <button type="button" onclick="closeTambahModal()" class="mt-3 w-full inline-flex justify-center rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-bold text-slate-700 shadow-sm hover:bg-slate-50 sm:mt-0 sm:w-auto transition-colors">Batal</button>
                     </div>
                 </div>
@@ -329,13 +353,12 @@
             document.getElementById('modalTambah').classList.add('hidden');
         }
 
-        function simpanOpsiBaru() {
+        function simpanOpsiBaruKhusus() {
             const selectId = document.getElementById('tambah_target_id').value;
             const newValue = document.getElementById('tambah_input').value.trim();
 
             if(newValue !== '') {
                 const selectEl = document.getElementById(selectId);
-                // Cek apakah opsi sudah ada agar tidak ganda
                 let exists = false;
                 for(let i = 0; i < selectEl.options.length; i++) {
                     if(selectEl.options[i].value === newValue) {
@@ -344,7 +367,6 @@
                     }
                 }
 
-                // Jika belum ada, buat elemen <option> baru dan pilih
                 if(!exists) {
                     const newOpt = new Option(newValue, newValue, true, true);
                     selectEl.add(newOpt);
@@ -363,14 +385,13 @@
 
             const selectEl = document.getElementById(selectId);
             const listContainer = document.getElementById('kelola_list');
-            listContainer.innerHTML = ''; // Bersihkan list sebelumnya
+            listContainer.innerHTML = '';
 
             let hasItems = false;
 
-            // Generate elemen <li> beserta tombol Hapus untuk setiap <option>
             for(let i = 0; i < selectEl.options.length; i++) {
                 const opt = selectEl.options[i];
-                if(opt.value !== '') { // Abaikan opsi "-- Pilih --"
+                if(opt.value !== '') {
                     hasItems = true;
                     const li = document.createElement('li');
                     li.className = "flex justify-between items-center p-3.5 bg-slate-50 border border-slate-100 rounded-xl hover:bg-white hover:shadow-sm transition-all";
@@ -396,7 +417,6 @@
         function hapusOpsiLokal(selectId, valueToRemove, btnEl) {
             const selectEl = document.getElementById(selectId);
 
-            // Hapus dari dropdown <select> di form utama
             for(let i = 0; i < selectEl.options.length; i++) {
                 if(selectEl.options[i].value === valueToRemove) {
                     selectEl.remove(i);
@@ -404,7 +424,6 @@
                 }
             }
 
-            // Hapus secara visual dari list modal
             const li = btnEl.closest('li');
             li.style.opacity = '0';
             setTimeout(() => {

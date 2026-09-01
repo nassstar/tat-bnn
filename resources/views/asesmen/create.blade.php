@@ -156,9 +156,10 @@
                         2. Identitas Profil Klien
                     </h3>
 
+                    <!-- GRID 1: IDENTITAS DASAR KLIEN -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
 
-                        <!-- FITUR UPLOAD FOTO -->
+                        <!-- UPLOAD FOTO -->
                         <div class="md:col-span-2 lg:col-span-3 mb-4 bg-slate-50 p-4 rounded-2xl border border-slate-200 shadow-sm">
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-3">Pas Foto Klien <span class="text-slate-400 font-normal lowercase">(Opsional)</span></label>
                             <div class="flex flex-col sm:flex-row items-center gap-5">
@@ -173,12 +174,13 @@
                             </div>
                         </div>
 
+                        <!-- NAMA LENGKAP -->
                         <div>
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Nama Lengkap <span class="text-rose-500">*</span></label>
                             <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap') }}" required class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
                         </div>
 
-                        <!-- BLOK INPUT NIK -->
+                        <!-- NIK KTP -->
                         <div>
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">NIK KTP <span class="text-rose-500">*</span></label>
                             <input type="text" name="nik" value="{{ old('nik') }}" required maxlength="16"
@@ -196,24 +198,7 @@
                             @enderror
                         </div>
 
-                        <div>
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">No. Handphone</label>
-                            <input type="text" name="no_hp" value="{{ old('no_hp') }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
-                        </div>
-                        <div>
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Tempat Lahir</label>
-                            <input type="text" name="tempat_lahir" value="{{ old('tempat_lahir') }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
-                        </div>
-                        <div>
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Tanggal Lahir</label>
-                            <input type="text" name="tgl_lahir" id="tgl_lahir" value="{{ old('tgl_lahir') }}" class="datepicker-id block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="Pilih Tanggal">
-                        </div>
-
-                        <!-- FITUR KOTAK USIA OTOMATIS -->
-                        <div>
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Usia <span class="text-blue-500 ml-1 lowercase font-normal">(Saat Didaftarkan)</span></label>
-                            <input type="text" name="usia" id="usia" value="{{ old('usia') }}" class="block w-full rounded-xl border-slate-200 shadow-sm sm:text-sm transition-all bg-blue-50 text-blue-800 font-bold pointer-events-none focus:ring-0" placeholder="0 Tahun" readonly>
-                        </div>
+                        <!-- JENIS KELAMIN -->
                         <div>
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Jenis Kelamin <span class="text-rose-500">*</span></label>
                             <select name="jenis_kelamin" required class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
@@ -221,10 +206,32 @@
                                 <option value="P" {{ old('jenis_kelamin') == 'P' ? 'selected' : '' }}>Perempuan (P)</option>
                             </select>
                         </div>
+
+                        <!-- TEMPAT LAHIR -->
+                        <div>
+                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Tempat Lahir</label>
+                            <input type="text" name="tempat_lahir" value="{{ old('tempat_lahir') }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
+                        </div>
+
+                        <!-- TANGGAL LAHIR -->
+                        <div>
+                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Tanggal Lahir</label>
+                            <input type="text" name="tgl_lahir" id="tgl_lahir" value="{{ old('tgl_lahir') }}" class="datepicker-id block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="Pilih Tanggal">
+                        </div>
+
+                        <!-- USIA OTOMATIS -->
+                        <div>
+                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Usia <span class="text-blue-500 ml-1 lowercase font-normal">(Saat Didaftarkan)</span></label>
+                            <input type="text" name="usia" id="usia" value="{{ old('usia') }}" class="block w-full rounded-xl border-slate-200 shadow-sm sm:text-sm transition-all bg-blue-50 text-blue-800 font-bold pointer-events-none focus:ring-0" placeholder="0 Tahun" readonly>
+                        </div>
+
+                        <!-- KEWARGANEGARAAN -->
                         <div>
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Kewarganegaraan</label>
                             <input type="text" name="kewarganegaraan" value="{{ old('kewarganegaraan', 'WNI') }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
                         </div>
+
+                        <!-- AGAMA -->
                         <div>
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Agama</label>
                             <select name="agama" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
@@ -238,37 +245,15 @@
                             </select>
                         </div>
 
-                        <!-- FITUR DROPDOWN PENDIDIKAN DENGAN MODAL KELOLA -->
-                        <div class="md:col-span-2 lg:col-span-1">
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Pendidikan</label>
-                            <div class="flex gap-2">
-                                <select name="pendidikan_input" id="selectPendidikan" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
-                                    <option value="">-- Pilih Pendidikan --</option>
-                                    @foreach($masterPendidikan ?? [] as $p)
-                                        @if(trim($p->nama_pendidikan) !== '')
-                                            <option value="{{ $p->nama_pendidikan }}" {{ old('pendidikan_input') == $p->nama_pendidikan ? 'selected' : '' }}>
-                                                {{ $p->nama_pendidikan }}
-                                            </option>
-                                        @endif
-                                    @endforeach
-                                </select>
-                                <button type="button" onclick="openModalTambahPendidikan()" class="shrink-0 px-3 py-2 bg-blue-100 text-blue-700 font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider rounded-xl hover:bg-blue-200 transition-colors shadow-sm">+ Tambah</button>
-                                <button type="button" onclick="openModalKelolaPendidikan()" class="shrink-0 px-3 py-2 bg-slate-100 text-slate-700 font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider rounded-xl hover:bg-slate-200 transition-colors shadow-sm">Kelola</button>
-                            </div>
-                        </div>
-
+                        <!-- PEKERJAAN -->
                         <div>
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Pekerjaan</label>
                             <input type="text" name="pekerjaan_input" value="{{ old('pekerjaan_input') }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
                         </div>
-                        <div>
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Penghasilan Rata-Rata</label>
-                            <input type="text" name="penghasilan_rata_rata" id="penghasilan_rupiah" value="{{ old('penghasilan_rata_rata') }}" placeholder="Misal: Rp 3.000.000" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
-                        </div>
                     </div>
 
                     <!-- ===================================== -->
-                    <!-- BLOK ALAMAT KTP & DOMISILI -->
+                    <!-- GRID 2: ALAMAT KTP & DOMISILI -->
                     <!-- ===================================== -->
                     <div class="col-span-1 sm:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6 pt-6 border-t border-slate-200">
 
@@ -490,139 +475,246 @@
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- ========================================== -->
-                <!-- SEKSI 3: PERKARA HUKUM & BARANG BUKTI -->
-                <!-- ========================================== -->
-                <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-full h-1.5 bg-amber-400"></div>
-                    <h3 class="text-sm font-extrabold text-slate-800 uppercase tracking-wider mb-6 border-b border-slate-100 pb-3 flex items-center gap-2 mt-1">
-                        <svg class="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path></svg>
-                        3. Perkara Hukum & Barang Bukti
-                    </h3>
+                    <!-- ===================================== -->
+                    <!-- GRID 3: PENDIDIKAN, PENGHASILAN & KONTAK -->
+                    <!-- ===================================== -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-6 pt-6 border-t border-slate-200">
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                        <!-- DROPDOWN PENDIDIKAN DENGAN MODAL KELOLA -->
+                        <div class="md:col-span-2 lg:col-span-1">
+                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Pendidikan</label>
+                            <div class="flex gap-2">
+                                <select name="pendidikan_input" id="selectPendidikan" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
+                                    <option value="">-- Pilih Pendidikan --</option>
+                                    @foreach($masterPendidikan ?? [] as $p)
+                                        @if(trim($p->nama_pendidikan) !== '')
+                                            <option value="{{ $p->nama_pendidikan }}" {{ old('pendidikan_input') == $p->nama_pendidikan ? 'selected' : '' }}>
+                                                {{ $p->nama_pendidikan }}
+                                            </option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                                <button type="button" onclick="openModalTambahPendidikan()" class="shrink-0 px-3 py-2 bg-blue-100 text-blue-700 font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider rounded-xl hover:bg-blue-200 transition-colors shadow-sm">+ Tambah</button>
+                                <button type="button" onclick="openModalKelolaPendidikan()" class="shrink-0 px-3 py-2 bg-slate-100 text-slate-700 font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider rounded-xl hover:bg-slate-200 transition-colors shadow-sm">Kelola</button>
+                            </div>
+                        </div>
+
+                        <!-- PENGHASILAN -->
                         <div>
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Jenis Narkotika</label>
-                            <select name="narkotika_id" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
-                                <option value="">-- Pilih Zat/Narkotika --</option>
-                                @foreach($masterNarkotika ?? [] as $n)
-                                    <option value="{{ $n->id }}" {{ old('narkotika_id') == $n->id ? 'selected' : '' }}>{{ $n->jenis_narkotika }}</option>
-                                @endforeach
-                            </select>
+                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Penghasilan Rata-Rata</label>
+                            <input type="text" name="penghasilan_rata_rata" id="penghasilan_rupiah" value="{{ old('penghasilan_rata_rata') }}" placeholder="Misal: Rp 3.000.000" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
                         </div>
+
+                        <!-- NO HANDPHONE -->
                         <div>
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Berat Barang Bukti (Gr)</label>
-                            <input type="number" step="0.01" name="berat_bb" value="{{ old('berat_bb') }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="Contoh: 2.50">
-                        </div>
-                        <div>
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Status Hukum</label>
-                            <input type="text" name="status_hukum" value="{{ old('status_hukum') }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="Cth: Tersangka">
-                        </div>
-                        <div class="md:col-span-2 lg:col-span-3">
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Deskripsi Barang Bukti</label>
-                            <textarea name="deskripsi_bb" rows="2" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">{{ old('deskripsi_bb') }}</textarea>
-                        </div>
-                        <div>
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Pasal Sangkaan</label>
-                            <input type="text" name="pasal_sangkaan" value="{{ old('pasal_sangkaan') }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
-                        </div>
-                        <div>
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Keterlibatan Jaringan</label>
-                            <input type="text" name="keterlibatan_jaringan" value="{{ old('keterlibatan_jaringan') }}" placeholder="Ya / Tidak" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
-                        </div>
-                        <div>
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Hasil Tes Urine</label>
-                            <input type="text" name="tes_urine" value="{{ old('tes_urine') }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="Cth: Positif Sabu">
-                        </div>
-                        <div>
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Cara Mendapatkan</label>
-                            <input type="text" name="cara_mendapatkan" value="{{ old('cara_mendapatkan') }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
-                        </div>
-                        <div class="md:col-span-2 text-sm">
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Dapat Dari Siapa</label>
-                            <input type="text" name="dapat_dari_siapa" value="{{ old('dapat_dari_siapa') }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
+                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">No. Handphone</label>
+                            <input type="text" name="no_hp" value="{{ old('no_hp') }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
                         </div>
                     </div>
                 </div>
 
                 <!-- ========================================== -->
-                <!-- SEKSI 4: HASIL TAT AWAL -->
+                <!-- SEKSI 3: DATA HUKUM, MEDIS & HASIL ASESMEN -->
+                <!-- ========================================== -->
+                <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden z-20">
+                    <div class="absolute top-0 left-0 w-full h-1.5 bg-amber-500"></div>
+                    <h3 class="text-sm font-extrabold text-slate-800 uppercase tracking-wider mb-6 border-b border-slate-100 pb-3 flex items-center gap-2 mt-1">
+                        <svg class="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path></svg>
+                        3. Perkara Hukum, Medis & Rekomendasi TAT
+                    </h3>
+
+                    <!-- BLOK A: HUKUM -->
+                    <div class="mb-8">
+                        <h4 class="font-extrabold text-[12px] text-amber-700 uppercase tracking-wider mb-4 flex items-center gap-2 bg-amber-50/50 p-3 rounded-xl border border-amber-100">
+                            <span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded">A</span> Bidang Hukum & Barang Bukti
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                            <div>
+                                <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Status Hukum</label>
+                                <input type="text" name="status_hukum" value="{{ old('status_hukum') }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="Cth: Tersangka">
+                            </div>
+                            <div>
+                                <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Keterlibatan Jaringan</label>
+                                <input type="text" name="keterlibatan_jaringan" value="{{ old('keterlibatan_jaringan') }}" placeholder="Ya / Tidak" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Pasal Sangkaan</label>
+                                <input type="text" name="pasal_sangkaan" value="{{ old('pasal_sangkaan') }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
+                            </div>
+
+                            <!-- Barang Bukti Group -->
+                            <div class="md:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-5 p-4 border border-amber-100 bg-amber-50/30 rounded-xl mt-2">
+                                <div class="md:col-span-3 text-[11px] font-bold text-amber-600 uppercase tracking-wider mb-[-10px]">Data Barang Bukti</div>
+                                <div>
+                                    <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Cara Mendapatkan</label>
+                                    <input type="text" name="cara_mendapatkan" value="{{ old('cara_mendapatkan') }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100 sm:text-sm transition-all bg-white focus:bg-white">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Dapat Dari Siapa</label>
+                                    <input type="text" name="dapat_dari_siapa" value="{{ old('dapat_dari_siapa') }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100 sm:text-sm transition-all bg-white focus:bg-white">
+                                </div>
+                                <div class="md:col-span-3">
+                                    <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Deskripsi Barang Bukti</label>
+                                    <textarea name="deskripsi_bb" rows="1" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100 sm:text-sm transition-all bg-white focus:bg-white">{{ old('deskripsi_bb') }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BLOK B: MEDIS -->
+                    <div class="mb-8">
+                        <h4 class="font-extrabold text-[12px] text-blue-700 uppercase tracking-wider mb-4 flex items-center gap-2 bg-blue-50/50 p-3 rounded-xl border border-blue-100">
+                            <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded">B</span> Bidang Medis
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                            <div>
+                                <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Kesehatan (Fisik)</label>
+                                <textarea name="kesehatan_fisik" rows="2" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">{{ old('kesehatan_fisik') }}</textarea>
+                            </div>
+                            <div>
+                                <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Psikologi</label>
+                                <textarea name="psikologi" rows="2" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">{{ old('psikologi') }}</textarea>
+                            </div>
+                            <div>
+                                <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Hasil Tes Urine</label>
+                                <input type="text" name="tes_urine" value="{{ old('tes_urine') }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="Cth: Positif Sabu">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BLOK C: KONDISI SOSIAL & POLA -->
+                    <div class="mb-8">
+                        <h4 class="font-extrabold text-[12px] text-purple-700 uppercase tracking-wider mb-4 flex items-center gap-2 bg-purple-50/50 p-3 rounded-xl border border-purple-100">
+                            <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded">C</span> Kondisi Sosio-Psikologis & Pola Pemakaian
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                            <div>
+                                <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Alasan Penggunaan</label>
+                                <textarea name="alasan_penggunaan" rows="2" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">{{ old('alasan_penggunaan') }}</textarea>
+                            </div>
+                            <div>
+                                <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Kondisi Keluarga</label>
+                                <textarea name="kondisi_keluarga" rows="2" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">{{ old('kondisi_keluarga') }}</textarea>
+                            </div>
+                            <div>
+                                <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Tingkat Ketergantungan</label>
+                                <input type="text" name="tingkat_ketergantungan" value="{{ old('tingkat_ketergantungan') }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Pola Pemakaian</label>
+                                <input type="text" name="pola_pemakaian" value="{{ old('pola_pemakaian') }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Kondisi Lingkungan</label>
+                                <textarea name="kondisi_lingkungan" rows="2" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">{{ old('kondisi_lingkungan') }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BLOK D: KESIMPULAN REKOMENDASI -->
+                    <div>
+                        <h4 class="font-extrabold text-[12px] text-emerald-700 uppercase tracking-wider mb-4 flex items-center gap-2 bg-emerald-50/50 p-3 rounded-xl border border-emerald-100">
+                            <span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded">D</span> Keputusan Rekomendasi & Saran
+                        </h4>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Dropdown Rekomendasi -->
+                            <div class="md:col-span-2">
+                                <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-2">Rekomendasi TAT <span class="text-rose-500">*</span></label>
+
+                                <div class="flex gap-4 p-3 bg-slate-50 border border-slate-200 rounded-xl mb-3">
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="kategori_rekomendasi" value="Rawat Jalan" class="text-indigo-600 focus:ring-indigo-500 w-4 h-4" onchange="toggleRekomendasi()">
+                                        <span class="ml-2 text-sm font-bold text-slate-700">Rawat Jalan</span>
+                                    </label>
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="kategori_rekomendasi" value="Rawat Inap" class="text-indigo-600 focus:ring-indigo-500 w-4 h-4" onchange="toggleRekomendasi()">
+                                        <span class="ml-2 text-sm font-bold text-slate-700">Rawat Inap</span>
+                                    </label>
+                                </div>
+
+                                <div class="flex flex-col sm:flex-row gap-2">
+                                    <select id="selectTempatRekomendasi" disabled class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 sm:text-sm transition-all bg-slate-100 text-slate-400 cursor-not-allowed" onchange="updateRekomendasiPreview()">
+                                        <option value="">-- Pilih Tempat / Instansi --</option>
+                                        <option value="Bawaan Sistem" data-kategori="Rawat Jalan" style="display:none;" disabled>Hanya Rawat Jalan (Tanpa Instansi)</option>
+                                        <option value="Bawaan Sistem" data-kategori="Rawat Inap" style="display:none;" disabled>Hanya Rawat Inap (Tanpa Instansi)</option>
+
+                                        @foreach($masterRekomendasi ?? [] as $r)
+                                            @if(trim($r->nama_rekomendasi) !== '')
+                                                @php
+                                                    $kategoriItem = 'Semua';
+                                                    $namaItem = $r->nama_rekomendasi;
+
+                                                    if (str_starts_with($namaItem, 'Rawat Jalan - ')) {
+                                                        $kategoriItem = 'Rawat Jalan';
+                                                        $namaItem = trim(substr($namaItem, 14));
+                                                    } elseif (str_starts_with($namaItem, 'Rawat Inap - ')) {
+                                                        $kategoriItem = 'Rawat Inap';
+                                                        $namaItem = trim(substr($namaItem, 13));
+                                                    }
+                                                @endphp
+                                                <option value="{{ $namaItem }}" data-kategori="{{ $kategoriItem }}" data-full="{{ $r->nama_rekomendasi }}" style="display:none;" disabled>
+                                                    {{ $namaItem }}
+                                                </option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                    <div class="flex gap-2">
+                                        <button type="button" id="btnTambahRekomendasi" disabled onclick="openModalTambahRekomendasi()" class="flex-1 sm:flex-none px-4 py-2 bg-slate-200 text-slate-400 font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider rounded-xl transition-colors shadow-sm cursor-not-allowed">+ Tambah</button>
+                                        <button type="button" id="btnKelolaRekomendasi" disabled onclick="openModalKelolaRekomendasi()" class="flex-1 sm:flex-none px-4 py-2 bg-slate-100 text-slate-600 font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider rounded-xl transition-colors shadow-sm cursor-not-allowed">Kelola</button>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" name="rekomendasi_input" id="hidden_rekomendasi_input" value="{{ old('rekomendasi_input') }}">
+                                <p class="text-[11px] text-slate-500 italic mt-2" id="teks_preview_rekomendasi">Hasil akhir Rekomendasi: <span class="font-bold text-slate-400">Belum dipilih</span></p>
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Keterangan Tambahan TAT</label>
+                                <input type="text" name="keterangan_tambahan" value="{{ old('keterangan_tambahan') }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Saran Sidang Case Conference</label>
+                                <textarea name="saran_case_conference" rows="3" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">{{ old('saran_case_conference') }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========================================== -->
+                <!-- SEKSI 4: HASIL ASESMEN FINAL & PELAKSANAAN -->
                 <!-- ========================================== -->
                 <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden z-20">
                     <div class="absolute top-0 left-0 w-full h-1.5 bg-slate-400"></div>
                     <h3 class="text-sm font-extrabold text-slate-800 uppercase tracking-wider mb-6 border-b border-slate-100 pb-3 flex items-center gap-2 mt-1">
                         <svg class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
-                        4. Hasil Asesmen Awal (Rekap Mentah TAT)
+                        4. Hasil Asesmen Final & Pelaksanaan
                     </h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Jenis Narkotika Otomatis (Display Only) -->
+                        <div>
+                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Jenis Narkotika</label>
+                            <input type="text" id="display_jenis_narkotika" class="block w-full rounded-xl border-slate-200 shadow-sm sm:text-sm bg-slate-100 text-slate-500 font-bold pointer-events-none focus:ring-0" placeholder="Otomatis dari pilihan di atas" readonly>
+                        </div>
+
+                        <!-- Berat BB Otomatis (Display Only) -->
+                        <div>
+                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Berat Barang Bukti (Gr)</label>
+                            <input type="text" id="display_berat_bb" class="block w-full rounded-xl border-slate-200 shadow-sm sm:text-sm bg-slate-100 text-slate-500 font-bold pointer-events-none focus:ring-0" placeholder="Otomatis dari input di atas" readonly>
+                        </div>
+
+                        <!-- Hasil Asesmen Hukum -->
                         <div>
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Hasil Asesmen Hukum</label>
                             <textarea name="hasil_asesmen_hukum" rows="4" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-slate-500 focus:ring-2 focus:ring-slate-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="Ketik kronologi mentah asesmen hukum...">{{ old('hasil_asesmen_hukum') }}</textarea>
                         </div>
+
+                        <!-- Hasil Asesmen Medis -->
                         <div>
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Hasil Asesmen Medis</label>
                             <textarea name="hasil_asesmen_medis" rows="4" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-slate-500 focus:ring-2 focus:ring-slate-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="Ketik kronologi mentah asesmen medis...">{{ old('hasil_asesmen_medis') }}</textarea>
-                        </div>
-
-                        <!-- FITUR BARU: DROPDOWN REKOMENDASI TAT (OPSI RAWAT JALAN & INAP CANGGIH) -->
-                        <div class="md:col-span-2">
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-2">Rekomendasi TAT <span class="text-rose-500">*</span></label>
-
-                            <div class="flex gap-4 p-3 bg-slate-50 border border-slate-200 rounded-xl mb-3">
-                                <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="kategori_rekomendasi" value="Rawat Jalan" class="text-indigo-600 focus:ring-indigo-500 w-4 h-4" onchange="toggleRekomendasi()">
-                                    <span class="ml-2 text-sm font-bold text-slate-700">Rawat Jalan</span>
-                                </label>
-                                <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="kategori_rekomendasi" value="Rawat Inap" class="text-indigo-600 focus:ring-indigo-500 w-4 h-4" onchange="toggleRekomendasi()">
-                                    <span class="ml-2 text-sm font-bold text-slate-700">Rawat Inap</span>
-                                </label>
-                            </div>
-
-                            <div class="flex flex-col sm:flex-row gap-2">
-                                <select id="selectTempatRekomendasi" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" onchange="updateRekomendasiPreview()">
-                                    <option value="">-- Pilih Tempat / Instansi --</option>
-
-                                    <!-- DIUBAH MENJADI STYLE="DISPLAY:NONE" AGAR TIDAK KONFLIK DENGAN TAILWIND -->
-                                    <option value="Bawaan Sistem" data-kategori="Rawat Jalan" style="display:none;" disabled>Hanya Rawat Jalan (Tanpa Instansi)</option>
-                                    <option value="Bawaan Sistem" data-kategori="Rawat Inap" style="display:none;" disabled>Hanya Rawat Inap (Tanpa Instansi)</option>
-
-                                    @foreach($masterRekomendasi ?? [] as $r)
-                                        @php
-                                            $namaAsli = $r->tempat_rehabilitasi ?? $r->nama_rekomendasi ?? '';
-                                        @endphp
-                                        @if(trim($namaAsli) !== '')
-                                            @php
-                                                $kategoriItem = 'Semua';
-                                                $namaTampil = trim($namaAsli);
-
-                                                if (str_starts_with($namaTampil, 'Rawat Jalan')) {
-                                                    $kategoriItem = 'Rawat Jalan';
-                                                    $namaTampil = trim(str_replace('Rawat Jalan', '', $namaTampil));
-                                                    $namaTampil = ltrim($namaTampil, ' -');
-                                                } elseif (str_starts_with($namaTampil, 'Rawat Inap')) {
-                                                    $kategoriItem = 'Rawat Inap';
-                                                    $namaTampil = trim(str_replace('Rawat Inap', '', $namaTampil));
-                                                    $namaTampil = ltrim($namaTampil, ' -');
-                                                }
-                                            @endphp
-                                            <option value="{{ $namaTampil }}" data-kategori="{{ $kategoriItem }}" data-full="{{ $namaAsli }}" style="display:none;" disabled>
-                                                {{ $namaTampil }}
-                                            </option>
-                                        @endif
-                                    @endforeach
-                                </select>
-                                <div class="flex gap-2">
-                                    <button type="button" onclick="openModalTambahRekomendasi()" class="shrink-0 px-3 py-2 bg-indigo-100 text-indigo-700 font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider rounded-xl hover:bg-indigo-200 transition-colors shadow-sm">+ Tambah</button>
-                                    <button type="button" onclick="openModalKelolaRekomendasi()" class="shrink-0 px-3 py-2 bg-slate-100 text-slate-700 font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider rounded-xl hover:bg-slate-200 transition-colors shadow-sm">Kelola</button>
-                                </div>
-                            </div>
-
-                            <input type="hidden" name="rekomendasi_input" id="hidden_rekomendasi_input" value="{{ old('rekomendasi_input') }}">
-                            <p class="text-[11px] text-slate-500 italic mt-2" id="teks_preview_rekomendasi">Hasil akhir Rekomendasi: <span class="font-bold text-slate-400">Belum dipilih</span></p>
                         </div>
 
                         <div>
@@ -631,72 +723,6 @@
                                 <option value="TIDAK" {{ old('pelaksanaan') == 'TIDAK' ? 'selected' : '' }}>Belum Dilaksanakan (TIDAK)</option>
                                 <option value="YA" {{ old('pelaksanaan') == 'YA' ? 'selected' : '' }}>Sudah Dilaksanakan (YA)</option>
                             </select>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Keterangan Tambahan TAT</label>
-                            <input type="text" name="keterangan_tambahan" value="{{ old('keterangan_tambahan') }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-slate-500 focus:ring-2 focus:ring-slate-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ========================================== -->
-                <!-- SEKSI 5: ANALISIS CASE CONFERENCE (OPSIONAL) -->
-                <!-- ========================================== -->
-                <div class="bg-gradient-to-br from-indigo-50/50 to-purple-50/50 p-6 md:p-8 rounded-2xl border border-indigo-100 shadow-sm relative overflow-hidden">
-                    <h3 class="text-sm font-extrabold text-indigo-900 uppercase tracking-wider mb-2 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                        5. Analisis Sidang Case Conference
-                    </h3>
-                    <p class="text-[13px] font-medium text-indigo-700 mb-6 border-b border-indigo-200/60 pb-4">
-                        <span class="bg-white px-2 py-0.5 rounded border border-indigo-100 text-xs shadow-sm mr-1">💡 Opsional</span>
-                        Bisa dikosongkan saat pendaftaran awal. Anda dapat memperbarui bagian ini nanti setelah sidang selesai.
-                    </p>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div>
-                            <label class="block text-[12px] font-bold text-indigo-900 uppercase tracking-wide mb-1">Aspek Hukum</label>
-                            <textarea name="aspek_hukum" rows="3" class="block w-full rounded-xl border-white shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 sm:text-sm transition-all bg-white/80 focus:bg-white">{{ old('aspek_hukum') }}</textarea>
-                        </div>
-                        <div>
-                            <label class="block text-[12px] font-bold text-indigo-900 uppercase tracking-wide mb-1">Aspek Medis</label>
-                            <textarea name="aspek_medis" rows="3" class="block w-full rounded-xl border-white shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 sm:text-sm transition-all bg-white/80 focus:bg-white">{{ old('aspek_medis') }}</textarea>
-                        </div>
-                        <div>
-                            <label class="block text-[12px] font-bold text-indigo-900 uppercase tracking-wide mb-1">Kesehatan</label>
-                            <textarea name="kesehatan_fisik" rows="2" class="block w-full rounded-xl border-white shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 sm:text-sm transition-all bg-white/80 focus:bg-white">{{ old('kesehatan_fisik') }}</textarea>
-                        </div>
-                        <div>
-                            <label class="block text-[12px] font-bold text-indigo-900 uppercase tracking-wide mb-1">Psikologi</label>
-                            <textarea name="psikologi" rows="2" class="block w-full rounded-xl border-white shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 sm:text-sm transition-all bg-white/80 focus:bg-white">{{ old('psikologi') }}</textarea>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:col-span-2 mt-2 pt-4 border-t border-indigo-100/50">
-                             <div>
-                                <label class="block text-[12px] font-bold text-indigo-900 uppercase tracking-wide mb-1">Alasan Penggunaan</label>
-                                <textarea name="alasan_penggunaan" rows="2" class="block w-full rounded-xl border-white shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 sm:text-sm transition-all bg-white/80 focus:bg-white">{{ old('alasan_penggunaan') }}</textarea>
-                            </div>
-                            <div>
-                                <label class="block text-[12px] font-bold text-indigo-900 uppercase tracking-wide mb-1">Kondisi Keluarga</label>
-                                <textarea name="kondisi_keluarga" rows="2" class="block w-full rounded-xl border-white shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 sm:text-sm transition-all bg-white/80 focus:bg-white">{{ old('kondisi_keluarga') }}</textarea>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-[12px] font-bold text-indigo-900 uppercase tracking-wide mb-1">Tingkat Ketergantungan</label>
-                            <input type="text" name="tingkat_ketergantungan" value="{{ old('tingkat_ketergantungan') }}" class="block w-full rounded-xl border-white shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 sm:text-sm transition-all bg-white/80 focus:bg-white">
-                        </div>
-                        <div>
-                            <label class="block text-[12px] font-bold text-indigo-900 uppercase tracking-wide mb-1">Pola Pemakaian</label>
-                            <input type="text" name="pola_pemakaian" value="{{ old('pola_pemakaian') }}" class="block w-full rounded-xl border-white shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 sm:text-sm transition-all bg-white/80 focus:bg-white">
-                        </div>
-
-                        <div class="md:col-span-2">
-                            <label class="block text-[12px] font-bold text-indigo-900 uppercase tracking-wide mb-1">Kondisi Lingkungan</label>
-                            <textarea name="kondisi_lingkungan" rows="2" class="block w-full rounded-xl border-white shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 sm:text-sm transition-all bg-white/80 focus:bg-white">{{ old('kondisi_lingkungan') }}</textarea>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-[12px] font-bold text-indigo-900 uppercase tracking-wide mb-1">Saran Sidang Case Conference</label>
-                            <textarea name="saran_case_conference" rows="4" class="block w-full rounded-xl border-white shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 sm:text-sm transition-all bg-white/80 focus:bg-white">{{ old('saran_case_conference') }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -862,7 +888,18 @@
 
     <!-- Script JavaScript Terintegrasi -->
     <script>
-        // Modal Handlers
+        // Sinkronisasi Display Narkotika & BB dari Input Form Atas
+        document.querySelector('select[name="narkotika_id"]').addEventListener('change', function() {
+            const displayEl = document.getElementById('display_jenis_narkotika');
+            displayEl.value = this.options[this.selectedIndex].text;
+        });
+
+        document.querySelector('input[name="berat_bb"]').addEventListener('input', function() {
+            const displayEl = document.getElementById('display_berat_bb');
+            displayEl.value = this.value ? this.value + ' Gr' : '';
+        });
+
+        // Modal Handlers Pendidikan
         function openModalTambahPendidikan() {
             const modal = document.getElementById('modalTambahPendidikan');
             modal.classList.remove('hidden');
@@ -1463,92 +1500,24 @@
             }
         }
 
-        // ==============================================
-        // FUNGSI REKOMENDASI (DENGAN TOMBOL SELALU AKTIF)
-        // ==============================================
-        function openModalTambahRekomendasi() {
-            const radio = document.querySelector('input[name="kategori_rekomendasi"]:checked');
-            if (!radio) {
-                alert('Pilih Kategori Perawatan (Radio Button Rawat Jalan / Inap) terlebih dahulu di form utama!');
-                return;
-            }
-            document.getElementById('tambahKategoriDisplay').textContent = radio.value;
-            const modal = document.getElementById('modalTambahRekomendasi');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                modal.children[0].classList.remove('scale-95');
-            }, 10);
-        }
-
-        function closeModalTambahRekomendasi() {
-            const modal = document.getElementById('modalTambahRekomendasi');
-            modal.classList.add('opacity-0');
-            modal.children[0].classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }, 300);
-        }
-
-        function openModalKelolaRekomendasi() {
-            const radio = document.querySelector('input[name="kategori_rekomendasi"]:checked');
-            if (!radio) {
-                alert('Pilih Kategori Perawatan (Radio Button Rawat Jalan / Inap) terlebih dahulu di form utama!');
-                return;
-            }
-            const selectedCat = radio.value;
-            const modalTitle = document.getElementById('modalKelolaRekomendasiTitle');
-            if(modalTitle) modalTitle.innerText = 'Kelola Opsi (' + selectedCat + ')';
-
-            const items = document.querySelectorAll('#listKelolaRekomendasi .rekomendasi-item');
-            let visibleCount = 0;
-            items.forEach(item => {
-                if (item.getAttribute('data-kategori') === selectedCat || item.getAttribute('data-kategori') === 'Semua') {
-                    item.classList.remove('hidden');
-                    item.classList.add('flex');
-                    visibleCount++;
-                } else {
-                    item.classList.remove('flex');
-                    item.classList.add('hidden');
-                }
-            });
-
-            const emptyMsg = document.getElementById('emptyMsgRekomendasi');
-            if (emptyMsg) {
-                if (visibleCount === 0) emptyMsg.classList.remove('hidden');
-                else emptyMsg.classList.add('hidden');
-            }
-
-            const modal = document.getElementById('modalKelolaRekomendasi');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                modal.children[0].classList.remove('scale-95');
-            }, 10);
-        }
-
-        function closeModalKelolaRekomendasi(force = false) {
-            const modal = document.getElementById('modalKelolaRekomendasi');
-            modal.classList.add('opacity-0');
-            modal.children[0].classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }, 300);
-        }
-
+        // FUNGSI REKOMENDASI
         function toggleRekomendasi() {
             const radio = document.querySelector('input[name="kategori_rekomendasi"]:checked');
             const select = document.getElementById('selectTempatRekomendasi');
+            const btnTambah = document.getElementById('btnTambahRekomendasi');
+            const btnKelola = document.getElementById('btnKelolaRekomendasi');
+
+            select.disabled = false;
+            select.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+            select.classList.add('bg-slate-50', 'text-slate-700');
+            btnTambah.disabled = false;
+            btnTambah.classList.remove('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
+            btnTambah.classList.add('bg-indigo-100', 'text-indigo-700', 'hover:bg-indigo-200');
+            btnKelola.disabled = false;
+            btnKelola.classList.remove('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
+            btnKelola.classList.add('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200');
 
             if (radio) {
-                select.disabled = false;
-                select.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
-                select.classList.add('bg-slate-50', 'text-slate-700');
-
                 const selectedCat = radio.value;
                 const options = select.querySelectorAll('option');
                 options.forEach(opt => {
@@ -1569,28 +1538,8 @@
                 let currentVal = select.value;
                 let isValid = Array.from(options).some(opt => opt.value === currentVal && opt.style.display !== 'none');
                 if(!isValid) select.value = '';
-            } else {
-                select.disabled = true;
-                select.classList.remove('bg-slate-50', 'text-slate-700');
-                select.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
             }
             updateRekomendasiPreview();
-        }
-
-        function updateRekomendasiPreview() {
-            const radio = document.querySelector('input[name="kategori_rekomendasi"]:checked');
-            const select = document.getElementById('selectTempatRekomendasi');
-            const hiddenInput = document.getElementById('hidden_rekomendasi_input');
-            const preview = document.getElementById('teks_preview_rekomendasi');
-            if (radio) {
-                let finalValue = radio.value;
-                if (select.value && select.value !== 'Bawaan Sistem') { finalValue += ' - ' + select.value; }
-                hiddenInput.value = finalValue;
-                preview.innerHTML = `Hasil akhir Rekomendasi: <span class="font-bold text-indigo-600">${finalValue}</span>`;
-            } else {
-                hiddenInput.value = '';
-                preview.innerHTML = `Hasil akhir Rekomendasi: <span class="font-bold text-slate-400">Belum dipilih</span>`;
-            }
         }
 
         function tambahRekomendasiJS(event) {

@@ -7,6 +7,7 @@
             <!-- ========================================== -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div class="flex items-center gap-4">
+                    <!-- Tombol Kembali ke Detail -->
                     <a href="{{ route('asesmen.show', $asesmen->id) }}" class="p-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-emerald-600 transition-colors shadow-sm">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     </a>
@@ -43,7 +44,7 @@
                         </div>
                         <div>
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Tanggal Rapat (BA)</label>
-                            <input type="date" name="tgl_ba" value="{{ old('tgl_ba', $asesmen->tgl_ba) }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
+                            <input type="text" name="tgl_ba" value="{{ old('tgl_ba', $asesmen->tgl_ba ? \Carbon\Carbon::parse($asesmen->tgl_ba)->format('Y-m-d') : '') }}" class="datepicker-id block w-full rounded-xl border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="Pilih Tanggal">
                         </div>
                         <div>
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Nama Ketua TAT</label>
@@ -61,7 +62,7 @@
                                 </div>
                                 <div class="sm:w-1/3">
                                     <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Tanggal SK Tim</label>
-                                    <input type="date" name="tgl_kep_tim" value="{{ old('tgl_kep_tim', $asesmen->tgl_kep_tim) }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
+                                    <input type="text" name="tgl_kep_tim" value="{{ old('tgl_kep_tim', $asesmen->tgl_kep_tim ? \Carbon\Carbon::parse($asesmen->tgl_kep_tim)->format('Y-m-d') : '') }}" class="datepicker-id block w-full rounded-xl border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="Pilih Tanggal">
                                 </div>
                             </div>
                         </div>
@@ -195,7 +196,7 @@
                             </div>
                             <div>
                                 <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Tanggal SK Narkoba</label>
-                                <input type="date" name="alat_bukti_tgl_sk" value="{{ old('alat_bukti_tgl_sk', $asesmen->alat_bukti_tgl_sk) }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 sm:text-sm transition-all">
+                                <input type="text" name="alat_bukti_tgl_sk" value="{{ old('alat_bukti_tgl_sk', $asesmen->alat_bukti_tgl_sk ? \Carbon\Carbon::parse($asesmen->alat_bukti_tgl_sk)->format('Y-m-d') : '') }}" class="datepicker-id block w-full rounded-xl border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="Pilih Tanggal">
                             </div>
                             <div>
                                 <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Nama Dokter Pemeriksa</label>
@@ -261,7 +262,7 @@
                                 <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Diagnosis Medis Final</label>
                                 <div class="flex gap-2">
                                     <select id="select_diagnosis" name="diagnosis_medis" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 sm:text-sm bg-white font-bold text-indigo-700 transition-all">
-                                        <option value="{{ $asesmen->diagnosis_medis ?? '' }}">{{ $asesmen->diagnosis_medis ?? '-- Pilih Diagnosis --' }}</option>
+                                        <!-- Dirender oleh JS agar tersinkronisasi master data -->
                                     </select>
                                     <button type="button" onclick="bukaModalOpsi('diagnosis')" class="px-4 py-2 bg-indigo-100 text-indigo-700 text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-indigo-200 whitespace-nowrap transition shadow-sm">+ Tambah</button>
                                     <button type="button" onclick="bukaKelolaOpsi('diagnosis')" class="px-4 py-2 bg-slate-100 text-slate-600 text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-slate-200 whitespace-nowrap transition shadow-sm">Kelola</button>
@@ -270,22 +271,42 @@
                         </div>
                     </div>
 
-                    <!-- Sub C: Rekomendasi -->
-                    <div class="bg-gradient-to-r from-emerald-50 to-teal-50 p-5 rounded-xl border border-emerald-100">
+                    <!-- Sub C: Rekomendasi (TERKUNCI - BERSUMBER DARI FORM REGISTRASI) -->
+                    <div class="bg-gradient-to-r from-emerald-50 to-teal-50 p-5 rounded-xl border border-emerald-100 mb-8">
                         <h4 class="font-extrabold text-[12px] text-emerald-800 uppercase tracking-wider mb-4 flex items-center gap-2">
                             <span class="bg-emerald-200 text-emerald-800 px-2 py-0.5 rounded">C</span> Keputusan Rekomendasi & Penempatan
                         </h4>
+
+                        @php
+                            // Logika Tarik Data & Pembersihan Prefix (Sinkronisasi dengan Form Registrasi)
+                            $rawTempat = old('rekomendasi_tempat_rehab', $asesmen->rekomendasi_tempat_rehab ?? $asesmen->rekomendasi->tempat_rehabilitasi ?? $asesmen->rekomendasi_input ?? '');
+                            $tempatBersih = $rawTempat;
+
+                            if (str_starts_with($rawTempat, 'Rawat Jalan')) {
+                                $tempatBersih = trim(str_replace('Rawat Jalan', '', $rawTempat));
+                                $tempatBersih = ltrim($tempatBersih, ' -');
+                            } elseif (str_starts_with($rawTempat, 'Rawat Inap')) {
+                                $tempatBersih = trim(str_replace('Rawat Inap', '', $rawTempat));
+                                $tempatBersih = ltrim($tempatBersih, ' -');
+                            }
+
+                            if (empty(trim($tempatBersih))) {
+                                $tempatBersih = '';
+                            }
+                        @endphp
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div class="md:col-span-2">
                                 <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Tempat Rehabilitasi (Sesuai SK)</label>
-                                <div class="flex gap-2">
-                                    <select id="select_tempat_rehab" name="rekomendasi_tempat_rehab" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 sm:text-sm bg-white font-bold text-emerald-700 transition-all">
-                                        <option value="{{ $asesmen->rekomendasi_tempat_rehab ?? '' }}">{{ $asesmen->rekomendasi_tempat_rehab ?? '-- Pilih Tempat Rehab --' }}</option>
-                                        <!-- Options by JS -->
-                                    </select>
-                                    <button type="button" onclick="bukaModalOpsi('tempat_rehab')" class="px-4 py-2 bg-emerald-100 text-emerald-700 text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-emerald-200 whitespace-nowrap transition shadow-sm">+ Tambah</button>
-                                    <button type="button" onclick="bukaKelolaOpsi('tempat_rehab')" class="px-4 py-2 bg-slate-100 text-slate-600 text-[11px] font-bold uppercase tracking-wider rounded-xl hover:bg-slate-200 whitespace-nowrap transition shadow-sm">Kelola</button>
+                                <div class="relative">
+                                    <input type="text" value="{{ $tempatBersih ?: 'Belum diset (Silakan edit di Data Klien)' }}" readonly class="block w-full rounded-xl border-emerald-200 shadow-sm sm:text-sm bg-emerald-50/50 cursor-not-allowed text-emerald-800 font-extrabold pr-10 pointer-events-none">
+                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-emerald-500">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                    </div>
                                 </div>
+                                <!-- Input tersembunyi ini yang akan dikirim ke controller -->
+                                <input type="hidden" name="rekomendasi_tempat_rehab" value="{{ $rawTempat }}">
+                                <p class="text-[10px] text-slate-500 mt-1.5 italic">Terkunci. Data ini otomatis ditarik dari form pendaftaran awal (Rekomendasi TAT).</p>
                             </div>
 
                             <!-- DURASI REHABILITASI -->
@@ -332,22 +353,10 @@
                 <!-- ========================================== -->
                 <!-- TOMBOL SUBMIT -->
                 <!-- ========================================== -->
-                <div class="flex flex-col sm:flex-row justify-end gap-3 pt-6 pb-10">
-                    <a href="{{ route('asesmen.show', $asesmen->id) }}" class="inline-flex justify-center items-center px-6 py-3 bg-white border border-slate-300 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-all shadow-sm focus:ring-2 focus:ring-slate-200">
-                        Batal
-                    </a>
-
-                    <!-- Tombol 1: Simpan Saja -->
-                    <button type="submit" name="action" value="save_only" onclick="syncHiddenInputs()" class="inline-flex justify-center items-center px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 hover:-translate-y-0.5 transition-all shadow-lg shadow-blue-200 focus:ring-4 focus:ring-blue-100">
-                        <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
-                        Simpan Perubahan
-                    </button>
-
-                    <!-- Tombol 2: Simpan & Unduh -->
-                    <button type="submit" name="action" value="generate" onclick="syncHiddenInputs()" class="inline-flex justify-center items-center px-6 py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 hover:-translate-y-0.5 transition-all shadow-lg shadow-emerald-200 focus:ring-4 focus:ring-emerald-100">
-                        <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        Simpan & Unduh Berita Acara
-                    </button>
+                <div class="flex justify-end gap-3 pt-4 bg-slate-50 p-4 border border-slate-200 rounded-lg">
+                    <a href="{{ route('asesmen.show', $asesmen->id) }}" class="inline-flex items-center justify-center px-6 py-3 bg-white border border-slate-300 rounded-lg font-semibold text-slate-700 hover:bg-slate-50 transition shadow-sm">Batal</a>
+                    <button type="submit" name="action" value="save_only" onclick="syncHiddenInputs()" class="inline-flex items-center justify-center px-6 py-3 bg-blue-600 border border-transparent rounded-lg font-semibold text-white hover:bg-blue-700 focus:outline-none transition shadow-sm">Simpan Perubahan</button>
+                    <button type="submit" name="action" value="generate" onclick="syncHiddenInputs()" style="background-color: #10b981;" class="inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-lg font-semibold text-white hover:opacity-90 focus:outline-none transition shadow-sm">Simpan & Unduh Berita Acara</button>
                 </div>
             </form>
         </div>
@@ -391,7 +400,7 @@
         </div>
     </div>
 
-    <!-- MODAL OPSI (ZAT & TEMPAT REHAB) -->
+    <!-- MODAL OPSI (ZAT & DIAGNOSIS) -->
     <div id="modalTambahOpsi" class="fixed inset-0 z-[70] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 sm:p-8">
             <h3 class="text-lg font-extrabold text-slate-900 mb-5 border-b border-slate-100 pb-3" id="modalOpsiTitle">Tambah Data Baru</h3>
@@ -502,11 +511,12 @@
             }
         }
 
-        // === 3. FITUR ZAT & TEMPAT REHAB DINAMIS ===
+        // === 3. FITUR ZAT & DIAGNOSIS DINAMIS ===
         let masterZat = @json($masterZat);
-        let masterTempatRehab = @json($masterTempatRehab);
         let masterDiagnosis = @json($masterDiagnosis);
         let prevZatString = "{{ old('alat_bukti_hasil', $asesmen->alat_bukti_hasil) }}";
+
+        let defaultDiagnosis = {!! json_encode($asesmen->diagnosis_medis ?? '') !!};
 
         function renderOpsiData() {
             // Render Zat Checkbox
@@ -523,21 +533,22 @@
                 `;
             });
 
-            // Render Tempat Rehab
-            let selTempat = document.getElementById('select_tempat_rehab');
-            let currentTempat = selTempat.value;
-            selTempat.innerHTML = `<option value="${currentTempat}">${currentTempat || '-- Pilih Tempat Rehab --'}</option>`;
-            masterTempatRehab.forEach(t => {
-                if(t.nilai !== currentTempat) selTempat.innerHTML += `<option value="${t.nilai}">${t.nilai}</option>`;
+            // Render Diagnosis Tersinkronisasi
+            let selDiag = document.getElementById('select_diagnosis');
+            let currentDiag = selDiag.value || defaultDiagnosis;
+
+            selDiag.innerHTML = `<option value="">-- Pilih Diagnosis --</option>`;
+
+            let isDiagInMaster = false;
+            masterDiagnosis.forEach(d => {
+                let isSelected = (d.nilai === currentDiag) ? 'selected' : '';
+                if(d.nilai === currentDiag) isDiagInMaster = true;
+                selDiag.innerHTML += `<option value="${d.nilai}" ${isSelected}>${d.nilai}</option>`;
             });
 
-            // Render Diagnosis
-            let selDiag = document.getElementById('select_diagnosis');
-            let currentDiag = selDiag.value;
-            selDiag.innerHTML = `<option value="${currentDiag}">${currentDiag || '-- Pilih Diagnosis --'}</option>`;
-            masterDiagnosis.forEach(d => {
-                if(d.nilai !== currentDiag) selDiag.innerHTML += `<option value="${d.nilai}">${d.nilai}</option>`;
-            });
+            if (currentDiag && !isDiagInMaster) {
+                selDiag.innerHTML += `<option value="${currentDiag}" selected>${currentDiag}</option>`;
+            }
         }
 
         function updateZatTerpilih() {
@@ -553,7 +564,6 @@
 
             let title = 'Tambah Data Baru';
             if(kategori === 'zat') title = 'Tambah Zat Baru';
-            else if(kategori === 'tempat_rehab') title = 'Tambah Tempat Rehabilitasi';
             else if(kategori === 'diagnosis') title = 'Tambah Diagnosis Baru';
 
             document.getElementById('modalOpsiTitle').innerText = title;
@@ -576,7 +586,6 @@
             }).then(r => r.json()).then(res => {
                 if(res.success) {
                     if(data.kategori === 'zat') masterZat.push(res.data);
-                    else if(data.kategori === 'tempat_rehab') masterTempatRehab.push(res.data);
                     else masterDiagnosis.push(res.data);
 
                     renderOpsiData();
@@ -588,7 +597,6 @@
         function bukaKelolaOpsi(kategori) {
             let title = 'Kelola Opsi';
             if(kategori === 'zat') title = 'Kelola Daftar Zat';
-            else if(kategori === 'tempat_rehab') title = 'Kelola Tempat Rehabilitasi';
             else if(kategori === 'diagnosis') title = 'Kelola Daftar Diagnosis';
 
             document.getElementById('kelolaOpsiTitle').innerText = title;
@@ -599,7 +607,7 @@
         function renderKelolaOpsiList(kategori) {
             let container = document.getElementById('kelolaOpsiList');
             container.innerHTML = '';
-            let data = kategori === 'zat' ? masterZat : (kategori === 'tempat_rehab' ? masterTempatRehab : masterDiagnosis);
+            let data = kategori === 'zat' ? masterZat : masterDiagnosis;
 
             data.forEach(item => {
                 container.innerHTML += `
@@ -618,7 +626,6 @@
             }).then(r => r.json()).then(res => {
                 if(res.success) {
                     if(kategori === 'zat') masterZat = masterZat.filter(x => x.id !== id);
-                    else if(kategori === 'tempat_rehab') masterTempatRehab = masterTempatRehab.filter(x => x.id !== id);
                     else masterDiagnosis = masterDiagnosis.filter(x => x.id !== id);
 
                     renderOpsiData();
@@ -767,6 +774,24 @@
                 else { masterHukum = masterHukum.filter(x => x.id !== id); selectedHukum = selectedHukum.filter(x => x !== id); renderHukum(); }
                 renderKelolaList(kategori);
             });
+        }
+
+        // TAMBAHAN FUNGSI UNTUK MODAL OPSI (TAMBAH DATA DARI BERITA ACARA LANGSUNG)
+        function simpanOpsiBaruKhusus() {
+            let selectId = document.getElementById('tambah_target_id').value;
+            let value = document.getElementById('tambah_input').value.trim();
+            if(!value) return;
+
+            let selectEl = document.getElementById(selectId);
+            let exists = Array.from(selectEl.options).some(opt => opt.value === value);
+
+            if(!exists) {
+                let newOpt = new Option(value, value, true, true);
+                selectEl.add(newOpt);
+            } else {
+                selectEl.value = value;
+            }
+            closeTambahModal();
         }
 
         renderMedis(); renderHukum();
