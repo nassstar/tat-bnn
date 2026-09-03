@@ -342,7 +342,7 @@
 
                             @php
                                 // Logika Pintar Pemisah String Rekomendasi
-                                // PERBAIKAN: Mengambil dari relasi database master rekomendasi (tempat_rehabilitasi)
+                                // PERBAIKAN: Menambahkan potongan untuk "Rehab di Lapas / Rutan" dan "Tidak Rehab (Proses Hukum)"
                                 $rawRek = $asesmen->rekomendasi->tempat_rehabilitasi ?? $asesmen->rekomendasi_input ?? '';
                                 $katRek = 'Belum Ada Keputusan';
                                 $tempatRek = '-';
@@ -353,15 +353,21 @@
                                 } elseif (str_starts_with($rawRek, 'Rawat Inap')) {
                                     $katRek = 'Rawat Inap';
                                     $tempatRek = trim(str_replace('Rawat Inap', '', $rawRek));
+                                } elseif (str_starts_with($rawRek, 'Rehab di Lapas / Rutan')) {
+                                    $katRek = 'Rehab di Lapas / Rutan';
+                                    $tempatRek = trim(str_replace('Rehab di Lapas / Rutan', '', $rawRek));
+                                } elseif (str_starts_with($rawRek, 'Tidak Rehab (Proses Hukum)')) {
+                                    $katRek = 'Tidak Rehab (Proses Hukum)';
+                                    $tempatRek = trim(str_replace('Tidak Rehab (Proses Hukum)', '', $rawRek));
                                 } else {
-                                    // Jika format manual
+                                    // Jika format manual / custom dari database lama
                                     $tempatRek = $rawRek;
                                 }
 
                                 // Hilangkan spasi dan strip (-) yang tersisa di awal teks tempat
                                 $tempatRek = trim(ltrim($tempatRek, ' -'));
 
-                                // Jika user hanya memilih "Rawat Jalan" tanpa tempat
+                                // Jika user hanya memilih Kategori tanpa nama Instansi
                                 if (empty($tempatRek) && $rawRek != '') {
                                     $tempatRek = 'Belum Ditentukan Instansinya';
                                 } elseif (empty($tempatRek)) {
@@ -378,12 +384,12 @@
                                         <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                                     </div>
                                     <div>
-                                        <!-- Status (Rawat Jalan / Rawat Inap) -->
+                                        <!-- Status Kategori (Rawat Jalan / Rawat Inap / Dll) -->
                                         <div class="text-sm font-black text-emerald-50 mb-1 border-b border-emerald-400/50 pb-1 inline-block uppercase tracking-wider">
                                             {{ $katRek }}
                                         </div>
 
-                                        <!-- Ditempatkan Di: Kepanjen -->
+                                        <!-- Ditempatkan Di: Kepanjen / Kemenkumham Malang -->
                                         <p class="text-[10px] text-emerald-200 uppercase tracking-widest mt-1 mb-0.5 font-bold">Ditempatkan Di:</p>
                                         <h4 class="text-lg font-extrabold text-white leading-tight capitalize">{{ $tempatRek }}</h4>
                                     </div>
@@ -400,7 +406,26 @@
                         <div class="space-y-4">
                             <div class="bg-white/80 backdrop-blur-sm p-5 rounded-2xl border border-white shadow-sm">
                                 <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">Saran Case Conference</span>
-                                <p class="text-[14px] font-bold text-slate-800 leading-relaxed">{{ $asesmen->saran_case_conference ?? 'Belum ada saran terisi' }}</p>
+
+                                @if(!empty($asesmen->saran_case_conference))
+                                    @php
+                                        // Mengurai input teks saran menjadi list berdasarkan koma
+                                        $saranArray = array_map('trim', explode(",", $asesmen->saran_case_conference));
+                                        $saranArray = array_filter($saranArray); // Membuang item kosong
+                                    @endphp
+
+                                    @if(count($saranArray) > 0)
+                                        <ul class="text-[14px] font-bold text-slate-800 leading-relaxed list-decimal pl-4 space-y-1">
+                                            @foreach($saranArray as $saran)
+                                                <li>{{ $saran }}</li>
+                                            @endforeach
+                                        </ul>
+                                    @else
+                                        <p class="text-[14px] font-bold text-slate-800 leading-relaxed">Belum ada saran terisi</p>
+                                    @endif
+                                @else
+                                    <p class="text-[14px] font-bold text-slate-800 leading-relaxed">Belum ada saran terisi</p>
+                                @endif
                             </div>
                             <div class="bg-white/80 backdrop-blur-sm p-5 rounded-2xl border border-white shadow-sm">
                                 <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">Keterangan Hukum Rekomendasi</span>

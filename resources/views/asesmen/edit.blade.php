@@ -168,7 +168,7 @@
                                 </div>
                                 <div class="w-full">
                                     <input type="file" name="foto_klien" id="foto_klien" accept="image/jpeg, image/png, image/jpg" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200 transition-all cursor-pointer" onchange="previewImage(event)">
-                                    <p class="text-[11px] font-medium text-slate-400 mt-2 leading-relaxed">Format yang didukung: JPG, JPEG, PNG.<br>Tidak ada batasan ukuran file.</p>
+                                    <p class="text-[11px] font-medium text-slate-400 mt-2 leading-relaxed">Format yang didukung: JPG, JPEG, PNG.<br>Upload foto baru jika ingin mengubah foto lama.</p>
                                 </div>
                             </div>
                         </div>
@@ -235,12 +235,10 @@
                             <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Agama</label>
                             <select name="agama" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
                                 <option value="">-- Pilih Agama --</option>
-                                <option value="Islam" {{ old('agama', $asesmen->agama) == 'Islam' ? 'selected' : '' }}>Islam</option>
-                                <option value="Kristen Protestan" {{ old('agama', $asesmen->agama) == 'Kristen Protestan' ? 'selected' : '' }}>Kristen Protestan</option>
-                                <option value="Katolik" {{ old('agama', $asesmen->agama) == 'Katolik' ? 'selected' : '' }}>Katolik</option>
-                                <option value="Hindu" {{ old('agama', $asesmen->agama) == 'Hindu' ? 'selected' : '' }}>Hindu</option>
-                                <option value="Buddha" {{ old('agama', $asesmen->agama) == 'Buddha' ? 'selected' : '' }}>Buddha</option>
-                                <option value="Konghucu" {{ old('agama', $asesmen->agama) == 'Konghucu' ? 'selected' : '' }}>Konghucu</option>
+                                @php $agamaList = ['Islam', 'Kristen Protestan', 'Katolik', 'Hindu', 'Buddha', 'Konghucu']; @endphp
+                                @foreach($agamaList as $ag)
+                                    <option value="{{ $ag }}" {{ old('agama', $asesmen->agama) == $ag ? 'selected' : '' }}>{{ $ag }}</option>
+                                @endforeach
                             </select>
                         </div>
 
@@ -255,6 +253,7 @@
                     <!-- GRID 2: ALAMAT KTP & DOMISILI -->
                     <!-- ===================================== -->
                     <div class="col-span-1 sm:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6 pt-6 border-t border-slate-200">
+
                         <!-- ALAMAT KTP -->
                         <div class="space-y-4 bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col h-full">
                             <h4 class="text-sm font-extrabold text-slate-800 border-b border-slate-200 pb-2 mb-2">Alamat Sesuai KTP</h4>
@@ -271,7 +270,7 @@
                                 </label>
                                 <label class="inline-flex items-center cursor-pointer">
                                     <input type="radio" name="mode_ktp" value="manual" checked class="text-indigo-600 focus:ring-indigo-500 w-4 h-4" onchange="toggleModeKtp()">
-                                    <span class="ml-2 text-xs font-bold text-slate-700">Manual (Alamat Lama)</span>
+                                    <span class="ml-2 text-xs font-bold text-slate-700">Manual (Luar Daerah)</span>
                                 </label>
                             </div>
 
@@ -306,39 +305,7 @@
                                         <label class="block font-medium text-sm text-gray-700">Kecamatan</label>
                                         <select id="kecamatan_ktp" name="kecamatan_ktp" class="border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full text-sm">
                                             <option value="">-- Pilih --</option>
-                                            <option value="Ampelgading">Ampelgading</option>
-                                            <option value="Bantur">Bantur</option>
-                                            <option value="Bululawang">Bululawang</option>
-                                            <option value="Dampit">Dampit</option>
-                                            <option value="Dau">Dau</option>
-                                            <option value="Donomulyo">Donomulyo</option>
-                                            <option value="Gedangan">Gedangan</option>
-                                            <option value="Gondanglegi">Gondanglegi</option>
-                                            <option value="Jabung">Jabung</option>
-                                            <option value="Kalipare">Kalipare</option>
-                                            <option value="Karangploso">Karangploso</option>
-                                            <option value="Kasembon">Kasembon</option>
-                                            <option value="Kepanjen">Kepanjen</option>
-                                            <option value="Kromengan">Kromengan</option>
-                                            <option value="Lawang">Lawang</option>
-                                            <option value="Ngajum">Ngajum</option>
-                                            <option value="Ngantang">Ngantang</option>
-                                            <option value="Pagak">Pagak</option>
-                                            <option value="Pagelaran">Pagelaran</option>
-                                            <option value="Pakis">Pakis</option>
-                                            <option value="Pakisaji">Pakisaji</option>
-                                            <option value="Poncokusumo">Poncokusumo</option>
-                                            <option value="Pujon">Pujon</option>
-                                            <option value="Singosari">Singosari</option>
-                                            <option value="Sumbermanjing Wetan">Sumbermanjing Wetan</option>
-                                            <option value="Sumberpucung">Sumberpucung</option>
-                                            <option value="Tajinan">Tajinan</option>
-                                            <option value="Tirtoyudo">Tirtoyudo</option>
-                                            <option value="Tumpang">Tumpang</option>
-                                            <option value="Turen">Turen</option>
-                                            <option value="Wagir">Wagir</option>
-                                            <option value="Wajak">Wajak</option>
-                                            <option value="Wonosari">Wonosari</option>
+                                            <option value="Ampelgading">Ampelgading</option><option value="Bantur">Bantur</option><option value="Bululawang">Bululawang</option><option value="Dampit">Dampit</option><option value="Dau">Dau</option><option value="Donomulyo">Donomulyo</option><option value="Gedangan">Gedangan</option><option value="Gondanglegi">Gondanglegi</option><option value="Jabung">Jabung</option><option value="Kalipare">Kalipare</option><option value="Karangploso">Karangploso</option><option value="Kasembon">Kasembon</option><option value="Kepanjen">Kepanjen</option><option value="Kromengan">Kromengan</option><option value="Lawang">Lawang</option><option value="Ngajum">Ngajum</option><option value="Ngantang">Ngantang</option><option value="Pagak">Pagak</option><option value="Pagelaran">Pagelaran</option><option value="Pakis">Pakis</option><option value="Pakisaji">Pakisaji</option><option value="Poncokusumo">Poncokusumo</option><option value="Pujon">Pujon</option><option value="Singosari">Singosari</option><option value="Sumbermanjing Wetan">Sumbermanjing Wetan</option><option value="Sumberpucung">Sumberpucung</option><option value="Tajinan">Tajinan</option><option value="Tirtoyudo">Tirtoyudo</option><option value="Tumpang">Tumpang</option><option value="Turen">Turen</option><option value="Wagir">Wagir</option><option value="Wajak">Wajak</option><option value="Wonosari">Wonosari</option>
                                         </select>
                                     </div>
                                     <div>
@@ -383,7 +350,7 @@
                                 </label>
                                 <label class="inline-flex items-center cursor-pointer">
                                     <input type="radio" name="mode_domisili" value="manual" checked class="text-indigo-600 focus:ring-indigo-500 w-4 h-4" onchange="toggleModeDomisili()">
-                                    <span class="ml-2 text-xs font-bold text-slate-700">Manual (Alamat Lama)</span>
+                                    <span class="ml-2 text-xs font-bold text-slate-700">Manual (Luar Daerah)</span>
                                 </label>
                             </div>
 
@@ -412,46 +379,13 @@
                                                 <div id="list_desa_domisili" class="hidden absolute z-[60] w-full mt-1 bg-white border border-slate-200 shadow-lg rounded-md py-1 text-sm custom-select-scroll" style="max-height: 200px; overflow-y: auto;">
                                                 </div>
                                             </div>
-
                                         </div>
                                     </div>
                                     <div>
                                         <label class="block font-medium text-sm text-gray-700">Kecamatan</label>
                                         <select id="kecamatan_domisili" name="kecamatan_domisili" class="border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full text-sm">
                                             <option value="">-- Pilih --</option>
-                                            <option value="Ampelgading">Ampelgading</option>
-                                            <option value="Bantur">Bantur</option>
-                                            <option value="Bululawang">Bululawang</option>
-                                            <option value="Dampit">Dampit</option>
-                                            <option value="Dau">Dau</option>
-                                            <option value="Donomulyo">Donomulyo</option>
-                                            <option value="Gedangan">Gedangan</option>
-                                            <option value="Gondanglegi">Gondanglegi</option>
-                                            <option value="Jabung">Jabung</option>
-                                            <option value="Kalipare">Kalipare</option>
-                                            <option value="Karangploso">Karangploso</option>
-                                            <option value="Kasembon">Kasembon</option>
-                                            <option value="Kepanjen">Kepanjen</option>
-                                            <option value="Kromengan">Kromengan</option>
-                                            <option value="Lawang">Lawang</option>
-                                            <option value="Ngajum">Ngajum</option>
-                                            <option value="Ngantang">Ngantang</option>
-                                            <option value="Pagak">Pagak</option>
-                                            <option value="Pagelaran">Pagelaran</option>
-                                            <option value="Pakis">Pakis</option>
-                                            <option value="Pakisaji">Pakisaji</option>
-                                            <option value="Poncokusumo">Poncokusumo</option>
-                                            <option value="Pujon">Pujon</option>
-                                            <option value="Singosari">Singosari</option>
-                                            <option value="Sumbermanjing Wetan">Sumbermanjing Wetan</option>
-                                            <option value="Sumberpucung">Sumberpucung</option>
-                                            <option value="Tajinan">Tajinan</option>
-                                            <option value="Tirtoyudo">Tirtoyudo</option>
-                                            <option value="Tumpang">Tumpang</option>
-                                            <option value="Turen">Turen</option>
-                                            <option value="Wagir">Wagir</option>
-                                            <option value="Wajak">Wajak</option>
-                                            <option value="Wonosari">Wonosari</option>
+                                            <option value="Ampelgading">Ampelgading</option><option value="Bantur">Bantur</option><option value="Bululawang">Bululawang</option><option value="Dampit">Dampit</option><option value="Dau">Dau</option><option value="Donomulyo">Donomulyo</option><option value="Gedangan">Gedangan</option><option value="Gondanglegi">Gondanglegi</option><option value="Jabung">Jabung</option><option value="Kalipare">Kalipare</option><option value="Karangploso">Karangploso</option><option value="Kasembon">Kasembon</option><option value="Kepanjen">Kepanjen</option><option value="Kromengan">Kromengan</option><option value="Lawang">Lawang</option><option value="Ngajum">Ngajum</option><option value="Ngantang">Ngantang</option><option value="Pagak">Pagak</option><option value="Pagelaran">Pagelaran</option><option value="Pakis">Pakis</option><option value="Pakisaji">Pakisaji</option><option value="Poncokusumo">Poncokusumo</option><option value="Pujon">Pujon</option><option value="Singosari">Singosari</option><option value="Sumbermanjing Wetan">Sumbermanjing Wetan</option><option value="Sumberpucung">Sumberpucung</option><option value="Tajinan">Tajinan</option><option value="Tirtoyudo">Tirtoyudo</option><option value="Tumpang">Tumpang</option><option value="Turen">Turen</option><option value="Wagir">Wagir</option><option value="Wajak">Wajak</option><option value="Wonosari">Wonosari</option>
                                         </select>
                                     </div>
                                     <div>
@@ -464,7 +398,7 @@
                             <!-- BLOK MANUAL DOMISILI -->
                             <div id="blok_manual_domisili" class="hidden space-y-4">
                                 <div>
-                                    <label class="block font-medium text-sm text-gray-700">Ketik Alamat Lengkap (Bisa Diedit Manual)</label>
+                                    <label class="block font-medium text-sm text-gray-700">Ketik Alamat Lengkap (Luar Daerah)</label>
                                     <textarea id="manual_domisili" name="manual_domisili" rows="3" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Cth: Jl. Jendral Sudirman No. 10...">{{ old('alamat_domisili', $asesmen->alamat_domisili) }}</textarea>
                                 </div>
                             </div>
@@ -489,6 +423,7 @@
                             <div class="flex gap-2">
                                 <select name="pendidikan_input" id="selectPendidikan" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
                                     <option value="">-- Pilih Pendidikan --</option>
+                                    @php $currentPendidikan = $asesmen->pendidikan->nama_pendidikan ?? ''; @endphp
                                     @foreach($masterPendidikan ?? [] as $p)
                                         @if(trim($p->nama_pendidikan) !== '')
                                             <option value="{{ $p->nama_pendidikan }}" {{ old('pendidikan_input', $asesmen->pendidikan_input ?? ($asesmen->pendidikan->nama_pendidikan ?? '')) == $p->nama_pendidikan ? 'selected' : '' }}>
@@ -545,17 +480,47 @@
                                 <input type="text" name="pasal_sangkaan" value="{{ old('pasal_sangkaan', $asesmen->pasal_sangkaan) }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
                             </div>
 
-                            <!-- Barang Bukti Group -->
+                            <!-- Barang Bukti Group dengan Dropdown Custom Checkbox -->
                             <div class="md:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-5 p-4 border border-amber-100 bg-amber-50/30 rounded-xl mt-2">
                                 <div class="md:col-span-3 text-[11px] font-bold text-amber-600 uppercase tracking-wider mb-[-10px]">Data Barang Bukti</div>
+
                                 <div>
-                                    <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Jenis Narkotika</label>
-                                    <select name="narkotika_id" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-100 sm:text-sm transition-all bg-white focus:bg-white">
-                                        <option value="">-- Pilih Zat/Narkotika --</option>
-                                        @foreach($masterNarkotika ?? [] as $n)
-                                            <option value="{{ $n->id }}" {{ old('narkotika_id', $asesmen->narkotika_id) == $n->id ? 'selected' : '' }}>{{ $n->jenis_narkotika }}</option>
-                                        @endforeach
-                                    </select>
+                                    <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">
+                                        Jenis Narkotika <span class="text-[10px] font-normal text-slate-400 normal-case ml-1">(Bisa pilih lebih dari 1)</span>
+                                    </label>
+
+                                    <div class="relative" id="narkotika-wrapper">
+                                        <!-- Trigger Button -->
+                                        <button type="button" onclick="toggleNarkotika()" class="w-full text-left bg-white focus:bg-white border border-slate-300 rounded-xl px-4 py-2.5 shadow-sm focus:ring-2 focus:ring-amber-100 focus:border-amber-500 transition-all flex justify-between items-center sm:text-sm">
+                                            <span id="narkotika-text" class="text-slate-500 truncate">-- Pilih Jenis Narkotika --</span>
+                                            <svg class="w-4 h-4 text-slate-400 shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        </button>
+
+                                        <!-- Dropdown List Checkbox -->
+                                        <div id="narkotika-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 shadow-xl rounded-xl py-2 max-h-56 overflow-y-auto custom-select-scroll">
+                                            @php
+                                                $narkotikaTersimpan = [];
+                                                if(isset($asesmen) && $asesmen->narkotika_id) {
+                                                    $narkotikaTersimpan = is_array($asesmen->narkotika_id) ? $asesmen->narkotika_id : explode(',', $asesmen->narkotika_id);
+                                                }
+                                                $selectedNarkotika = old('narkotika_id', $narkotikaTersimpan);
+                                                if (!is_array($selectedNarkotika)) {
+                                                    $selectedNarkotika = $selectedNarkotika ? explode(',', $selectedNarkotika) : [];
+                                                }
+                                            @endphp
+
+                                            @foreach($masterNarkotika ?? [] as $n)
+                                                <label class="flex items-center px-4 py-2.5 hover:bg-amber-50 cursor-pointer transition-colors group border-b border-slate-50 last:border-0">
+                                                    <input type="checkbox" name="narkotika_id[]" value="{{ $n->id }}"
+                                                        onchange="updateNarkotikaText()"
+                                                        class="narkotika-cb w-4 h-4 text-amber-500 border-slate-300 rounded focus:ring-amber-500 transition-all cursor-pointer"
+                                                        {{ in_array($n->id, $selectedNarkotika) ? 'checked' : '' }}
+                                                        data-label="{{ $n->jenis_narkotika }}">
+                                                    <span class="ml-3 text-sm text-slate-700 group-hover:text-amber-800 font-medium cursor-pointer">{{ $n->jenis_narkotika }}</span>
+                                                </label>
+                                            @endforeach
+                                        </div>
+                                    </div>
                                 </div>
                                 <div>
                                     <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Berat Barang Bukti (Gr)</label>
@@ -654,14 +619,48 @@
                             <div class="md:col-span-2">
                                 <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-2">Rekomendasi TAT <span class="text-rose-500">*</span></label>
 
-                                <div class="flex gap-4 p-3 bg-slate-50 border border-slate-200 rounded-xl mb-3">
+                                @php
+                                    $rawRek = old('rekomendasi_input', $asesmen->rekomendasi_input ?? $asesmen->rekomendasi->tempat_rehabilitasi ?? '');
+
+                                    $isJalan = str_starts_with($rawRek, 'Rawat Jalan');
+                                    $isInap = str_starts_with($rawRek, 'Rawat Inap');
+                                    $isLapas = str_starts_with($rawRek, 'Rehab di Lapas / Rutan');
+                                    $isTidakRehab = str_starts_with($rawRek, 'Tidak Rehab (Proses Hukum)');
+
+                                    $tempatRek = '';
+                                    if ($isJalan) {
+                                        $tempatRek = trim(str_replace('Rawat Jalan', '', $rawRek));
+                                        $tempatRek = ltrim($tempatRek, ' -');
+                                    } elseif ($isInap) {
+                                        $tempatRek = trim(str_replace('Rawat Inap', '', $rawRek));
+                                        $tempatRek = ltrim($tempatRek, ' -');
+                                    } elseif ($isLapas) {
+                                        $tempatRek = trim(str_replace('Rehab di Lapas / Rutan', '', $rawRek));
+                                        $tempatRek = ltrim($tempatRek, ' -');
+                                    } elseif ($isTidakRehab) {
+                                        $tempatRek = trim(str_replace('Tidak Rehab (Proses Hukum)', '', $rawRek));
+                                        $tempatRek = ltrim($tempatRek, ' -');
+                                    } else {
+                                        $tempatRek = $rawRek;
+                                    }
+                                @endphp
+
+                                <div class="flex flex-wrap gap-4 p-3 bg-slate-50 border border-slate-200 rounded-xl mb-3">
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="kategori_rekomendasi" value="Rawat Jalan" class="text-indigo-600 focus:ring-indigo-500 w-4 h-4" onchange="toggleRekomendasi()">
+                                        <input type="radio" name="kategori_rekomendasi" value="Rawat Jalan" {{ $isJalan ? 'checked' : '' }} class="text-indigo-600 focus:ring-indigo-500 w-4 h-4" onchange="toggleRekomendasi()">
                                         <span class="ml-2 text-sm font-bold text-slate-700">Rawat Jalan</span>
                                     </label>
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="kategori_rekomendasi" value="Rawat Inap" class="text-indigo-600 focus:ring-indigo-500 w-4 h-4" onchange="toggleRekomendasi()">
+                                        <input type="radio" name="kategori_rekomendasi" value="Rawat Inap" {{ $isInap ? 'checked' : '' }} class="text-indigo-600 focus:ring-indigo-500 w-4 h-4" onchange="toggleRekomendasi()">
                                         <span class="ml-2 text-sm font-bold text-slate-700">Rawat Inap</span>
+                                    </label>
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="kategori_rekomendasi" value="Rehab di Lapas / Rutan" {{ $isLapas ? 'checked' : '' }} class="text-indigo-600 focus:ring-indigo-500 w-4 h-4" onchange="toggleRekomendasi()">
+                                        <span class="ml-2 text-sm font-bold text-slate-700">Rehab di Lapas / Rutan</span>
+                                    </label>
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="kategori_rekomendasi" value="Tidak Rehab (Proses Hukum)" {{ $isTidakRehab ? 'checked' : '' }} class="text-indigo-600 focus:ring-indigo-500 w-4 h-4" onchange="toggleRekomendasi()">
+                                        <span class="ml-2 text-sm font-bold text-slate-700">Tidak Rehab (Proses Hukum)</span>
                                     </label>
                                 </div>
 
@@ -670,6 +669,8 @@
                                         <option value="">-- Pilih Tempat / Instansi --</option>
                                         <option value="Bawaan Sistem" data-kategori="Rawat Jalan" style="display:none;" disabled>Hanya Rawat Jalan (Tanpa Instansi)</option>
                                         <option value="Bawaan Sistem" data-kategori="Rawat Inap" style="display:none;" disabled>Hanya Rawat Inap (Tanpa Instansi)</option>
+                                        <option value="Bawaan Sistem" data-kategori="Rehab di Lapas / Rutan" style="display:none;" disabled>Hanya Rehab di Lapas / Rutan (Tanpa Instansi)</option>
+                                        <option value="Bawaan Sistem" data-kategori="Tidak Rehab (Proses Hukum)" style="display:none;" disabled>Hanya Tidak Rehab (Tanpa Instansi)</option>
 
                                         @foreach($masterRekomendasi ?? [] as $r)
                                             @if(trim($r->nama_rekomendasi) !== '')
@@ -683,6 +684,12 @@
                                                     } elseif (str_starts_with($namaItem, 'Rawat Inap - ')) {
                                                         $kategoriItem = 'Rawat Inap';
                                                         $namaItem = trim(substr($namaItem, 13));
+                                                    } elseif (str_starts_with($namaItem, 'Rehab di Lapas / Rutan - ')) {
+                                                        $kategoriItem = 'Rehab di Lapas / Rutan';
+                                                        $namaItem = trim(substr($namaItem, 25));
+                                                    } elseif (str_starts_with($namaItem, 'Tidak Rehab (Proses Hukum) - ')) {
+                                                        $kategoriItem = 'Tidak Rehab (Proses Hukum)';
+                                                        $namaItem = trim(substr($namaItem, 29));
                                                     }
                                                 @endphp
                                                 <option value="{{ $namaItem }}" data-kategori="{{ $kategoriItem }}" data-full="{{ $r->nama_rekomendasi }}" style="display:none;" disabled>
@@ -705,10 +712,28 @@
                                 <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Keterangan Tambahan TAT</label>
                                 <input type="text" name="keterangan_tambahan" value="{{ old('keterangan_tambahan', $asesmen->keterangan_tambahan) }}" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">
                             </div>
+
+                            <!-- 4 BARIS FORM SARAN SIDANG CASE CONFERENCE -->
                             <div class="md:col-span-2">
                                 <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Saran Sidang Case Conference</label>
-                                <textarea name="saran_case_conference" rows="3" class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 sm:text-sm transition-all bg-slate-50 focus:bg-white">{{ old('saran_case_conference', $asesmen->saran_case_conference) }}</textarea>
+
+                                <!-- Input tersembunyi ini yang akan dikirim ke Laravel -->
+                                <input type="hidden" name="saran_case_conference" id="hidden_saran_cc" value="{{ old('saran_case_conference', $asesmen->saran_case_conference) }}">
+
+                                @php
+                                    $saranLama = old('saran_case_conference', $asesmen->saran_case_conference);
+                                    // Memecah berdasarkan koma (dan membersihkan spasi)
+                                    $saranList = $saranLama ? array_map('trim', explode(",", $saranLama)) : [];
+                                @endphp
+
+                                <div class="grid grid-cols-1 gap-3 saran-grid-container">
+                                    <input type="text" class="saran-cc-input block w-full rounded-xl border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="1. Saran pertama..." value="{{ $saranList[0] ?? '' }}">
+                                    <input type="text" class="saran-cc-input block w-full rounded-xl border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="2. Saran kedua..." value="{{ $saranList[1] ?? '' }}">
+                                    <input type="text" class="saran-cc-input block w-full rounded-xl border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="3. Saran ketiga..." value="{{ $saranList[2] ?? '' }}">
+                                    <input type="text" class="saran-cc-input block w-full rounded-xl border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 sm:text-sm transition-all bg-slate-50 focus:bg-white" placeholder="4. Saran keempat..." value="{{ $saranList[3] ?? '' }}">
+                                </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -881,6 +906,14 @@
                     <span class="text-sm font-bold text-slate-500">Hanya Rawat Inap (Tanpa Instansi)</span>
                     <button type="button" disabled class="text-xs font-bold text-slate-300 px-4 py-2 cursor-not-allowed">Tetap</button>
                 </div>
+                <div data-kategori="Rehab di Lapas / Rutan" class="rekomendasi-item hidden justify-between items-center p-4 border border-slate-100 bg-slate-50 rounded-2xl opacity-70">
+                    <span class="text-sm font-bold text-slate-500">Hanya Rehab di Lapas / Rutan (Tanpa Instansi)</span>
+                    <button type="button" disabled class="text-xs font-bold text-slate-300 px-4 py-2 cursor-not-allowed">Tetap</button>
+                </div>
+                <div data-kategori="Tidak Rehab (Proses Hukum)" class="rekomendasi-item hidden justify-between items-center p-4 border border-slate-100 bg-slate-50 rounded-2xl opacity-70">
+                    <span class="text-sm font-bold text-slate-500">Hanya Tidak Rehab (Tanpa Instansi)</span>
+                    <button type="button" disabled class="text-xs font-bold text-slate-300 px-4 py-2 cursor-not-allowed">Tetap</button>
+                </div>
 
                 <!-- Tarikan dari Database -->
                 @foreach($masterRekomendasi ?? [] as $r)
@@ -899,6 +932,14 @@
                             } elseif (str_starts_with($namaTampil, 'Rawat Inap')) {
                                 $kategoriItem = 'Rawat Inap';
                                 $namaTampil = trim(str_replace('Rawat Inap', '', $namaTampil));
+                                $namaTampil = ltrim($namaTampil, ' -');
+                            } elseif (str_starts_with($namaTampil, 'Rehab di Lapas / Rutan')) {
+                                $kategoriItem = 'Rehab di Lapas / Rutan';
+                                $namaTampil = trim(str_replace('Rehab di Lapas / Rutan', '', $namaTampil));
+                                $namaTampil = ltrim($namaTampil, ' -');
+                            } elseif (str_starts_with($namaTampil, 'Tidak Rehab (Proses Hukum)')) {
+                                $kategoriItem = 'Tidak Rehab (Proses Hukum)';
+                                $namaTampil = trim(str_replace('Tidak Rehab (Proses Hukum)', '', $namaTampil));
                                 $namaTampil = ltrim($namaTampil, ' -');
                             }
                         @endphp
@@ -924,41 +965,100 @@
 
     <!-- Script JavaScript Terintegrasi -->
     <script>
-        // Sinkronisasi Display Narkotika, BB, & Pasal Sangkaan dari Input Form Atas
-        document.querySelector('select[name="narkotika_id"]').addEventListener('change', function() {
-            const displayEl = document.getElementById('display_jenis_narkotika');
-            if (this.selectedIndex > 0) {
-                displayEl.value = this.options[this.selectedIndex].text;
+        // Toggle Buka/Tutup Dropdown Narkotika
+        function toggleNarkotika() {
+            const dropdown = document.getElementById('narkotika-dropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Update Teks Button Saat Checkbox Dipilih & Update Tampilan Preview
+        function updateNarkotikaText() {
+            const checkboxes = document.querySelectorAll('.narkotika-cb:checked');
+            const textSpan = document.getElementById('narkotika-text');
+            const displayEl = document.getElementById('display_jenis_narkotika'); // Element Preview
+
+            if (checkboxes.length === 0) {
+                textSpan.textContent = '-- Pilih Jenis Narkotika --';
+                textSpan.classList.remove('text-slate-900', 'font-bold');
+                textSpan.classList.add('text-slate-500');
+                if (displayEl) displayEl.value = '';
             } else {
-                displayEl.value = '';
+                const labels = Array.from(checkboxes).map(cb => cb.getAttribute('data-label'));
+                const joinedLabels = labels.join(', ');
+                textSpan.textContent = joinedLabels;
+                textSpan.classList.remove('text-slate-500');
+                textSpan.classList.add('text-slate-900', 'font-bold');
+                if (displayEl) displayEl.value = joinedLabels;
+            }
+        }
+
+        // Menutup dropdown narkotika jika user klik di luar area
+        document.addEventListener('click', function(e) {
+            const wrapper = document.getElementById('narkotika-wrapper');
+            const dropdown = document.getElementById('narkotika-dropdown');
+            if (wrapper && !wrapper.contains(e.target)) {
+                dropdown.classList.add('hidden');
             }
         });
 
+        // Sinkronisasi Saran Case Conference
+        const saranInputs = document.querySelectorAll('.saran-cc-input');
+        const hiddenSaran = document.getElementById('hidden_saran_cc');
+
+        function updateSaranHidden() {
+            if(!hiddenSaran) return;
+            let combinedSaran = [];
+            saranInputs.forEach(input => {
+                if (input.value.trim() !== '') {
+                    combinedSaran.push(input.value.trim());
+                }
+            });
+            // DIGABUNG MENGGUNAKAN KOMA DAN SPASI
+            hiddenSaran.value = combinedSaran.join(', ');
+            if (typeof saveFormDraft === 'function') saveFormDraft();
+        }
+
+        saranInputs.forEach(input => {
+            input.addEventListener('input', updateSaranHidden);
+        });
+
+        // Sinkronisasi Display BB dari Input Form Atas
         document.querySelector('input[name="berat_bb"]').addEventListener('input', function() {
             const displayEl = document.getElementById('display_berat_bb');
-            displayEl.value = this.value ? this.value + ' Gr' : '';
+            if (displayEl) {
+                displayEl.value = this.value ? this.value + ' Gr' : '';
+            }
         });
 
         document.querySelector('input[name="pasal_sangkaan"]').addEventListener('input', function() {
             const displayEl = document.getElementById('display_pasal_sangkaan');
-            displayEl.value = this.value;
+            if (displayEl) {
+                displayEl.value = this.value;
+            }
         });
 
         // Trigger Sync awal untuk mode Edit
         window.addEventListener('load', function() {
-            const narkoSelect = document.querySelector('select[name="narkotika_id"]');
-            if(narkoSelect && narkoSelect.selectedIndex > 0) {
-                document.getElementById('display_jenis_narkotika').value = narkoSelect.options[narkoSelect.selectedIndex].text;
-            }
+            updateNarkotikaText();
 
             const bbInput = document.querySelector('input[name="berat_bb"]');
             if(bbInput && bbInput.value) {
-                document.getElementById('display_berat_bb').value = bbInput.value + ' Gr';
+                const displayBb = document.getElementById('display_berat_bb');
+                if(displayBb) displayBb.value = bbInput.value + ' Gr';
             }
 
             const pasalInput = document.querySelector('input[name="pasal_sangkaan"]');
             if(pasalInput && pasalInput.value) {
-                document.getElementById('display_pasal_sangkaan').value = pasalInput.value;
+                const displayPasal = document.getElementById('display_pasal_sangkaan');
+                if(displayPasal) displayPasal.value = pasalInput.value;
+            }
+
+            // Memisahkan nilai dari hidden input ke dalam 4 text input (jika load dari db / old / draft)
+            if(hiddenSaran && hiddenSaran.value) {
+                const splitSaran = hiddenSaran.value.split(',');
+                saranInputs.forEach((input, index) => {
+                    input.value = splitSaran[index] ? splitSaran[index].trim() : '';
+                });
             }
         });
 
@@ -1300,9 +1400,12 @@
             const formData = new FormData(mainForm);
             const data = {};
             formData.forEach((value, key) => {
-                if(key !== '_token' && key !== 'foto_klien') data[key] = value;
+                // Ignore tokens, files, and multi-select arrays to avoid issues in localStorage
+                if(key !== '_token' && key !== '_method' && key !== 'foto_klien' && !key.includes('narkotika_id[]')) {
+                    data[key] = value;
+                }
             });
-            localStorage.setItem('formKlienDraft', JSON.stringify(data));
+            localStorage.setItem('formKlienEditDraft_{{ $asesmen->id }}', JSON.stringify(data));
             if(autosaveIndicator) {
                 autosaveIndicator.classList.remove('hidden');
                 setTimeout(() => { autosaveIndicator.classList.add('hidden'); }, 3000);
@@ -1311,7 +1414,7 @@
 
         function loadFormDraft() {
             if(!mainForm) return;
-            const draft = localStorage.getItem('formKlienDraft');
+            const draft = localStorage.getItem('formKlienEditDraft_{{ $asesmen->id }}');
             if (draft) {
                 const data = JSON.parse(draft);
                 Object.keys(data).forEach(key => {
@@ -1336,12 +1439,22 @@
             // Restore Form Draft
             loadFormDraft();
 
+            // Render ulang 4 grid saran case conference jika ada draft yang terload
+            const hiddenSaranVal = document.getElementById('hidden_saran_cc');
+            if(hiddenSaranVal && hiddenSaranVal.value) {
+                const splitSaran = hiddenSaranVal.value.split(',');
+                const saranVisuals = document.querySelectorAll('.saran-cc-input');
+                saranVisuals.forEach((el, index) => {
+                    el.value = splitSaran[index] ? splitSaran[index].trim() : '';
+                });
+            }
+
             // Jalankan Toggle Tampilan Default Berdasarkan Form Draft
             toggleModeKtp();
             toggleModeDomisili();
 
             // =========================================================
-            // INISIALISASI STATE AWAL DATA EDIT
+            // INISIALISASI STATE AWAL DATA EDIT REKOMENDASI TAT
             // =========================================================
             let oldRek = "{!! old('rekomendasi_input', $asesmen->rekomendasi->tempat_rehabilitasi ?? $asesmen->rekomendasi_input ?? '') !!}";
 
@@ -1355,6 +1468,12 @@
                 } else if (oldRek.startsWith('Rawat Inap')) {
                     kategori = 'Rawat Inap';
                     tempat = oldRek.substring(10).replace(/^[\s-]+/, '').trim();
+                } else if (oldRek.startsWith('Rehab di Lapas / Rutan')) {
+                    kategori = 'Rehab di Lapas / Rutan';
+                    tempat = oldRek.substring(22).replace(/^[\s-]+/, '').trim();
+                } else if (oldRek.startsWith('Tidak Rehab (Proses Hukum)')) {
+                    kategori = 'Tidak Rehab (Proses Hukum)';
+                    tempat = oldRek.substring(26).replace(/^[\s-]+/, '').trim();
                 }
 
                 if (kategori) {
@@ -1384,13 +1503,10 @@
             }
             updateRekomendasiPreview();
 
-            // Trigger Sync awal untuk mode Edit
-            const narkoSelect = document.querySelector('select[name="narkotika_id"]');
-            if(narkoSelect && narkoSelect.selectedIndex > 0) {
-                const displayEl = document.getElementById('display_jenis_narkotika');
-                if(displayEl) displayEl.value = narkoSelect.options[narkoSelect.selectedIndex].text;
-            }
+            // Trigger Sync awal untuk mode Edit Multi-Select
+            updateNarkotikaText();
 
+            // Trigger bb dan pasal
             const bbInput = document.querySelector('input[name="berat_bb"]');
             if(bbInput && bbInput.value) {
                 const displayBb = document.getElementById('display_berat_bb');
@@ -1591,7 +1707,7 @@
                     updateAlamatKtp();
                     updateAlamatDomisili();
                     updateRekomendasiPreview();
-                    localStorage.removeItem('formKlienDraft');
+                    localStorage.removeItem('formKlienEditDraft_{{ $asesmen->id }}');
                 });
             }
 
@@ -1612,9 +1728,15 @@
                 }
                 reader.readAsDataURL(input.files[0]);
             } else {
-                preview.src = '#';
-                preview.classList.add('hidden');
-                placeholder.classList.remove('hidden');
+                if ("{{ $asesmen->foto_klien }}") {
+                    preview.src = "{{ asset('storage/' . $asesmen->foto_klien) }}";
+                    preview.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                } else {
+                    preview.src = '#';
+                    preview.classList.add('hidden');
+                    placeholder.classList.remove('hidden');
+                }
             }
         }
 
@@ -1658,6 +1780,70 @@
                 if(!isValid) select.value = '';
             }
             updateRekomendasiPreview();
+        }
+
+        function updateRekomendasiPreview() {
+            const radio = document.querySelector('input[name="kategori_rekomendasi"]:checked');
+            const select = document.getElementById('selectTempatRekomendasi');
+            const hiddenInput = document.getElementById('hidden_rekomendasi_input');
+            const preview = document.getElementById('teks_preview_rekomendasi');
+
+            if (radio) {
+                let finalValue = radio.value;
+                if (select.value && select.value !== 'Bawaan Sistem') {
+                    finalValue += ' - ' + select.value;
+                }
+                hiddenInput.value = finalValue;
+                preview.innerHTML = `Hasil akhir Rekomendasi: <span class="font-bold text-indigo-600">${finalValue}</span>`;
+            } else {
+                hiddenInput.value = '';
+                preview.innerHTML = `Hasil akhir Rekomendasi: <span class="font-bold text-slate-400">Belum dipilih</span>`;
+            }
+        }
+
+        function openModalTambahRekomendasi() {
+            const radio = document.querySelector('input[name="kategori_rekomendasi"]:checked');
+            if (!radio) { alert("Pilih Kategori Perawatan (Radio Button) terlebih dahulu di form utama!"); return; }
+            document.getElementById('tambahKategoriDisplay').textContent = radio.value;
+            const modal = document.getElementById('modalTambahRekomendasi');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            setTimeout(() => { modal.classList.remove('opacity-0'); modal.children[0].classList.remove('scale-95'); }, 10);
+        }
+
+        function closeModalTambahRekomendasi() {
+            const modal = document.getElementById('modalTambahRekomendasi');
+            modal.classList.add('opacity-0'); modal.children[0].classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+        }
+
+        function openModalKelolaRekomendasi() {
+            const radio = document.querySelector('input[name="kategori_rekomendasi"]:checked');
+            if (!radio) { alert("Pilih Kategori Perawatan (Radio Button) terlebih dahulu di form utama!"); return; }
+            const selectedCat = radio.value;
+            const modalTitle = document.getElementById('modalKelolaRekomendasiTitle');
+            if(modalTitle) modalTitle.innerText = 'Kelola Opsi (' + selectedCat + ')';
+            const items = document.querySelectorAll('#listKelolaRekomendasi .rekomendasi-item');
+            let visibleCount = 0;
+            items.forEach(item => {
+                if (item.getAttribute('data-kategori') === selectedCat || item.getAttribute('data-kategori') === 'Semua') {
+                    item.classList.remove('hidden'); item.classList.add('flex'); visibleCount++;
+                } else {
+                    item.classList.remove('flex'); item.classList.add('hidden');
+                }
+            });
+            const emptyMsg = document.getElementById('emptyMsgRekomendasi');
+            if (emptyMsg) {
+                if (visibleCount === 0) emptyMsg.classList.remove('hidden'); else emptyMsg.classList.add('hidden');
+            }
+            const modal = document.getElementById('modalKelolaRekomendasi');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            setTimeout(() => { modal.classList.remove('opacity-0'); modal.children[0].classList.remove('scale-95'); }, 10);
+        }
+
+        function closeModalKelolaRekomendasi(force = false) {
+            const modal = document.getElementById('modalKelolaRekomendasi');
+            modal.classList.add('opacity-0'); modal.children[0].classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
         }
 
         function tambahRekomendasiJS(event) {

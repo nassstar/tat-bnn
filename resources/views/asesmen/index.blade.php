@@ -58,113 +58,122 @@
                 </div>
             </div>
 
-            <!-- HEADER DAFTAR KLIEN & TOMBOL AKSI SORTING -->
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 mt-4">
-                <div>
+            <!-- HEADER DAFTAR KLIEN & BLOK PENCARIAN -->
+            <div class="flex flex-col lg:flex-row justify-between items-start gap-4 mb-6 mt-4">
+                <div class="shrink-0 lg:mt-3">
                     <h2 class="text-xl font-bold text-slate-800">Daftar Klien TAT</h2>
                     <p class="text-sm text-slate-500 mt-1">Total data ditemukan: <span class="font-bold text-indigo-600">{{ $asesmens->total() }}</span> klien</p>
                 </div>
 
-                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                    <form action="{{ route('asesmen.index') }}" method="GET" class="flex-1 md:flex-none">
-                        @foreach(request()->except('sort', 'page') as $key => $value)
-                            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
-                        @endforeach
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm w-full lg:max-w-2xl xl:max-w-3xl">
+                    <form action="{{ route('asesmen.index') }}" method="GET" id="filterForm">
+                        @if(request()->has('sort'))
+                            <input type="hidden" name="sort" value="{{ request('sort') }}">
+                        @endif
 
-                        <div class="relative">
-                            <select name="sort" onchange="this.form.submit()" class="appearance-none w-full md:w-48 bg-white border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block pl-3 pr-10 py-2.5 shadow-sm cursor-pointer hover:bg-slate-50 transition-colors">
-                                <option value="terbaru" {{ request('sort') == 'terbaru' ? 'selected' : '' }}>Terbaru Ditambahkan</option>
-                                <option value="terlama" {{ request('sort') == 'terlama' ? 'selected' : '' }}>Terlama Ditambahkan</option>
-                                <option value="a-z" {{ request('sort') == 'a-z' ? 'selected' : '' }}>Abjad (A - Z)</option>
-                                <option value="z-a" {{ request('sort') == 'z-a' ? 'selected' : '' }}>Abjad (Z - A)</option>
-                            </select>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <div class="flex-1 relative">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                    <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                </div>
+                                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Nama Klien, NIK, atau No. Register..." class="block w-full pl-11 pr-3 py-3 border border-slate-300 rounded-xl text-sm bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all shadow-sm">
+                            </div>
+
+                            <button type="submit" class="px-6 py-3 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 transition shadow-sm">
+                                Cari
+                            </button>
+
+                            <button type="button" onclick="toggleFilter()" class="px-5 py-3 bg-white border border-slate-300 text-slate-700 text-sm font-bold rounded-xl hover:bg-slate-50 transition shadow-sm flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+                                Filter
+                                <svg id="filterIcon" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                            </button>
+                        </div>
+
+                        <!-- PANEL FILTER TERSEMBUNYI -->
+                        <div id="filterPanel" class="overflow-hidden transition-all duration-300 ease-in-out max-h-0 opacity-0">
+                            <div class="pt-5 mt-5 border-t border-slate-100">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                    <select name="bulan" class="w-full border-slate-300 rounded-xl text-sm text-slate-600 focus:border-indigo-500 focus:ring-indigo-200 bg-slate-50 focus:bg-white py-2.5">
+                                        <option value="">-- Bulan --</option>
+                                        @php $bulans = [1=>'Januari', 2=>'Februari', 3=>'Maret', 4=>'April', 5=>'Mei', 6=>'Juni', 7=>'Juli', 8=>'Agustus', 9=>'September', 10=>'Oktober', 11=>'November', 12=>'Desember']; @endphp
+                                        @foreach($bulans as $num => $name)
+                                            <option value="{{ $num }}" {{ request('bulan') == $num ? 'selected' : '' }}>{{ $name }}</option>
+                                        @endforeach
+                                    </select>
+
+                                    <select name="tahun" class="w-full border-slate-300 rounded-xl text-sm text-slate-600 focus:border-indigo-500 focus:ring-indigo-200 bg-slate-50 focus:bg-white py-2.5">
+                                        <option value="">-- Tahun --</option>
+                                        @foreach($daftarTahun ?? [] as $thn)
+                                            <option value="{{ $thn }}" {{ request('tahun') == $thn ? 'selected' : '' }}>{{ $thn }}</option>
+                                        @endforeach
+                                    </select>
+
+                                    <select name="narkotika" class="w-full border-slate-300 rounded-xl text-sm text-slate-600 focus:border-indigo-500 focus:ring-indigo-200 bg-slate-50 focus:bg-white py-2.5">
+                                        <option value="">-- Jenis Zat/Narkotika --</option>
+                                        @foreach($masterNarkotika ?? [] as $n)
+                                            <option value="{{ $n->id }}" {{ request('narkotika') == $n->id ? 'selected' : '' }}>{{ $n->jenis_narkotika }}</option>
+                                        @endforeach
+                                    </select>
+
+                                    <select name="status" class="w-full border-slate-300 rounded-xl text-sm text-slate-600 focus:border-indigo-500 focus:ring-indigo-200 bg-slate-50 focus:bg-white py-2.5">
+                                        <option value="">-- Status TAT --</option>
+                                        <option value="YA" {{ request('status') == 'YA' ? 'selected' : '' }}>Selesai</option>
+                                        <option value="TIDAK" {{ request('status') == 'TIDAK' ? 'selected' : '' }}>Menunggu</option>
+                                    </select>
+                                </div>
+
+                                <div class="flex justify-end gap-3 mt-4">
+                                    @if(request()->hasAny(['bulan', 'tahun', 'narkotika', 'status', 'search']))
+                                        <a href="{{ route('asesmen.index', ['sort' => request('sort')]) }}" class="px-5 py-2 text-sm font-bold text-slate-500 hover:text-slate-800 transition">Bersihkan Filter</a>
+                                    @endif
+                                    <button type="submit" class="px-5 py-2 bg-indigo-100 text-indigo-700 text-sm font-bold rounded-lg hover:bg-indigo-200 transition">
+                                        Terapkan Filter Spesifik
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </form>
-
-                    <a href="{{ route('asesmen.export-excel', request()->query()) }}" class="flex-1 md:flex-none inline-flex justify-center items-center px-4 py-2.5 border border-emerald-200 text-sm font-bold rounded-lg text-emerald-700 bg-emerald-50 hover:bg-emerald-100 hover:border-emerald-300 shadow-sm transition-colors">
-                        <svg class="w-4 h-4 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        Export Excel (Sesuai Filter)
-                    </a>
                 </div>
             </div>
 
-            <!-- 3. PENCARIAN & FILTER ANIMASI -->
-            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                <form action="{{ route('asesmen.index') }}" method="GET" id="filterForm">
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <div class="flex-1 relative">
-                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                            </div>
-                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Nama Klien, NIK, atau No. Register..." class="block w-full pl-11 pr-3 py-3 border border-slate-300 rounded-xl text-sm bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all shadow-sm">
-                        </div>
-
-                        <button type="submit" class="px-6 py-3 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 transition shadow-sm">
-                            Cari
-                        </button>
-
-                        <button type="button" onclick="toggleFilter()" class="px-5 py-3 bg-white border border-slate-300 text-slate-700 text-sm font-bold rounded-xl hover:bg-slate-50 transition shadow-sm flex items-center justify-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-                            Filter Lanjutan
-                            <svg id="filterIcon" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                        </button>
-                    </div>
-
-                    <div id="filterPanel" class="overflow-hidden transition-all duration-300 ease-in-out max-h-0 opacity-0">
-                        <div class="pt-5 mt-5 border-t border-slate-100">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                                <select name="bulan" class="w-full border-slate-300 rounded-xl text-sm text-slate-600 focus:border-indigo-500 focus:ring-indigo-200 bg-slate-50 focus:bg-white py-2.5">
-                                    <option value="">-- Bulan --</option>
-                                    @php $bulans = [1=>'Januari', 2=>'Februari', 3=>'Maret', 4=>'April', 5=>'Mei', 6=>'Juni', 7=>'Juli', 8=>'Agustus', 9=>'September', 10=>'Oktober', 11=>'November', 12=>'Desember']; @endphp
-                                    @foreach($bulans as $num => $name)
-                                        <option value="{{ $num }}" {{ request('bulan') == $num ? 'selected' : '' }}>{{ $name }}</option>
-                                    @endforeach
-                                </select>
-
-                                <select name="tahun" class="w-full border-slate-300 rounded-xl text-sm text-slate-600 focus:border-indigo-500 focus:ring-indigo-200 bg-slate-50 focus:bg-white py-2.5">
-                                    <option value="">-- Tahun --</option>
-                                    @foreach($daftarTahun ?? [] as $thn)
-                                        <option value="{{ $thn }}" {{ request('tahun') == $thn ? 'selected' : '' }}>{{ $thn }}</option>
-                                    @endforeach
-                                </select>
-
-                                <select name="narkotika" class="w-full border-slate-300 rounded-xl text-sm text-slate-600 focus:border-indigo-500 focus:ring-indigo-200 bg-slate-50 focus:bg-white py-2.5">
-                                    <option value="">-- Jenis Zat/Narkotika --</option>
-                                    @foreach($masterNarkotika ?? [] as $n)
-                                        <option value="{{ $n->id }}" {{ request('narkotika') == $n->id ? 'selected' : '' }}>{{ $n->jenis_narkotika }}</option>
-                                    @endforeach
-                                </select>
-
-                                <select name="status" class="w-full border-slate-300 rounded-xl text-sm text-slate-600 focus:border-indigo-500 focus:ring-indigo-200 bg-slate-50 focus:bg-white py-2.5">
-                                    <option value="">-- Status TAT --</option>
-                                    <option value="YA" {{ request('status') == 'YA' ? 'selected' : '' }}>Selesai</option>
-                                    <option value="TIDAK" {{ request('status') == 'TIDAK' ? 'selected' : '' }}>Menunggu</option>
-                                </select>
-                            </div>
-
-                            <div class="flex justify-end gap-3 mt-4">
-                                @if(request()->hasAny(['bulan', 'tahun', 'narkotika', 'status', 'sort']))
-                                    <a href="{{ route('asesmen.index') }}" class="px-5 py-2 text-sm font-bold text-slate-500 hover:text-slate-800 transition">Bersihkan Filter</a>
-                                @endif
-                                <button type="submit" class="px-5 py-2 bg-indigo-100 text-indigo-700 text-sm font-bold rounded-lg hover:bg-indigo-200 transition">
-                                    Terapkan Filter Spesifik
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-            <!-- 4. TABEL DATA & EXPORT EXCEL -->
+            <!-- 4. TABEL DATA (DENGAN SORTING & EXPORT DI HEADERNYA) -->
             <div class="bg-white overflow-hidden shadow-sm rounded-2xl border border-slate-200">
-                <div class="p-4 sm:p-5 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div class="p-4 sm:p-5 border-b border-slate-200 bg-slate-50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
                         <h3 class="font-bold text-slate-800 text-lg">Tabel Data Klien</h3>
                     </div>
-                    <a href="{{ route('asesmen.export-excel', request()->query()) }}" class="inline-flex justify-center items-center px-4 py-2 border border-emerald-300 text-sm font-bold rounded-xl shadow-sm text-emerald-700 bg-white hover:bg-emerald-50 transition-all">
-                        <svg class="h-4 w-4 mr-2 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                        Export Excel (Sesuai Filter)
-                    </a>
+
+                    <!-- BLOK SORTING & EXPORT -->
+                    <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                        <form action="{{ route('asesmen.index') }}" method="GET" class="flex-1 sm:flex-none">
+                            @foreach(request()->except('sort', 'page') as $key => $value)
+                                <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                            @endforeach
+                            <div class="relative">
+                                <select name="sort" onchange="this.form.submit()" class="appearance-none w-full sm:w-48 bg-white border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block pl-3 pr-10 py-2 shadow-sm cursor-pointer hover:bg-slate-50 transition-colors">
+                                    <option value="terbaru" {{ request('sort') == 'terbaru' ? 'selected' : '' }}>Terbaru Ditambahkan</option>
+                                    <option value="terlama" {{ request('sort') == 'terlama' ? 'selected' : '' }}>Terlama Ditambahkan</option>
+                                    <option value="a-z" {{ request('sort') == 'a-z' ? 'selected' : '' }}>Abjad (A - Z)</option>
+                                    <option value="z-a" {{ request('sort') == 'z-a' ? 'selected' : '' }}>Abjad (Z - A)</option>
+                                </select>
+                            </div>
+                        </form>
+
+                        <div class="flex gap-2 w-full sm:w-auto">
+                            <!-- EXPORT 1: BERDASARKAN FILTER -->
+                            <a href="{{ route('asesmen.export-excel', request()->query()) }}" class="flex-1 sm:flex-none inline-flex justify-center items-center px-3 py-2 border border-emerald-300 text-xs font-bold rounded-lg shadow-sm text-emerald-700 bg-white hover:bg-emerald-50 transition-all" title="Export berdasarkan hasil pencarian dan filter saat ini">
+                                <svg class="h-4 w-4 mr-1.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                Export (Filter)
+                            </a>
+
+                            <!-- EXPORT 2: BERDASARKAN SORTING SAJA -->
+                            <a href="{{ route('asesmen.export-excel', ['sort' => request('sort', 'terbaru')]) }}" class="flex-1 sm:flex-none inline-flex justify-center items-center px-3 py-2 border border-indigo-300 text-xs font-bold rounded-lg shadow-sm text-indigo-700 bg-white hover:bg-indigo-50 transition-all" title="Export seluruh data diurutkan berdasarkan pilihan">
+                                <svg class="h-4 w-4 mr-1.5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                Export (Sorting)
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="overflow-x-auto pb-4">
@@ -180,12 +189,25 @@
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             @forelse($asesmens as $index => $item)
+                                @php
+                                    // PENGHITUNGAN USIA UNTUK EXPAND
+                                    $usiaKlien = '-';
+                                    if (!empty($item->tgl_lahir)) {
+                                        try {
+                                            $usiaKlien = \Carbon\Carbon::parse($item->tgl_lahir)->age . ' Tahun';
+                                        } catch (\Exception $e) {}
+                                    }
+
+                                    $bb_gabungan = ($item->berat_bb ? $item->berat_bb . ' gr' : '') . ($item->berat_bb && $item->deskripsi_bb ? ' - ' : '') . ($item->deskripsi_bb ?? '');
+                                @endphp
+
+                                <!-- BARIS UTAMA -->
                                 <tr class="hover:bg-slate-50/70 transition-colors duration-200">
                                     <td class="px-6 py-5 text-sm text-slate-500 align-top">
                                         {{ $asesmens->firstItem() + $index }}
                                     </td>
 
-                                    <!-- Kolom Identitas dengan Cek Foto -->
+                                    <!-- Kolom Identitas -->
                                     <td class="px-6 py-5 align-top">
                                         <div class="flex items-start gap-3">
                                             <div class="flex-shrink-0 w-10 h-10 mt-0.5 relative">
@@ -200,7 +222,11 @@
                                                 @endif
                                             </div>
                                             <div>
-                                                <div class="font-bold text-slate-900 text-sm">{{ $item->nama_lengkap }}</div>
+                                                <!-- NAMA KLIEN SEBAGAI TEKS BIASA -->
+                                                <div class="font-extrabold text-slate-900 text-sm text-left">
+                                                    {{ $item->nama_lengkap }}
+                                                </div>
+
                                                 <div class="text-xs text-slate-500 mt-1">NIK: <span class="font-medium text-slate-700">{{ $item->nik ?? '-' }}</span></div>
                                                 <div class="text-xs text-slate-500 mt-0.5">Reg: <span class="font-medium text-slate-700">{{ $item->no_register ?? '-' }}</span></div>
 
@@ -281,8 +307,10 @@
                                     <!-- Kolom Tindakan & Dokumen -->
                                     <td class="px-6 py-5 align-top">
                                         <div class="flex flex-col gap-2 min-w-[175px] float-right">
+
+                                            <!-- BARIS 1: Detail, Edit, Hapus -->
                                             <div class="inline-flex rounded-lg shadow-sm" role="group">
-                                                <a href="{{ route('asesmen.show', $item->id) }}" class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-[11px] font-bold text-slate-600 bg-white border border-slate-200 rounded-l-lg hover:bg-slate-50 hover:text-blue-600 transition-colors" title="Lihat Detail Klien">
+                                                <a href="{{ route('asesmen.show', $item->id) }}" class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-[11px] font-bold text-slate-600 bg-white border border-slate-200 rounded-l-lg hover:bg-slate-50 hover:text-blue-600 transition-colors" title="Lihat Detail Form">
                                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                                                     Detail
                                                 </a>
@@ -298,21 +326,113 @@
                                                 </form>
                                             </div>
 
+                                            <!-- BARIS 2: B. Acara & Rekom -->
                                             <div class="grid grid-cols-2 gap-1.5">
                                                 <a href="{{ route('asesmen.berita-acara', $item->id) }}" class="inline-flex items-center justify-center gap-1.5 px-2 py-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-md hover:bg-emerald-100 transition-colors text-[10px] font-bold" title="Generate Berita Acara (Word)">
                                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                                                     B. Acara
                                                 </a>
                                                 <a href="{{ route('asesmen.rekomendasi', $item->id) }}" class="inline-flex items-center justify-center gap-1.5 px-2 py-1.5 bg-purple-50 border border-purple-200 text-purple-700 rounded-md hover:bg-purple-100 transition-colors text-[10px] font-bold" title="Generate Surat Rekomendasi (Word)">
-                                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
+                                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
                                                     Rekom
                                                 </a>
                                             </div>
 
-                                            <a href="{{ route('asesmen.cetakPdf', $item->id) }}" class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-rose-50 border border-rose-200 text-rose-600 rounded-md hover:bg-rose-100 transition-colors text-[11px] font-bold w-full" title="Cetak Ringkasan Asesmen (PDF)">
+                                            <!-- BARIS 3: Tombol Case Conference (DENGAN ICON PANAH KE BAWAH) -->
+                                            <button type="button" onclick="toggleExpand('{{ $item->id }}')" class="inline-flex items-center justify-between px-3 py-1.5 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-md hover:bg-indigo-100 transition-colors text-[11px] font-bold w-full shadow-sm group" title="Lihat Detail Case Conference">
+                                                <div class="flex items-center gap-1.5">
+                                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                                    Case Conference
+                                                </div>
+                                                <svg id="icon-expand-{{ $item->id }}" class="w-3.5 h-3.5 text-indigo-400 group-hover:text-indigo-700 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" /></svg>
+                                            </button>
+
+                                            <!-- BARIS 4: Cetak PDF -->
+                                            <a href="{{ route('asesmen.cetakPdf', $item->id) }}" target="_blank" class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-rose-50 border border-rose-200 text-rose-600 rounded-md hover:bg-rose-100 transition-colors text-[11px] font-bold w-full" title="Cetak Ringkasan Asesmen (PDF)">
                                                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
                                                 Unduh PDF Ringkasan
                                             </a>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- ============================================================ -->
+                                <!-- HIDDEN EXPANDABLE ROW: DATA CASE CONFERENCE                  -->
+                                <!-- ============================================================ -->
+                                <tr id="expand-row-{{ $item->id }}" class="hidden bg-slate-50 border-b-2 border-indigo-200 shadow-inner">
+                                    <td colspan="5" class="p-6">
+                                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 md:p-7 space-y-6">
+
+                                            <!-- HEADER DATA EXPAND -->
+                                            <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+                                                <svg class="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                                <h4 class="text-sm font-extrabold text-slate-800 uppercase tracking-widest">Detail Case Conference: <span class="text-indigo-600">{{ $item->nama_lengkap }}</span></h4>
+                                            </div>
+
+                                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                                                <!-- 1. IDENTITAS -->
+                                                <div class="space-y-3">
+                                                    <h5 class="text-[11px] font-bold text-slate-400 border-b border-slate-100 pb-1 mb-2">IDENTITAS</h5>
+                                                    <div><span class="block text-[10px] font-semibold text-slate-400 uppercase">Usia</span><p class="font-bold text-sm text-slate-800">{{ $usiaKlien }}</p></div>
+                                                    <div><span class="block text-[10px] font-semibold text-slate-400 uppercase">P / L (Jenis Kelamin)</span><p class="font-bold text-sm text-slate-800">{{ $item->jenis_kelamin == 'L' ? 'Laki-Laki' : ($item->jenis_kelamin == 'P' ? 'Perempuan' : '-') }}</p></div>
+                                                    <div><span class="block text-[10px] font-semibold text-slate-400 uppercase">Pekerjaan</span><p class="font-bold text-sm text-slate-800">{{ $item->pekerjaan->nama_pekerjaan ?? '-' }}</p></div>
+                                                    <div><span class="block text-[10px] font-semibold text-slate-400 uppercase">Pendidikan Terakhir</span><p class="font-bold text-sm text-slate-800">{{ $item->pendidikan->nama_pendidikan ?? '-' }}</p></div>
+                                                    <div><span class="block text-[10px] font-semibold text-slate-400 uppercase">Domisili</span><p class="font-bold text-sm text-slate-800 leading-snug">{{ $item->alamat_domisili ?? '-' }}</p></div>
+                                                </div>
+
+                                                <!-- 2. HUKUM & MEDIS -->
+                                                <div class="space-y-4">
+                                                    <!-- HUKUM -->
+                                                    <div class="space-y-3">
+                                                        <h5 class="text-[11px] font-bold text-amber-500 border-b border-amber-100 pb-1 mb-2">HUKUM</h5>
+                                                        <div><span class="block text-[10px] font-semibold text-slate-400 uppercase">Status Hukum</span><p class="font-bold text-sm text-slate-800">{{ $item->status_hukum ?? '-' }}</p></div>
+                                                        <div><span class="block text-[10px] font-semibold text-slate-400 uppercase">Keterlibatan Jaringan</span><p class="font-bold text-sm text-rose-600 uppercase">{{ $item->keterlibatan_jaringan ?? '-' }}</p></div>
+                                                        <div><span class="block text-[10px] font-semibold text-slate-400 uppercase">Barang Bukti</span><p class="font-bold text-sm text-slate-800">{{ $bb_gabungan ?: '-' }}</p></div>
+                                                        <div><span class="block text-[10px] font-semibold text-slate-400 uppercase">Cara Mendapatkan</span><p class="font-bold text-sm text-slate-800">{{ $item->cara_mendapatkan ?? '-' }}</p></div>
+                                                        <div><span class="block text-[10px] font-semibold text-slate-400 uppercase">Dapat Dari</span><p class="font-bold text-sm text-slate-800">{{ $item->dapat_dari_siapa ?? '-' }}</p></div>
+                                                    </div>
+
+                                                    <!-- MEDIS -->
+                                                    <div class="space-y-3 pt-3">
+                                                        <h5 class="text-[11px] font-bold text-blue-500 border-b border-blue-100 pb-1 mb-2">MEDIS</h5>
+                                                        <div><span class="block text-[10px] font-semibold text-slate-400 uppercase">Kesehatan</span><p class="font-bold text-sm text-slate-800 whitespace-pre-line">{{ $item->kesehatan_fisik ?? $item->aspek_medis ?? '-' }}</p></div>
+                                                        <div><span class="block text-[10px] font-semibold text-slate-400 uppercase">Psikologi</span><p class="font-bold text-sm text-slate-800 whitespace-pre-line">{{ $item->psikologi ?? '-' }}</p></div>
+                                                        <div><span class="block text-[10px] font-semibold text-slate-400 uppercase">Hasil Tes Urine</span><p class="font-bold text-sm text-slate-800">{{ $item->tes_urine ?? '-' }}</p></div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- 3. KONDISI & REKOMENDASI -->
+                                                <div class="space-y-4">
+                                                    <!-- KONDISI LINGKUNGAN -->
+                                                    <div class="space-y-3">
+                                                        <h5 class="text-[11px] font-bold text-slate-400 border-b border-slate-100 pb-1 mb-2">KONDISI & RIWAYAT</h5>
+                                                        <div><span class="block text-[10px] font-semibold text-slate-400 uppercase">Alasan Penggunaan</span><p class="font-bold text-sm text-slate-800 whitespace-pre-line">{{ $item->alasan_penggunaan ?? '-' }}</p></div>
+                                                        <div><span class="block text-[10px] font-semibold text-slate-400 uppercase">Kondisi Keluarga</span><p class="font-bold text-sm text-slate-800 whitespace-pre-line">{{ $item->kondisi_keluarga ?? '-' }}</p></div>
+                                                        <div><span class="block text-[10px] font-semibold text-slate-400 uppercase">Tingkat Ketergantungan</span><p class="font-bold text-sm text-slate-800">{{ $item->tingkat_ketergantungan ?? '-' }}</p></div>
+                                                        <div><span class="block text-[10px] font-semibold text-slate-400 uppercase">Pola Pemakaian</span><p class="font-bold text-sm text-slate-800">{{ $item->pola_pemakaian ?? '-' }}</p></div>
+                                                        <div><span class="block text-[10px] font-semibold text-slate-400 uppercase">Kondisi Lingkungan</span><p class="font-bold text-sm text-slate-800 whitespace-pre-line">{{ $item->kondisi_lingkungan ?? '-' }}</p></div>
+                                                    </div>
+
+                                                    <!-- REKOMENDASI FINAL -->
+                                                    <div class="space-y-3 pt-3 border-t border-slate-100">
+                                                        <div>
+                                                            <span class="block text-[10px] font-semibold text-emerald-600 uppercase">Rekomendasi (Instansi)</span>
+                                                            <p class="font-extrabold text-sm text-emerald-800 bg-emerald-50 px-2 py-1 rounded inline-block mt-1">{{ $item->rekomendasi_input ?? $item->rekomendasi->tempat_rehabilitasi ?? '-' }}</p>
+                                                        </div>
+                                                        <div><span class="block text-[10px] font-semibold text-slate-400 uppercase">Keterangan Hukum</span><p class="font-semibold text-sm text-slate-700 italic">"{{ $item->rekomendasi_keterangan ?? $item->keterangan_tambahan ?? '-' }}"</p></div>
+                                                        <div><span class="block text-[10px] font-semibold text-slate-400 uppercase">Saran Sidang</span><p class="font-bold text-sm text-slate-800 bg-slate-50 p-2 rounded-lg border border-slate-100 whitespace-pre-line">{{ $item->saran_case_conference ?? '-' }}</p></div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <!-- TUTUP EXPAND -->
+                                            <div class="border-t border-slate-100 pt-4 flex justify-end">
+                                                <button onclick="toggleExpand('{{ $item->id }}')" class="px-5 py-2 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-200 transition-colors shadow-sm">
+                                                    Tutup Detail
+                                                </button>
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>
@@ -347,7 +467,7 @@
         </div>
     </div>
 
-    <!-- Script Animasi Filter & Edit Tanggal -->
+    <!-- Script Animasi Filter, Expand, & Edit Tanggal -->
     <script>
         function toggleFilter() {
             const panel = document.getElementById('filterPanel');
@@ -374,13 +494,30 @@
             }
         });
 
-        // Script untuk toggle form Edit Tanggal Inline dengan Konfirmasi
+        // ==========================================
+        // SCRIPT EXPANDABLE ROW CASE CONFERENCE
+        // ==========================================
+        function toggleExpand(id) {
+            const expandRow = document.getElementById('expand-row-' + id);
+            const icon = document.getElementById('icon-expand-' + id);
+
+            if (expandRow.classList.contains('hidden')) {
+                // Tampilkan Row
+                expandRow.classList.remove('hidden');
+                icon.classList.add('rotate-180');
+            } else {
+                // Sembunyikan Row
+                expandRow.classList.add('hidden');
+                icon.classList.remove('rotate-180');
+            }
+        }
+
+        // Script untuk toggle form Edit Tanggal Inline
         function toggleEditTanggal(id, isOpening) {
             const textDiv = document.getElementById('text-tanggal-' + id);
             const formDiv = document.getElementById('form-tanggal-' + id);
 
             if (isOpening) {
-                // Operator klik tombol Pensil
                 if (confirm("Apakah Anda yakin ingin mengedit tanggal klien ditambahkan?")) {
                     formDiv.classList.remove('hidden');
                     formDiv.classList.add('flex');
@@ -388,7 +525,6 @@
                     textDiv.classList.remove('flex');
                 }
             } else {
-                // Operator klik tombol Batal di form
                 formDiv.classList.add('hidden');
                 formDiv.classList.remove('flex');
                 textDiv.classList.remove('hidden');

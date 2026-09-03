@@ -99,6 +99,13 @@ class AsesmenController extends Controller
             'nik.unique' => 'Peringatan: NIK ini sudah pernah terdaftar di dalam sistem! Silakan gunakan NIK lain atau gunakan fitur Edit Data.',
         ]);
 
+        // === GABUNGKAN ARRAY NARKOTIKA MENJADI STRING SEBELUM VALIDASI ===
+        if ($request->has('narkotika_id') && is_array($request->narkotika_id)) {
+            $request->merge([
+                'narkotika_id' => implode(',', $request->narkotika_id)
+            ]);
+        }
+
         $validatedData = $request->validate([
             // Identitas Dasar & Foto
             'foto_klien' => 'nullable|image|mimes:jpeg,png,jpg',
@@ -130,7 +137,7 @@ class AsesmenController extends Controller
             'tgl_tangkap' => 'nullable|date',
 
             // Kasus & Medis
-            'narkotika_id' => 'nullable|integer',
+            'narkotika_id' => 'nullable|string',
             'berat_bb' => 'nullable|numeric',
             'pasal_sangkaan' => 'nullable|string',
             'deskripsi_bb' => 'nullable|string',
@@ -229,6 +236,13 @@ class AsesmenController extends Controller
             'nik.unique' => 'Peringatan: NIK ini sudah digunakan oleh Klien lain.',
         ]);
 
+        // === GABUNGKAN ARRAY NARKOTIKA MENJADI STRING SEBELUM VALIDASI ===
+        if ($request->has('narkotika_id') && is_array($request->narkotika_id)) {
+            $request->merge([
+                'narkotika_id' => implode(',', $request->narkotika_id)
+            ]);
+        }
+
         $validatedData = $request->validate([
             // Identitas Dasar & Foto
             'foto_klien' => 'nullable|image|mimes:jpeg,png,jpg',
@@ -260,7 +274,7 @@ class AsesmenController extends Controller
             'tgl_tangkap' => 'nullable|date',
 
             // Kasus & Medis
-            'narkotika_id' => 'nullable|integer',
+            'narkotika_id' => 'nullable|string',
             'berat_bb' => 'nullable|numeric',
             'pasal_sangkaan' => 'nullable|string',
             'deskripsi_bb' => 'nullable|string',
@@ -511,6 +525,12 @@ class AsesmenController extends Controller
         $asesmen->rekomendasi_durasi = $request->rekomendasi_durasi;
         $asesmen->rekomendasi_keterangan = $request->rekomendasi_keterangan;
 
+        // --- SINKRONISASI KE HALAMAN SHOW ---
+        // Jika Berita Acara di-save, nilai 'lama_perawatan' di database juga otomatis diupdate
+        // sehingga halaman 'show' (Detail Klien) akan menampilkan data yang sama persis
+        $asesmen->lama_perawatan = $request->rekomendasi_durasi;
+        // ------------------------------------
+
         // Eksekusi penyimpanan ke database
         $asesmen->save();
 
@@ -556,15 +576,25 @@ class AsesmenController extends Controller
         $rawTempat = $asesmen->rekomendasi_tempat_rehab ?? $asesmen->rekomendasi->tempat_rehabilitasi ?? $asesmen->rekomendasi_input ?? '-';
         $tempatBersih = $rawTempat;
 
-        if (str_starts_with($rawTempat, 'Rawat Jalan')) {
+        if (str_starts_with($rawTempat, 'Rawat Jalan - ')) {
+            $tempatBersih = trim(str_replace('Rawat Jalan - ', '', $rawTempat));
+        } elseif (str_starts_with($rawTempat, 'Rawat Inap - ')) {
+            $tempatBersih = trim(str_replace('Rawat Inap - ', '', $rawTempat));
+        } elseif (str_starts_with($rawTempat, 'Rehab di Lapas / Rutan - ')) {
+            $tempatBersih = trim(str_replace('Rehab di Lapas / Rutan - ', '', $rawTempat));
+        } elseif (str_starts_with($rawTempat, 'Tidak Rehab (Proses Hukum) - ')) {
+            $tempatBersih = trim(str_replace('Tidak Rehab (Proses Hukum) - ', '', $rawTempat));
+        } elseif (str_starts_with($rawTempat, 'Rawat Jalan')) {
             $tempatBersih = trim(str_replace('Rawat Jalan', '', $rawTempat));
-            $tempatBersih = ltrim($tempatBersih, ' -');
         } elseif (str_starts_with($rawTempat, 'Rawat Inap')) {
             $tempatBersih = trim(str_replace('Rawat Inap', '', $rawTempat));
-            $tempatBersih = ltrim($tempatBersih, ' -');
+        } elseif (str_starts_with($rawTempat, 'Rehab di Lapas / Rutan')) {
+            $tempatBersih = trim(str_replace('Rehab di Lapas / Rutan', '', $rawTempat));
+        } elseif (str_starts_with($rawTempat, 'Tidak Rehab (Proses Hukum)')) {
+            $tempatBersih = trim(str_replace('Tidak Rehab (Proses Hukum)', '', $rawTempat));
         }
 
-        $tempatBersih = empty($tempatBersih) ? 'Tanpa Instansi' : $tempatBersih;
+        $tempatBersih = empty($tempatBersih) ? 'Tanpa Instansi' : trim(ltrim($tempatBersih, ' -'));
         // ----------------------------------------------------------------------
 
         // --- MAPPING IDENTITAS DASAR ---
@@ -639,7 +669,7 @@ class AsesmenController extends Controller
         $templateProcessor->setValue('kesimpulan_pola_pakai', $asesmen->kesimpulan_pola_pakai ?? '-');
         $templateProcessor->setValue('kesimpulan_kategori', $asesmen->kesimpulan_kategori ?? '-');
         $templateProcessor->setValue('diagnosis_medis', $asesmen->diagnosis_medis ?? '-');
-        $templateProcessor->setValue('rekomendasi_tempat_rehab', $tempatBersih); // Variabel Bersih Digunakan
+        $templateProcessor->setValue('rekomendasi_tempat_rehab', $tempatBersih);
         $templateProcessor->setValue('rekomendasi_durasi', $asesmen->rekomendasi_durasi ?? '-');
         $templateProcessor->setValue('rekomendasi_keterangan', $asesmen->rekomendasi_keterangan ?? '-');
 
@@ -692,6 +722,11 @@ class AsesmenController extends Controller
         // Simpan input tempat rekomendasi rehab
         $asesmen->rekomendasi_tempat_rehab = $request->input('rekomendasi_tempat_rehab');
 
+        // --- SINKRONISASI KE HALAMAN SHOW ---
+        // Jika Rekomendasi di-save, nilai durasi di Berita Acara ikut disamakan
+        $asesmen->rekomendasi_durasi = $request->input('lama_perawatan');
+        // ------------------------------------
+
         // EKSEKUSI SIMPAN KE DATABASE
         $asesmen->save();
 
@@ -714,15 +749,25 @@ class AsesmenController extends Controller
         $rawTempatRek = $asesmen->rekomendasi_tempat_rehab ?? $asesmen->rekomendasi->tempat_rehabilitasi ?? $asesmen->rekomendasi_input ?? '-';
         $tempatBersihRek = $rawTempatRek;
 
-        if (str_starts_with($rawTempatRek, 'Rawat Jalan')) {
+        if (str_starts_with($rawTempatRek, 'Rawat Jalan - ')) {
+            $tempatBersihRek = trim(str_replace('Rawat Jalan - ', '', $rawTempatRek));
+        } elseif (str_starts_with($rawTempatRek, 'Rawat Inap - ')) {
+            $tempatBersihRek = trim(str_replace('Rawat Inap - ', '', $rawTempatRek));
+        } elseif (str_starts_with($rawTempatRek, 'Rehab di Lapas / Rutan - ')) {
+            $tempatBersihRek = trim(str_replace('Rehab di Lapas / Rutan - ', '', $rawTempatRek));
+        } elseif (str_starts_with($rawTempatRek, 'Tidak Rehab (Proses Hukum) - ')) {
+            $tempatBersihRek = trim(str_replace('Tidak Rehab (Proses Hukum) - ', '', $rawTempatRek));
+        } elseif (str_starts_with($rawTempatRek, 'Rawat Jalan')) {
             $tempatBersihRek = trim(str_replace('Rawat Jalan', '', $rawTempatRek));
-            $tempatBersihRek = ltrim($tempatBersihRek, ' -');
         } elseif (str_starts_with($rawTempatRek, 'Rawat Inap')) {
             $tempatBersihRek = trim(str_replace('Rawat Inap', '', $rawTempatRek));
-            $tempatBersihRek = ltrim($tempatBersihRek, ' -');
+        } elseif (str_starts_with($rawTempatRek, 'Rehab di Lapas / Rutan')) {
+            $tempatBersihRek = trim(str_replace('Rehab di Lapas / Rutan', '', $rawTempatRek));
+        } elseif (str_starts_with($rawTempatRek, 'Tidak Rehab (Proses Hukum)')) {
+            $tempatBersihRek = trim(str_replace('Tidak Rehab (Proses Hukum)', '', $rawTempatRek));
         }
 
-        $tempatBersihRek = empty($tempatBersihRek) ? 'Tanpa Instansi' : $tempatBersihRek;
+        $tempatBersihRek = empty($tempatBersihRek) ? 'Tanpa Instansi' : trim(ltrim($tempatBersihRek, ' -'));
         // ----------------------------------------------------------------------
 
         // Mapping Data Input Manual
@@ -757,7 +802,8 @@ class AsesmenController extends Controller
         $templateProcessor->setValue('hari', $hari_pelaksanaan);
         $templateProcessor->setValue('jenis_narkotika', $asesmen->narkotika->jenis_narkotika ?? '-');
         $templateProcessor->setValue('tingkat_ketergantungan', $asesmen->tingkat_ketergantungan ?? '-');
-        $templateProcessor->setValue('rekomendasi_tat', $tempatBersihRek); // Variabel Bersih Digunakan
+
+        $templateProcessor->setValue('rekomendasi_tat', $tempatBersihRek);
 
         // Proses Unduh File
         $fileName = 'Surat_Rekomendasi_TAT_' . str_replace(' ', '_', $asesmen->nama_lengkap) . '.docx';
@@ -788,7 +834,6 @@ class AsesmenController extends Controller
 
         $asesmen = Asesmen::findOrFail($id);
 
-        // Mempertahankan jam asli, hanya mengubah tanggalnya
         $jamAsli = $asesmen->created_at ? $asesmen->created_at->format('H:i:s') : '00:00:00';
         $asesmen->created_at = $request->tanggal_ditambahkan . ' ' . $jamAsli;
 
@@ -798,7 +843,7 @@ class AsesmenController extends Controller
     }
 
     /**
-     * Menghapus master data Pendidikan (Dari Modal Kelola)
+     * Menghapus master data Pendidikan
      */
     public function destroyPendidikan(string $id)
     {
@@ -809,11 +854,9 @@ class AsesmenController extends Controller
             return redirect()->back()->with('success', 'Pilihan Pendidikan berhasil dihapus secara permanen dari sistem!');
 
         } catch (\Illuminate\Database\QueryException $e) {
-            // Menangkap error jika data sedang dipakai oleh Klien (Foreign Key Constraint Violation)
             if ($e->getCode() == '23000') {
                 return redirect()->back()->with('error', 'Gagal menghapus! Pilihan pendidikan ini tidak bisa dihapus karena pilihan ini sudah digunakan dalam penambahan data Klien.');
             }
-
             return redirect()->back()->with('error', 'Terjadi kesalahan database: ' . $e->getMessage());
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
