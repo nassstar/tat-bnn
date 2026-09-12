@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AsesmenController;
 use App\Http\Controllers\DashboardController;
@@ -10,7 +10,17 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// 2. Route aplikasi yang dikunci dengan Middleware (Wajib Login)
+// =========================================================================
+// RUTE PUBLIK (Bisa diakses tanpa login)
+// =========================================================================
+Route::get('/waiting-approval', function () {
+    return view('auth.waiting-approval');
+})->name('approval.waiting');
+
+
+// =========================================================================
+// RUTE APLIKASI (WAJIB LOGIN)
+// =========================================================================
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -62,10 +72,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/master-opsi/ajax/{id}', [App\Http\Controllers\MasterOpsiController::class, 'destroyAjax'])->name('master-opsi.destroyAjax');
 
     Route::patch('/asesmen/{id}/update-tanggal', [AsesmenController::class, 'updateTanggal'])->name('asesmen.update-tanggal');
-// Route untuk menghapus master data Pendidikan
-Route::delete('/pendidikan/{id}', [App\Http\Controllers\AsesmenController::class, 'destroyPendidikan'])->name('pendidikan.destroy');
-// Route untuk menghapus master data Rekomendasi TAT
-Route::delete('/rekomendasi/{id}', [App\Http\Controllers\AsesmenController::class, 'destroyRekomendasi'])->name('rekomendasi.destroy');
+
+    // Route untuk menghapus master data Pendidikan
+    Route::delete('/pendidikan/{id}', [App\Http\Controllers\AsesmenController::class, 'destroyPendidikan'])->name('pendidikan.destroy');
+    // Route untuk menghapus master data Rekomendasi TAT
+    Route::delete('/rekomendasi/{id}', [App\Http\Controllers\AsesmenController::class, 'destroyRekomendasi'])->name('rekomendasi.destroy');
+
+
+    // Route untuk Manajemen Pengguna
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+
+    // 1. Tambahkan Route Edit Ini (Yang menyebabkan error tadi)
+    Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+
+    // 2. Tambahkan Route Update Ini (Untuk menyimpan perubahan sandi & profil)
+    Route::patch('/users/{id}', [UserController::class, 'update'])->name('users.update');
+
+    // Route Hapus (Mungkin ini sudah Anda miliki)
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+
 });
 
 // 3. Route bawaan Laravel Breeze untuk autentikasi (Login, Register, Logout)

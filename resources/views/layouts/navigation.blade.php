@@ -21,11 +21,19 @@
                        class="px-3.5 py-2 rounded-lg text-sm transition-all duration-200 {{ request()->routeIs('dashboard') ? 'bg-slate-100 text-slate-900 font-bold shadow-sm border border-slate-200/60' : 'text-slate-500 font-medium hover:bg-slate-50 hover:text-slate-800' }}">
                         Dashboard
                     </a>
+                    
                     <a href="{{ route('asesmen.index') }}" 
                        class="px-3.5 py-2 rounded-lg text-sm transition-all duration-200 {{ request()->routeIs('asesmen.*') ? 'bg-indigo-50 text-indigo-700 font-bold shadow-sm border border-indigo-100/60' : 'text-slate-500 font-medium hover:bg-slate-50 hover:text-slate-800' }}">
                         Data Asesmen
                     </a>
-                    <!-- Tambahkan menu lain di sini nanti -->
+
+                    <!-- MENU MANAJEMEN PENGGUNA (KHUSUS ADMIN) -->
+                    @can('is-admin')
+                    <a href="{{ route('users.index') }}" 
+                       class="px-3.5 py-2 rounded-lg text-sm transition-all duration-200 {{ request()->routeIs('users.*') ? 'bg-indigo-50 text-indigo-700 font-bold shadow-sm border border-indigo-100/60' : 'text-slate-500 font-medium hover:bg-slate-50 hover:text-slate-800' }}">
+                        Manajemen Pengguna
+                    </a>
+                    @endcan
                 </div>
             </div>
 
@@ -55,6 +63,12 @@
                         <div class="px-4 py-3 border-b border-slate-100">
                             <p class="text-sm text-slate-500 leading-none">Login sebagai</p>
                             <p class="text-sm font-bold text-slate-900 mt-1 truncate">{{ Auth::user()->email }}</p>
+                            
+                            <!-- Tampilkan Label Role di Dropdown -->
+                            <span class="inline-block mt-1.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider
+                                {{ Auth::user()->role === 'admin' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600' }}">
+                                {{ str_replace('_', ' ', Auth::user()->role) }}
+                            </span>
                         </div>
 
                         <x-dropdown-link :href="route('profile.edit')" class="text-sm font-medium text-slate-700 hover:text-indigo-600 hover:bg-indigo-50 flex items-center gap-2 mt-1">
@@ -97,6 +111,13 @@
             <a href="{{ route('asesmen.index') }}" class="block px-4 py-2 rounded-lg text-base font-medium transition-colors {{ request()->routeIs('asesmen.*') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50' }}">
                 Data Asesmen
             </a>
+            
+            <!-- MENU MANAJEMEN PENGGUNA MOBILE (KHUSUS ADMIN) -->
+            @can('is-admin')
+            <a href="{{ route('users.index') }}" class="block px-4 py-2 rounded-lg text-base font-medium transition-colors {{ request()->routeIs('users.*') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50' }}">
+                Manajemen Pengguna
+            </a>
+            @endcan
         </div>
 
         <!-- Responsive Settings Options -->
@@ -108,6 +129,9 @@
                 <div>
                     <div class="font-bold text-base text-slate-900">{{ Auth::user()->name }}</div>
                     <div class="font-medium text-xs text-slate-500">{{ Auth::user()->email }}</div>
+                    <span class="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border border-slate-200 text-slate-600 bg-white">
+                        Role: {{ str_replace('_', ' ', Auth::user()->role) }}
+                    </span>
                 </div>
             </div>
 

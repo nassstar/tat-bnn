@@ -104,44 +104,64 @@
             </div>
 
             <!-- ========================================== -->
-            <!-- 3. ANALISIS DEMOGRAFI & DAFTAR KERJA -->
+            <!-- 3. TOP 5 PEKERJAAN & AKTIVITAS TERBARU -->
             <!-- ========================================== -->
-            <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Kolom Kiri: Top 5 Pekerjaan -->
+                <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 relative overflow-hidden flex flex-col h-full">
+                    <div class="absolute top-0 left-0 w-full h-1.5 bg-rose-500"></div>
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-5 mb-5">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2.5 bg-rose-50 text-rose-600 border border-rose-100 rounded-xl">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            </div>
+                            <div>
+                                <h3 class="font-extrabold text-slate-800 text-lg">Top 5 Pekerjaan Klien</h3>
+                                <p class="text-[13px] font-semibold text-slate-500">Profil pekerjaan terbanyak pada data TAT</p>
+                            </div>
+                        </div>
+                    </div>
 
-                <!-- Kolom Kiri: Demografi Gender -->
-                <div class="xl:col-span-1 space-y-6">
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
-                        <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-2">
-                            <h3 class="font-extrabold text-slate-800">Demografi Gender Klien</h3>
-                            <button type="button" onclick="openModal('modalDetailGender')" class="text-[10px] font-extrabold text-indigo-600 bg-indigo-50 border border-indigo-100 hover:bg-indigo-600 hover:text-white px-3 py-1.5 rounded-lg transition-all shadow-sm">
-                                Lihat Detail &rarr;
-                            </button>
-                        </div>
-                        <div class="space-y-4">
-                            @foreach($demografiGender as $gender)
-                                <div>
-                                    <div class="flex justify-between text-sm mb-1 font-bold text-slate-700">
-                                        <span>{{ $gender->jenis_kelamin == 'L' ? 'Laki-Laki' : 'Perempuan' }}</span>
-                                        <span>{{ $gender->total }} Orang</span>
-                                    </div>
-                                    <div class="w-full bg-slate-100 rounded-full h-2.5">
-                                        <div class="bg-{{ $gender->jenis_kelamin == 'L' ? 'blue' : 'rose' }}-500 h-2.5 rounded-full" style="width: {{ ($totalKlien > 0) ? ($gender->total / $totalKlien) * 100 : 0 }}%"></div>
-                                    </div>
+                    <div class="flex-1 space-y-4">
+                        @forelse($topPekerjaan as $index => $pekerjaan)
+                            <div class="flex items-center justify-between group">
+                                <div class="flex items-center gap-3">
+                                    <span class="flex items-center justify-center w-7 h-7 rounded-full {{ $index == 0 ? 'bg-rose-500 text-white shadow-md shadow-rose-200' : 'bg-slate-100 text-slate-500 group-hover:bg-rose-100 group-hover:text-rose-600 transition-colors' }} text-xs font-bold">
+                                        {{ $index + 1 }}
+                                    </span>
+                                    <span class="font-bold text-slate-700 text-sm group-hover:text-slate-900 transition-colors">{{ $pekerjaan->pekerjaan_input }}</span>
                                 </div>
-                            @endforeach
-                        </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-24 h-2 bg-slate-100 rounded-full overflow-hidden hidden sm:block">
+                                        @php
+                                            $highestTotal = $topPekerjaan->first()->total > 0 ? $topPekerjaan->first()->total : 1;
+                                            $percentage = ($pekerjaan->total / $highestTotal) * 100;
+                                        @endphp
+                                        <div class="h-full bg-rose-400 rounded-full transition-all duration-1000" style="width: {{ $percentage }}%"></div>
+                                    </div>
+                                    <span class="font-extrabold text-slate-800 text-sm w-12 text-right">{{ $pekerjaan->total }} <span class="text-[10px] text-slate-400 font-normal">Org</span></span>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="py-8 flex flex-col items-center justify-center text-center">
+                                <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-3 border-2 border-dashed border-slate-200">
+                                    <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                                </div>
+                                <p class="text-sm text-slate-500 font-medium italic">Belum ada data pekerjaan klien yang tersimpan.</p>
+                            </div>
+                        @endforelse
                     </div>
                 </div>
 
                 <!-- Kolom Kanan: Kasus To-Do List / Terbaru -->
-                <div class="xl:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-full">
+                <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-full">
                     <div class="px-6 py-5 border-b border-slate-100 bg-slate-50 flex justify-between items-start">
                         <div>
                             <h3 class="font-extrabold text-slate-800 text-lg">Aktivitas Asesmen Terbaru</h3>
                             @if($tanggalTerakhir)
                                 <p class="text-[12px] text-slate-500 mt-1">
-                                    Menampilkan <span class="font-bold text-indigo-600">{{ $aktivitasTerbaru->count() }} klien</span> yang diinput pada batch terakhir
-                                    (<span class="font-semibold">{{ \Carbon\Carbon::parse($tanggalTerakhir)->translatedFormat('d F Y') }}</span>).
+                                    Menampilkan <span class="font-bold text-indigo-600">{{ $aktivitasTerbaru->count() }} klien</span> dari batch 
+                                    <span class="font-semibold">{{ \Carbon\Carbon::parse($tanggalTerakhir)->translatedFormat('d F Y') }}</span>.
                                 </p>
                             @else
                                 <p class="text-[12px] text-slate-500 mt-1">Belum ada data klien terdaftar.</p>
@@ -150,7 +170,7 @@
                         <a href="{{ route('asesmen.index') }}" class="text-xs font-bold text-indigo-600 bg-white border border-indigo-200 px-4 py-2 rounded-lg hover:bg-indigo-50 shadow-sm transition-colors whitespace-nowrap">Lihat Semua Data &rarr;</a>
                     </div>
 
-                    <div class="flex-1 overflow-y-auto p-4 max-h-[400px] space-y-3 custom-select-scroll">
+                    <div class="flex-1 overflow-y-auto p-4 max-h-[350px] space-y-3 custom-select-scroll">
                         @forelse($aktivitasTerbaru as $item)
                             <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100 hover:bg-slate-100/50 transition">
                                 <div class="flex items-center gap-4">
@@ -182,45 +202,70 @@
                         @endforelse
                     </div>
                 </div>
-
             </div>
 
             <!-- ========================================== -->
-            <!-- CARD: DEMOGRAFI USIA KLIEN (DINAMIS) -->
+            <!-- 4. GENDER & DEMOGRAFI USIA KLIEN -->
             <!-- ========================================== -->
-            <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm mt-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-4 mb-6 gap-4">
-
-                    <div class="flex items-center gap-3">
-                        <h3 class="text-[15px] font-extrabold text-slate-800">Demografi Usia Klien</h3>
-                        <button type="button" onclick="openModal('modalDetailUsia')" class="text-[10px] font-extrabold text-indigo-600 bg-indigo-50 border border-indigo-100 hover:bg-indigo-600 hover:text-white px-3 py-1.5 rounded-lg transition-all shadow-sm">
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                <!-- Kolom Kiri: Demografi Gender -->
+                <div class="xl:col-span-1 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden h-full flex flex-col">
+                    <div class="absolute top-0 left-0 w-full h-1.5 bg-blue-500"></div>
+                    <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-4 mt-2">
+                        <h3 class="font-extrabold text-slate-800 text-[15px]">Demografi Gender Klien</h3>
+                        <button type="button" onclick="openModal('modalDetailGender')" class="text-[10px] font-extrabold text-indigo-600 bg-indigo-50 border border-indigo-100 hover:bg-indigo-600 hover:text-white px-3 py-1.5 rounded-lg transition-all shadow-sm">
                             Lihat Detail &rarr;
                         </button>
                     </div>
-
-                    <!-- Dropdown Pilihan Rentang Interval Usia -->
-                    <div class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm w-full sm:w-auto mt-2 sm:mt-0">
-                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Rentang Usia:</label>
-                        <select id="intervalPilihan" class="w-full sm:w-auto border-transparent focus:border-transparent focus:ring-0 bg-transparent text-sm font-extrabold text-indigo-700 py-1 pl-1 pr-6 cursor-pointer" onchange="olahDataUsia()">
-                            <option value="2">Per 2 Tahun</option>
-                            <option value="5">Per 5 Tahun</option>
-                            <option value="10" selected>Per 10 Tahun</option>
-                            <option value="15">Per 15 Tahun</option>
-                            <option value="20">Per 20 Tahun</option>
-                        </select>
+                    
+                    <div class="space-y-5 flex-1 justify-center flex flex-col">
+                        @foreach($demografiGender as $gender)
+                            <div>
+                                <div class="flex justify-between text-sm mb-1.5 font-bold text-slate-700">
+                                    <span>{{ $gender->jenis_kelamin == 'L' ? 'Laki-Laki' : 'Perempuan' }}</span>
+                                    <span>{{ $gender->total }} Orang</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-3">
+                                    <div class="bg-{{ $gender->jenis_kelamin == 'L' ? 'blue' : 'rose' }}-500 h-3 rounded-full" style="width: {{ ($totalKlien > 0) ? ($gender->total / $totalKlien) * 100 : 0 }}%"></div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
 
-                <div id="wadahGrafikUsia" class="space-y-6">
-                    <!-- Rendered by JS -->
+                <!-- Kolom Kanan: Demografi Usia Klien -->
+                <div class="xl:col-span-2 bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm h-full flex flex-col">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-4 mb-6 gap-4">
+                        <div class="flex items-center gap-3">
+                            <h3 class="text-[15px] font-extrabold text-slate-800">Demografi Usia Klien</h3>
+                            <button type="button" onclick="openModal('modalDetailUsia')" class="text-[10px] font-extrabold text-indigo-600 bg-indigo-50 border border-indigo-100 hover:bg-indigo-600 hover:text-white px-3 py-1.5 rounded-lg transition-all shadow-sm">
+                                Lihat Detail &rarr;
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm w-full sm:w-auto mt-2 sm:mt-0">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Rentang Usia:</label>
+                            <select id="intervalPilihan" class="w-full sm:w-auto border-transparent focus:border-transparent focus:ring-0 bg-transparent text-sm font-extrabold text-indigo-700 py-1 pl-1 pr-6 cursor-pointer" onchange="olahDataUsia()">
+                                <option value="2">Per 2 Tahun</option>
+                                <option value="5">Per 5 Tahun</option>
+                                <option value="10" selected>Per 10 Tahun</option>
+                                <option value="15">Per 15 Tahun</option>
+                                <option value="20">Per 20 Tahun</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="wadahGrafikUsia" class="space-y-6 flex-1 flex flex-col justify-center">
+                        <!-- Rendered by JS -->
+                    </div>
                 </div>
             </div>
 
             <!-- ========================================== -->
-            <!-- CARD: DEMOGRAFI WILAYAH (TOP 5 & PENCARIAN) -->
+            <!-- 5. KARTU DEMOGRAFI WILAYAH (TOP 5 & PENCARIAN) -->
             <!-- ========================================== -->
-            <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm mt-6 mb-10">
-                <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center border-b border-slate-100 pb-4 mb-6 gap-4">
+            <div class="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1.5 bg-emerald-500"></div>
+                <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center border-b border-slate-100 pb-4 mb-6 mt-1 gap-4">
 
                     <div class="flex items-center gap-3">
                         <h3 class="text-[15px] font-extrabold text-slate-800 whitespace-nowrap">Demografi Wilayah Klien (Top 5)</h3>
@@ -229,15 +274,41 @@
                         </button>
                     </div>
 
-                    <div class="flex flex-col sm:flex-row items-center gap-3 w-full xl:w-auto">
+                    <div class="flex flex-wrap items-center gap-3 w-full xl:w-auto">
+
+                        <!-- FILTER BULAN & TAHUN WILAYAH -->
+                        <form action="{{ url()->current() }}" method="GET" class="flex items-center bg-white rounded-xl border border-slate-200 shadow-sm p-1 w-full sm:w-auto overflow-hidden">
+                            <div class="pl-3 text-slate-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            </div>
+                            <select name="bulan_wilayah" onchange="this.form.submit()" class="bg-transparent border-none text-xs font-bold text-slate-600 focus:ring-0 cursor-pointer py-1.5 pl-2 pr-7 outline-none">
+                                <option value="">Semua Bulan</option>
+                                @foreach(['01'=>'Januari','02'=>'Februari','03'=>'Maret','04'=>'April','05'=>'Mei','06'=>'Juni','07'=>'Juli','08'=>'Agustus','09'=>'September','10'=>'Oktober','11'=>'November','12'=>'Desember'] as $num => $name)
+                                    <option value="{{ $num }}" {{ request('bulan_wilayah') == $num ? 'selected' : '' }}>{{ $name }}</option>
+                                @endforeach
+                            </select>
+                            <div class="w-px h-5 bg-slate-200 mx-1"></div>
+                            <select name="tahun_wilayah" onchange="this.form.submit()" class="bg-transparent border-none text-xs font-bold text-slate-600 focus:ring-0 cursor-pointer py-1.5 pl-2 pr-7 outline-none">
+                                <option value="">Semua Tahun</option>
+                                @foreach($tahunTersedia as $thn)
+                                    <option value="{{ $thn }}" {{ request('tahun_wilayah') == $thn ? 'selected' : '' }}>{{ $thn }}</option>
+                                @endforeach
+                            </select>
+                            @if(request('bulan_wilayah') || request('tahun_wilayah'))
+                                <a href="{{ url()->current() }}" class="pr-3 pl-1 text-rose-500 hover:text-rose-700" title="Reset Filter">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </a>
+                            @endif
+                        </form>
+
                         <!-- Sakelar Tab Opsi (KTP vs Domisili) -->
-                        <div class="flex bg-slate-100 p-1 rounded-lg w-full sm:w-auto">
-                            <button id="btnTabKtp" onclick="switchWilayah('ktp')" class="flex-1 sm:flex-none px-4 py-1.5 text-xs font-bold rounded-md bg-white shadow-sm text-indigo-700 transition-all">Sesuai KTP</button>
-                            <button id="btnTabDomisili" onclick="switchWilayah('domisili')" class="flex-1 sm:flex-none px-4 py-1.5 text-xs font-bold rounded-md text-slate-500 hover:text-slate-700 transition-all">Domisili Saat Ini</button>
+                        <div class="flex bg-slate-100 p-1 rounded-xl w-full sm:w-auto shadow-inner">
+                            <button id="btnTabKtp" onclick="switchWilayah('ktp')" class="flex-1 sm:flex-none px-4 py-1.5 text-xs font-bold rounded-lg bg-white shadow-sm text-indigo-700 transition-all">Sesuai KTP</button>
+                            <button id="btnTabDomisili" onclick="switchWilayah('domisili')" class="flex-1 sm:flex-none px-4 py-1.5 text-xs font-bold rounded-lg text-slate-500 hover:text-slate-700 transition-all">Domisili</button>
                         </div>
 
                         <!-- Search Bar -->
-                        <div class="relative w-full sm:w-64">
+                        <div class="relative w-full sm:w-56">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </div>
@@ -309,9 +380,9 @@
             </div>
 
             <!-- ========================================== -->
-            <!-- CARD: DEMOGRAFI PENDIDIKAN                 -->
+            <!-- 6. DEMOGRAFI PENDIDIKAN                  -->
             <!-- ========================================== -->
-            <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm mt-6 mb-10 relative overflow-hidden">
+            <div class="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm mt-6 mb-10 relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-1.5 bg-blue-500"></div>
                 <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-4 mt-1">
                     <h3 class="text-[15px] font-extrabold text-slate-800 flex items-center gap-2">
@@ -441,9 +512,7 @@
         </div>
     </div>
 
-    <!-- ============================================================== -->
     <!-- MODAL 2: DETAIL PENDIDIKAN KLIEN -->
-    <!-- ============================================================== -->
     <div id="modalDetailPendidikan" class="fixed inset-0 z-50 hidden bg-slate-900/70 backdrop-blur-sm p-4 sm:p-6 md:p-10 items-center justify-center">
         <div class="relative w-full max-w-5xl bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col max-h-[85vh]">
 
@@ -491,9 +560,7 @@
         </div>
     </div>
 
-    <!-- ============================================================== -->
-    <!-- MODAL 3: DETAIL USIA KLIEN (DINAMIS DENGAN JS)                 -->
-    <!-- ============================================================== -->
+    <!-- MODAL 3: DETAIL USIA KLIEN -->
     <div id="modalDetailUsia" class="fixed inset-0 z-50 hidden bg-slate-900/70 backdrop-blur-sm p-4 sm:p-6 md:p-10 items-center justify-center">
         <div class="relative w-full max-w-5xl bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col max-h-[85vh]">
 
@@ -517,9 +584,7 @@
         </div>
     </div>
 
-    <!-- ============================================================== -->
-    <!-- MODAL 4: DETAIL WILAYAH TOP 5 (KTP & DOMISILI)                 -->
-    <!-- ============================================================== -->
+    <!-- MODAL 4: DETAIL WILAYAH TOP 5 (KTP & DOMISILI) -->
     <div id="modalDetailWilayah" class="fixed inset-0 z-50 hidden bg-slate-900/70 backdrop-blur-sm p-4 sm:p-6 md:p-10 items-center justify-center">
         <div class="relative w-full max-w-5xl bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col max-h-[85vh]">
 
@@ -756,7 +821,7 @@
             grupUsiaTerbaru = {};
 
             if (dataUsiaMentah.length === 0) {
-                document.getElementById('wadahGrafikUsia').innerHTML = '<p class="text-sm font-semibold text-slate-400 italic">Belum ada data usia klien yang dapat dihitung.</p>';
+                document.getElementById('wadahGrafikUsia').innerHTML = '<div class="py-8 flex flex-col items-center justify-center text-center"><div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-3 border-2 border-dashed border-slate-200"><svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div><p class="text-sm text-slate-500 font-medium italic">Belum ada data usia klien.</p></div>';
                 document.getElementById('kontenModalUsia').innerHTML = '<div class="text-sm text-slate-400 italic text-center p-8 bg-white border border-slate-200 rounded-2xl">Belum ada data klien yang dapat ditampilkan.</div>';
                 return;
             }
@@ -797,18 +862,18 @@
                 let calcPersen = (jumlah / totalData) * 100;
                 let persentase = calcPersen % 1 === 0 ? calcPersen : calcPersen.toFixed(1);
                 let warna = warnaWarni[index % warnaWarni.length];
+                let warnaText = warna.replace('bg-', 'text-');
 
                 let htmlBar = `
                     <div class="relative pt-1">
                         <div class="flex justify-between items-end mb-2">
                             <span class="text-sm font-extrabold text-slate-700">
                                 ${label}
-                                <span class="text-[11px] font-bold text-slate-400 ml-1 tracking-wider">(${persentase}%)</span>
                             </span>
-                            <span class="text-[13px] font-bold text-slate-800">${jumlah} Klien</span>
+                            <span class="text-[13px] font-bold ${warnaText}">${jumlah} Klien <span class="text-[11px] font-medium text-slate-400 ml-1 tracking-wider">(${persentase}%)</span></span>
                         </div>
-                        <div class="w-full bg-slate-100 rounded-full h-3 shadow-inner overflow-hidden">
-                            <div class="${warna} h-3 rounded-full transition-all duration-1000 ease-out" style="width: 0%;" data-target-width="${persentase}%"></div>
+                        <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                            <div class="${warna} h-2.5 rounded-full transition-all duration-1000 ease-out" style="width: 0%;" data-target-width="${persentase}%"></div>
                         </div>
                     </div>
                 `;
