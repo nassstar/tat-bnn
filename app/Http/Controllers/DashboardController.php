@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Asesmen;
-use Illuminate\Http\Request; // PASTIKAN BARIS INI ADA
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -71,17 +71,12 @@ class DashboardController extends Controller
             }
         }
 
-        // ==============================================================
-        // 5. DEMOGRAFI WILAYAH (DENGAN FILTER BULAN/TAHUN)
-        // ==============================================================
+        // 5. Demografi Wilayah (KTP & Domisili dengan Data Klien)
         $queryWilayah = Asesmen::select('id', 'nama_lengkap', 'no_register', 'alamat_ktp', 'alamat_domisili');
 
-        // Jika ada filter bulan yang dipilih
         if ($request->filled('bulan_wilayah')) {
             $queryWilayah->whereMonth('created_at', $request->bulan_wilayah);
         }
-
-        // Jika ada filter tahun yang dipilih
         if ($request->filled('tahun_wilayah')) {
             $queryWilayah->whereYear('created_at', $request->tahun_wilayah);
         }
@@ -90,21 +85,17 @@ class DashboardController extends Controller
         $dataKtp = $this->prosesDemografiWilayah($allAsesmens, 'alamat_ktp');
         $dataDomisili = $this->prosesDemografiWilayah($allAsesmens, 'alamat_domisili');
 
-        // Ambil Daftar Tahun Unik yang tersedia di database
         $tahunTersedia = Asesmen::selectRaw('YEAR(created_at) as tahun')
             ->whereNotNull('created_at')
             ->groupBy('tahun')
             ->orderByDesc('tahun')
             ->pluck('tahun');
 
-        // Jika database kosong, beri default tahun ini
         if ($tahunTersedia->isEmpty()) {
             $tahunTersedia = collect([date('Y')]);
         }
 
-        // ==============================================================
-        // 6. DEMOGRAFI PENDIDIKAN & TARIKAN DATA UNTUK MODAL DETAIL
-        // ==============================================================
+        // 6. Demografi Pendidikan & Tarikan Data Untuk Modal Detail
         try {
             $demografiPendidikan = Asesmen::select('m_pendidikan.nama_pendidikan as nama', DB::raw('count(*) as total'))
                 ->join('m_pendidikan', 'asesmens.pendidikan_id', '=', 'm_pendidikan.id')
@@ -126,9 +117,7 @@ class DashboardController extends Controller
             $listKlienPendidikan = collect();
         }
 
-        // ==============================================================
-        // 7. DEMOGRAFI TOP 5 PEKERJAAN
-        // ==============================================================
+        // 7. Demografi Top 5 Pekerjaan
         try {
             $topPekerjaan = Asesmen::select('m_pekerjaan.nama_pekerjaan as pekerjaan_input', DB::raw('count(*) as total'))
                 ->join('m_pekerjaan', 'asesmens.pekerjaan_id', '=', 'm_pekerjaan.id')
@@ -140,6 +129,48 @@ class DashboardController extends Controller
                 ->get();
         } catch (\Exception $e) {
             $topPekerjaan = collect();
+        }
+
+        // ==============================================================
+        // 8. STATISTIK REKOMENDASI REHABILITASI (TAHUN INI)
+        // ==============================================================
+        $tahunIni = date('Y');
+        $asesmenTahunIni = Asesmen::with('rekomendasi')->whereYear('created_at', $tahunIni)->get();
+        $totalRekomendasiTahunIni = $asesmenTahunIni->count();
+
+        $statRekomendasi = [
+            'Rawat Jalan' => 0,
+            'Rawat Inap' => 0,
+            'Rehab di Lapas / Rutan' => 0,
+            'Tidak Rehab (Proses Hukum)' => 0,
+            'Belum Ada Keterangan' => 0,
+        ];
+
+        foreach ($asesmenTahunIni as $a) {
+            // Ambil string rekomendasi dari manapun field yang terisi
+            $rawRek = $a->rekomendasi_tempat_rehab ?? ($a->rekomendasi->tempat_rehabilitasi ?? ($a->rekomendasi_input ?? ''));
+            $rawRek = trim($rawRek);
+
+            // Deteksi cerdas menggunakan stripos (case-insensitive)
+            if (empty($rawRek) || $rawRek === '-' || stripos($rawRek, 'Belum diset') !== false) {
+                $statRekomendasi['Belum Ada Keterangan']++;
+            } elseif (stripos($rawRek, 'Rawat Jalan') !== false) {
+                $statRekomendasi['Rawat Jalan']++;
+            } elseif (stripos($rawRek, 'Rawat Inap') !== false) {
+                $statRekomendasi['Rawat Inap']++;
+            } elseif (stripos($rawRek, 'Lapas') !== false || stripos($rawRek, 'Rutan') !== false) {
+                $statRekomendasi['Rehab di Lapas / Rutan']++;
+            } elseif (stripos($rawRek, 'Tidak Rehab') !== false || stripos($rawRek, 'Hukum') !== false) {
+                $statRekomendasi['Tidak Rehab (Proses Hukum)']++;
+            } else {
+                $statRekomendasi['Belum Ada Keterangan']++;
+            }
+        }
+
+        // Hitung Persentase
+        $persenRekomendasi = [];
+        foreach ($statRekomendasi as $key => $count) {
+            $persenRekomendasi[$key] = $totalRekomendasiTahunIni > 0 ? round(($count / $totalRekomendasiTahunIni) * 100, 1) : 0;
         }
 
         return view('dashboard', compact(
@@ -159,7 +190,11 @@ class DashboardController extends Controller
             'totalPendidikan',
             'listKlienPendidikan',
             'topPekerjaan',
-            'tahunTersedia' // <-- Variabel tahun dikirim ke view
+            'tahunTersedia',
+            'tahunIni',
+            'totalRekomendasiTahunIni',
+            'statRekomendasi',
+            'persenRekomendasi' // Variabel Statistik Rekomendasi
         ));
     }
 
@@ -215,12 +250,10 @@ class DashboardController extends Controller
         foreach (array_slice($desaKliens, 0, 5, true) as $k => $v) {
             $topDesa[$k] = count($v);
         }
-
         $topKelurahan = [];
         foreach (array_slice($kelurahanKliens, 0, 5, true) as $k => $v) {
             $topKelurahan[$k] = count($v);
         }
-
         $topKecamatan = [];
         foreach (array_slice($kecamatanKliens, 0, 5, true) as $k => $v) {
             $topKecamatan[$k] = count($v);
@@ -228,25 +261,13 @@ class DashboardController extends Controller
 
         $full = ['desa' => [], 'kelurahan' => [], 'kecamatan' => []];
         foreach ($desaKliens as $name => $kliens) {
-            $full['desa'][] = [
-                'nama' => $name,
-                'count' => count($kliens),
-                'persen' => round((count($kliens) / $totalAlamat) * 100, 1),
-            ];
+            $full['desa'][] = ['nama' => $name, 'count' => count($kliens), 'persen' => round((count($kliens) / $totalAlamat) * 100, 1)];
         }
         foreach ($kelurahanKliens as $name => $kliens) {
-            $full['kelurahan'][] = [
-                'nama' => $name,
-                'count' => count($kliens),
-                'persen' => round((count($kliens) / $totalAlamat) * 100, 1),
-            ];
+            $full['kelurahan'][] = ['nama' => $name, 'count' => count($kliens), 'persen' => round((count($kliens) / $totalAlamat) * 100, 1)];
         }
         foreach ($kecamatanKliens as $name => $kliens) {
-            $full['kecamatan'][] = [
-                'nama' => $name,
-                'count' => count($kliens),
-                'persen' => round((count($kliens) / $totalAlamat) * 100, 1),
-            ];
+            $full['kecamatan'][] = ['nama' => $name, 'count' => count($kliens), 'persen' => round((count($kliens) / $totalAlamat) * 100, 1)];
         }
 
         return [

@@ -270,6 +270,38 @@
                                 <button type="button" onclick="openKelolaModal('keterangan_diagnosis', 'Keterangan Diagnosis Panjang')" class="px-3 py-2.5 bg-slate-100 text-slate-600 rounded-lg text-[11px] font-bold hover:bg-slate-200 transition shadow-sm whitespace-nowrap">KELOLA</button>
                             </div>
                         </div>
+
+                        <!-- FITUR BARU: KETERANGAN HUKUM REKOMENDASI (POIN 4.b) -->
+                        <div class="md:col-span-2">
+                            <label class="block text-[12px] font-bold text-slate-700 uppercase tracking-wide mb-1">Keterangan Hukum Rekomendasi (Poin 4.b) <span class="text-rose-500">*</span></label>
+                            <div class="flex gap-2 items-center">
+                                <select name="rekomendasi_keterangan" id="rekomendasi_keterangan" required class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-100 sm:text-sm bg-slate-50 focus:bg-white h-auto py-3 leading-snug transition-all custom-select-scroll">
+                                    <option value="">-- Pilih Keterangan Hukum --</option>
+                                    @php
+                                        $ketList = [
+                                            "hasil pemeriksaan urine/rambut positif narkotika tanpa barang bukti narkotika dan tidak terdapat keterlibatan dalam jaringan peredaran gelap narkotika",
+                                            "hasil pemeriksaan urine/rambut negatif narkotika tanpa barang bukti narkotika dan tidak terdapat keterlibatan dalam jaringan peredaran gelap narkotika",
+                                            "hasil pemeriksaan urine/rambut positif narkotika dengan barang bukti narkotika dan tidak terdapat keterlibatan dalam jaringan peredaran gelap narkotika",
+                                            "hasil pemeriksaan urine/rambut negatif narkotika dengan barang bukti narkotika dan tidak terdapat keterlibatan dalam jaringan peredaran gelap narkotika",
+                                            "hasil pemeriksaan urine/rambut positif narkotika tanpa barang bukti narkotika, namun terdapat keterlibatan dalam jaringan peredaran gelap narkotika",
+                                            "hasil pemeriksaan urine/rambut negatif narkotika tanpa barang bukti narkotika, namun terdapat keterlibatan dalam jaringan peredaran gelap narkotika",
+                                            "hasil pemeriksaan urine/rambut positif narkotika dengan barang bukti narkotika dan terdapat keterlibatan dalam jaringan peredaran gelap narkotika",
+                                            "hasil pemeriksaan urine/rambut negatif narkotika dengan barang bukti narkotika dan terdapat keterlibatan dalam jaringan peredaran gelap narkotika"
+                                        ];
+                                        $savedKet = old('rekomendasi_keterangan', $asesmen->rekomendasi_keterangan);
+                                    @endphp
+                                    @if($savedKet !== '' && $savedKet !== null && !in_array($savedKet, $ketList))
+                                        <option value="{{ $savedKet }}" selected>{{ $savedKet }}</option>
+                                    @endif
+                                    @foreach($ketList as $ket)
+                                        <option value="{{ $ket }}" {{ $savedKet == $ket ? 'selected' : '' }}>{{ $ket }}</option>
+                                    @endforeach
+                                </select>
+                                <button type="button" onclick="openTambahModal('rekomendasi_keterangan', 'Keterangan Hukum')" class="px-3 py-2.5 bg-indigo-50 text-indigo-700 rounded-lg text-[11px] font-bold hover:bg-indigo-100 transition shadow-sm whitespace-nowrap">+ TAMBAH</button>
+                                <button type="button" onclick="openKelolaModal('rekomendasi_keterangan', 'Keterangan Hukum')" class="px-3 py-2.5 bg-slate-100 text-slate-600 rounded-lg text-[11px] font-bold hover:bg-slate-200 transition shadow-sm whitespace-nowrap">KELOLA</button>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -456,7 +488,8 @@
         }
 
         function loadSemuaOpsiLokal() {
-            const selectIds = ['kepada_yth', 'no_keputusan', 'tentang_permohonan', 'keterangan_diagnosis'];
+            // DITAMBAHKAN rekomendasi_keterangan KE DALAM DAFTAR AUTO-LOAD
+            const selectIds = ['kepada_yth', 'no_keputusan', 'tentang_permohonan', 'keterangan_diagnosis', 'rekomendasi_keterangan'];
             selectIds.forEach(id => {
                 let savedOpts = JSON.parse(localStorage.getItem('opsi_' + id)) || [];
                 const selectEl = document.getElementById(id);

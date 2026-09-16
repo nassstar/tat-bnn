@@ -140,6 +140,7 @@ class AsesmenController extends Controller
             'kewarganegaraan' => 'nullable|string|max:255',
             'agama' => 'nullable|string|max:255',
 
+            // Key dummy ini tetap di validasi agar masuk ke $validatedData
             'pendidikan_input' => 'nullable|string|max:255',
             'pekerjaan_input' => 'nullable|string|max:255',
             'rekomendasi_input' => 'nullable|string|max:255',
@@ -205,8 +206,8 @@ class AsesmenController extends Controller
         // =====================================================================
 
         $dataSiapSimpan = Arr::except($validatedData, [
-            'pendidikan_input', 
-            'pekerjaan_input', 
+            'pendidikan_input',
+            'pekerjaan_input',
             'rekomendasi_input'
         ]);
 
@@ -359,8 +360,8 @@ class AsesmenController extends Controller
         // =====================================================================
 
         $dataSiapUpdate = Arr::except($validatedData, [
-            'pendidikan_input', 
-            'pekerjaan_input', 
+            'pendidikan_input',
+            'pekerjaan_input',
             'rekomendasi_input'
         ]);
 
@@ -716,6 +717,10 @@ class AsesmenController extends Controller
         $asesmen->nama_narkotika_medis = $request->input('nama_narkotika_medis');
         $asesmen->lama_perawatan = $request->input('lama_perawatan');
         $asesmen->keterangan_diagnosis = $request->input('keterangan_diagnosis');
+
+        // BARIS BARU: Simpan input keterangan hukum rekomendasi
+        $asesmen->rekomendasi_keterangan = $request->input('rekomendasi_keterangan');
+
         $asesmen->rekomendasi_tempat_rehab = $request->input('rekomendasi_tempat_rehab');
         $asesmen->rekomendasi_durasi = $request->input('lama_perawatan');
 
@@ -767,6 +772,9 @@ class AsesmenController extends Controller
         $templateProcessor->setValue('nama_narkotika', $asesmen->nama_narkotika_medis ?? '-');
         $templateProcessor->setValue('keterangan_diagnosis', $asesmen->keterangan_diagnosis ?? '-');
         $templateProcessor->setValue('lama_perawatan', $asesmen->lama_perawatan ?? '-');
+
+        // BARIS BARU: Mapping nilai keterangan rekomendasi ke dalam file Word
+        $templateProcessor->setValue('rekomendasi_keterangan', $asesmen->rekomendasi_keterangan ?? '-');
 
         $templateProcessor->setValue('nama_lengkap', $asesmen->nama_lengkap);
         $templateProcessor->setValue('nik', $asesmen->nik);

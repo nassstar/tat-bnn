@@ -1,31 +1,17 @@
 <x-app-layout>
-    <!-- Tambahkan library Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- CSS Custom untuk Scrollbar -->
     <style>
-        .custom-select-scroll::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-select-scroll::-webkit-scrollbar-track {
-            background: #f8fafc;
-            border-radius: 8px;
-        }
-        .custom-select-scroll::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 8px;
-        }
-        .custom-select-scroll::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
+        .custom-select-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-select-scroll::-webkit-scrollbar-track { background: #f8fafc; border-radius: 8px; }
+        .custom-select-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+        .custom-select-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 
     <div class="py-8 sm:py-10 bg-slate-50/50 min-h-screen">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
 
-            <!-- ========================================== -->
             <!-- 1. HEADER HERO DASHBOARD -->
-            <!-- ========================================== -->
             <div class="bg-gradient-to-r from-indigo-800 to-blue-700 rounded-3xl p-8 sm:p-10 shadow-lg text-white flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
                 <div class="absolute top-0 right-0 -mt-10 -mr-10 w-48 h-48 bg-white opacity-10 rounded-full blur-3xl"></div>
                 <div class="absolute bottom-0 right-32 -mb-10 w-32 h-32 bg-blue-400 opacity-20 rounded-full blur-2xl"></div>
@@ -41,9 +27,7 @@
                 </div>
             </div>
 
-            <!-- ========================================== -->
-            <!-- 2. KPI CARDS (KEY PERFORMANCE INDICATORS) -->
-            <!-- ========================================== -->
+            <!-- 2. KPI CARDS -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Total Klien -->
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden group hover:border-indigo-300 transition-colors">
@@ -103,9 +87,7 @@
                 </div>
             </div>
 
-            <!-- ========================================== -->
             <!-- 3. TOP 5 PEKERJAAN & AKTIVITAS TERBARU -->
-            <!-- ========================================== -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Kolom Kiri: Top 5 Pekerjaan -->
                 <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 relative overflow-hidden flex flex-col h-full">
@@ -167,7 +149,7 @@
                                 <p class="text-[12px] text-slate-500 mt-1">Belum ada data klien terdaftar.</p>
                             @endif
                         </div>
-                        <a href="{{ route('asesmen.index') }}" class="text-xs font-bold text-indigo-600 bg-white border border-indigo-200 px-4 py-2 rounded-lg hover:bg-indigo-50 shadow-sm transition-colors whitespace-nowrap">Lihat Semua Data &rarr;</a>
+                        <a href="{{ route('asesmen.index') }}" class="text-xs font-bold text-indigo-600 bg-white border border-indigo-200 px-4 py-2 rounded-lg hover:bg-indigo-50 shadow-sm transition-colors whitespace-nowrap">Lihat Semua &rarr;</a>
                     </div>
 
                     <div class="flex-1 overflow-y-auto p-4 max-h-[350px] space-y-3 custom-select-scroll">
@@ -204,9 +186,7 @@
                 </div>
             </div>
 
-            <!-- ========================================== -->
             <!-- 4. GENDER & DEMOGRAFI USIA KLIEN -->
-            <!-- ========================================== -->
             <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
                 <!-- Kolom Kiri: Demografi Gender -->
                 <div class="xl:col-span-1 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden h-full flex flex-col">
@@ -253,20 +233,14 @@
                             </select>
                         </div>
                     </div>
-
-                    <div id="wadahGrafikUsia" class="space-y-6 flex-1 flex flex-col justify-center">
-                        <!-- Rendered by JS -->
-                    </div>
+                    <div id="wadahGrafikUsia" class="space-y-6 flex-1 flex flex-col justify-center"></div>
                 </div>
             </div>
 
-            <!-- ========================================== -->
             <!-- 5. KARTU DEMOGRAFI WILAYAH (TOP 5 & PENCARIAN) -->
-            <!-- ========================================== -->
             <div class="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-1.5 bg-emerald-500"></div>
                 <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center border-b border-slate-100 pb-4 mb-6 mt-1 gap-4">
-
                     <div class="flex items-center gap-3">
                         <h3 class="text-[15px] font-extrabold text-slate-800 whitespace-nowrap">Demografi Wilayah Klien (Top 5)</h3>
                         <button type="button" onclick="bukaModalWilayah()" class="text-[10px] font-extrabold text-indigo-600 bg-indigo-50 border border-indigo-100 hover:bg-indigo-600 hover:text-white px-3 py-1.5 rounded-lg transition-all shadow-sm">
@@ -275,7 +249,6 @@
                     </div>
 
                     <div class="flex flex-wrap items-center gap-3 w-full xl:w-auto">
-
                         <!-- FILTER BULAN & TAHUN WILAYAH -->
                         <form action="{{ url()->current() }}" method="GET" class="flex items-center bg-white rounded-xl border border-slate-200 shadow-sm p-1 w-full sm:w-auto overflow-hidden">
                             <div class="pl-3 text-slate-400">
@@ -301,13 +274,10 @@
                             @endif
                         </form>
 
-                        <!-- Sakelar Tab Opsi (KTP vs Domisili) -->
                         <div class="flex bg-slate-100 p-1 rounded-xl w-full sm:w-auto shadow-inner">
                             <button id="btnTabKtp" onclick="switchWilayah('ktp')" class="flex-1 sm:flex-none px-4 py-1.5 text-xs font-bold rounded-lg bg-white shadow-sm text-indigo-700 transition-all">Sesuai KTP</button>
                             <button id="btnTabDomisili" onclick="switchWilayah('domisili')" class="flex-1 sm:flex-none px-4 py-1.5 text-xs font-bold rounded-lg text-slate-500 hover:text-slate-700 transition-all">Domisili</button>
                         </div>
-
-                        <!-- Search Bar -->
                         <div class="relative w-full sm:w-56">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -317,12 +287,8 @@
                     </div>
                 </div>
 
-                <!-- Hasil Search Engine -->
-                <div id="hasilSearchWilayah" class="hidden bg-indigo-50/50 border border-indigo-100 rounded-xl p-4 mb-6 space-y-2 max-h-48 overflow-y-auto shadow-inner custom-select-scroll">
-                    <!-- Javascript merender ke sini -->
-                </div>
+                <div id="hasilSearchWilayah" class="hidden bg-indigo-50/50 border border-indigo-100 rounded-xl p-4 mb-6 space-y-2 max-h-48 overflow-y-auto shadow-inner custom-select-scroll"></div>
 
-                <!-- WADAH TOP 5 KTP -->
                 <div id="wadahTopKtp" class="grid grid-cols-1 md:grid-cols-3 gap-8 transition-opacity duration-300">
                     @foreach(['Kecamatan' => $dataKtp['topKecamatan'], 'Desa' => $dataKtp['topDesa'], 'Kelurahan' => $dataKtp['topKelurahan']] as $tipe => $topData)
                     <div>
@@ -350,7 +316,6 @@
                     @endforeach
                 </div>
 
-                <!-- WADAH TOP 5 DOMISILI -->
                 <div id="wadahTopDomisili" class="hidden grid-cols-1 md:grid-cols-3 gap-8 transition-opacity duration-300">
                     @foreach(['Kecamatan' => $dataDomisili['topKecamatan'], 'Desa' => $dataDomisili['topDesa'], 'Kelurahan' => $dataDomisili['topKelurahan']] as $tipe => $topData)
                     <div>
@@ -395,7 +360,6 @@
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
-                    <!-- List Grafik Progres Bar (Kiri) -->
                     <div class="lg:col-span-2 space-y-5">
                         @forelse($demografiPendidikan as $index => $item)
                             @php
@@ -419,8 +383,6 @@
                             </div>
                         @endforelse
                     </div>
-
-                    <!-- Kotak Insight Singkat (Kanan) -->
                     <div class="bg-blue-50/50 border border-blue-100 rounded-2xl p-6 flex flex-col justify-center h-full shadow-inner">
                         <div class="mb-4">
                             <span class="text-[10px] font-extrabold text-blue-500 uppercase tracking-widest bg-white shadow-sm border border-blue-100 px-3 py-1.5 rounded-lg">Total Data Masuk</span>
@@ -430,6 +392,55 @@
                             Distribusi latar belakang ini dapat membantu Tim Hukum & Medis dalam merancang penyampaian komunikasi serta pendekatan rehabilitasi yang paling sesuai.
                         </p>
                     </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 7. STATISTIK REKOMENDASI REHABILITASI      -->
+            <!-- ========================================== -->
+            <div class="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm mt-6 mb-10 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1.5 bg-teal-500"></div>
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-slate-100 pb-4 mt-1 gap-4">
+                    <div>
+                        <h3 class="text-[15px] font-extrabold text-slate-800 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Statistik Hasil Rekomendasi TAT
+                        </h3>
+                        <p class="text-xs font-semibold text-slate-500 mt-1">Akumulasi keputusan pada tahun berjalan ({{ $tahunIni }}).</p>
+                    </div>
+                    <div class="bg-teal-50 px-3 py-1.5 rounded-lg border border-teal-100 shadow-sm">
+                        <span class="text-xs font-black text-teal-700">{{ $totalRekomendasiTahunIni }} Klien Tahun Ini</span>
+                    </div>
+                </div>
+
+                <div class="space-y-5">
+                    @php
+                        $warnaRek = [
+                            'Rawat Jalan' => 'bg-emerald-500 text-emerald-600',
+                            'Rawat Inap' => 'bg-blue-500 text-blue-600',
+                            'Rehab di Lapas / Rutan' => 'bg-amber-500 text-amber-600',
+                            'Tidak Rehab (Proses Hukum)' => 'bg-rose-500 text-rose-600',
+                            'Belum Ada Keterangan' => 'bg-slate-400 text-slate-500',
+                        ];
+                    @endphp
+
+                    @foreach($statRekomendasi as $label => $jumlah)
+                        @php
+                            $persen = $persenRekomendasi[$label];
+                            $w = $warnaRek[$label];
+                            $bgClass = explode(' ', $w)[0];
+                            $textClass = explode(' ', $w)[1];
+                        @endphp
+                        <div class="relative pt-1">
+                            <div class="flex justify-between items-end mb-1.5">
+                                <span class="text-sm font-bold text-slate-700">{{ $label }}</span>
+                                <span class="text-[13px] font-extrabold {{ $textClass }}">{{ $jumlah }} Klien <span class="text-[11px] text-slate-400 font-medium ml-1">({{ $persen }}%)</span></span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                                <div class="{{ $bgClass }} h-2.5 rounded-full transition-all duration-1000 ease-out" style="width: {{ $persen }}%"></div>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
 
@@ -584,7 +595,7 @@
         </div>
     </div>
 
-    <!-- MODAL 4: DETAIL WILAYAH TOP 5 (KTP & DOMISILI) -->
+    <!-- MODAL 4: DETAIL WILAYAH TOP 5 -->
     <div id="modalDetailWilayah" class="fixed inset-0 z-50 hidden bg-slate-900/70 backdrop-blur-sm p-4 sm:p-6 md:p-10 items-center justify-center">
         <div class="relative w-full max-w-5xl bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col max-h-[85vh]">
 
@@ -759,10 +770,6 @@
             </div>
         </div>
     </div>
-
-    <!-- ========================================== -->
-    <!-- SCRIPT RENDER GRAFIK & PENCARIAN -->
-    <!-- ========================================== -->
 
     <!-- Script Manajemen Modal Universal -->
     <script>
