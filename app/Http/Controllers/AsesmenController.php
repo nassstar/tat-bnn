@@ -91,20 +91,17 @@ class AsesmenController extends Controller
      */
     public function create()
     {
-        if (!Gate::allows('manage-data')) {
-            abort(403, 'Anda tidak memiliki hak akses untuk mengelola data.');
-        }
-
         $masterPendidikan = Pendidikan::orderBy('nama_pendidikan', 'asc')->get();
         $masterPekerjaan = Pekerjaan::orderBy('nama_pekerjaan', 'asc')->get();
         $masterNarkotika = Narkotika::orderBy('jenis_narkotika', 'asc')->get();
         $masterRekomendasi = Rekomendasi::orderBy('tempat_rehabilitasi', 'asc')->get();
 
+        // TAMBAHKAN BARIS INI:
+        $masterZat = \App\Models\MasterOpsi::where('kategori', 'zat')->get();
+
+        // Pastikan 'masterZat' dimasukkan ke dalam compact
         return view('asesmen.create', compact(
-            'masterPendidikan',
-            'masterPekerjaan',
-            'masterNarkotika',
-            'masterRekomendasi'
+            'masterPendidikan', 'masterPekerjaan', 'masterNarkotika', 'masterRekomendasi', 'masterZat'
         ));
     }
 
@@ -240,22 +237,18 @@ class AsesmenController extends Controller
      */
     public function edit(string $id)
     {
-        if (!Gate::allows('manage-data')) {
-            abort(403, 'Anda tidak memiliki hak akses untuk mengelola data.');
-        }
-
         $asesmen = Asesmen::findOrFail($id);
         $masterPendidikan = Pendidikan::orderBy('nama_pendidikan', 'asc')->get();
         $masterPekerjaan = Pekerjaan::orderBy('nama_pekerjaan', 'asc')->get();
         $masterNarkotika = Narkotika::orderBy('jenis_narkotika', 'asc')->get();
         $masterRekomendasi = Rekomendasi::orderBy('tempat_rehabilitasi', 'asc')->get();
 
+        // TAMBAHKAN BARIS INI:
+        $masterZat = \App\Models\MasterOpsi::where('kategori', 'zat')->get();
+
+        // Pastikan 'masterZat' dimasukkan ke dalam compact
         return view('asesmen.edit', compact(
-            'asesmen',
-            'masterPendidikan',
-            'masterPekerjaan',
-            'masterNarkotika',
-            'masterRekomendasi'
+            'asesmen', 'masterPendidikan', 'masterPekerjaan', 'masterNarkotika', 'masterRekomendasi', 'masterZat'
         ));
     }
 
@@ -524,6 +517,11 @@ class AsesmenController extends Controller
         $asesmen->rekomendasi_keterangan = $request->rekomendasi_keterangan;
         $asesmen->lama_perawatan = $request->rekomendasi_durasi;
 
+        // PENTING: Menyimpan Hasil Tes Urine agar terupdate di Database
+        if ($request->has('tes_urine')) {
+            $asesmen->tes_urine = $request->tes_urine;
+        }
+
         $asesmen->save();
 
         $asesmen->anggotaTim()->sync(array_merge(
@@ -773,7 +771,6 @@ class AsesmenController extends Controller
         $templateProcessor->setValue('keterangan_diagnosis', $asesmen->keterangan_diagnosis ?? '-');
         $templateProcessor->setValue('lama_perawatan', $asesmen->lama_perawatan ?? '-');
 
-        // BARIS BARU: Mapping nilai keterangan rekomendasi ke dalam file Word
         $templateProcessor->setValue('rekomendasi_keterangan', $asesmen->rekomendasi_keterangan ?? '-');
 
         $templateProcessor->setValue('nama_lengkap', $asesmen->nama_lengkap);
