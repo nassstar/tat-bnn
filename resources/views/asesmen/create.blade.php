@@ -246,7 +246,7 @@
                                     <label class="inline-flex items-center cursor-pointer group"><input type="radio" name="mode_domisili" value="otomatis" checked class="text-[#3B82F6] focus:ring-[#3B82F6] w-4 h-4 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600" onchange="toggleModeDomisili()"><span class="ml-2 text-[11px] font-bold uppercase tracking-widest text-slate-700 dark:text-slate-300 group-hover:text-[#3B82F6] transition-colors">Otomatis (Kab. Malang)</span></label>
                                     <label class="inline-flex items-center cursor-pointer group"><input type="radio" name="mode_domisili" value="manual" class="text-[#3B82F6] focus:ring-[#3B82F6] w-4 h-4 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600" onchange="toggleModeDomisili()"><span class="ml-2 text-[11px] font-bold uppercase tracking-widest text-slate-700 dark:text-slate-300 group-hover:text-[#3B82F6] transition-colors">Manual (Luar)</span></label>
                                 </div>
-                                <div id="blok_otomatis_domisili" class="space-y-4 pt-2">
+                                <div id="blok_otomatis_domisili" class="hidden space-y-4 pt-2">
                                     <div>
                                         <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Jalan / RT RW</label>
                                         <input type="text" id="jalan_domisili" name="jalan_domisili" class="block w-full rounded-xl border-slate-200 dark:border-slate-700 shadow-sm focus:border-[#3B82F6] focus:ring-2 focus:ring-blue-500/20 text-sm font-medium bg-slate-50 dark:bg-[#0F172A] text-slate-900 dark:text-white px-4 py-2.5 outline-none transition-all focus:bg-white dark:focus:bg-[#1E293B]" autocomplete="off" />
@@ -459,7 +459,7 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 mb-6">
+                        <div class="grid grid-cols-1 gap-6 mb-6">
                             <!-- 11. tes_urine (DIGABUNG DENGAN ZAT NARKOTIKA) -->
                             <div class="bg-slate-50 dark:bg-[#1E293B] p-5 rounded-[1.25rem] border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
                                 <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-3 ml-1">Hasil Tes Urine Lengkap <span class="text-rose-500">*</span></label>
@@ -502,6 +502,29 @@
                                         <p id="tes_urine_preview" class="text-sm font-black text-[#3B82F6] dark:text-blue-400">{{ $oldUrine ?: '-' }}</p>
                                     </div>
                                     <input type="hidden" name="tes_urine" id="tes_urine_hidden" value="{{ $oldUrine }}">
+                                </div>
+                            </div>
+
+                            <!-- NEW: JENIS ZAT NARKOTIKA -->
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Jenis Narkotika / Zat Adiktif</label>
+                                <div class="flex flex-wrap items-start gap-2">
+                                    <div class="flex-1 min-w-[200px] w-full">
+                                        <select name="narkotika_input" id="selectNarkotika" class="block w-full">
+                                            <option value="">-- Pilih Jenis Narkotika --</option>
+                                            @foreach($masterNarkotika ?? [] as $nk)
+                                                @if(trim($nk->jenis_narkotika) !== '')
+                                                    <option value="{{ $nk->jenis_narkotika }}" {{ old('narkotika_input') == $nk->jenis_narkotika ? 'selected' : '' }}>
+                                                        {{ $nk->jenis_narkotika }}
+                                                    </option>
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="flex gap-2 shrink-0">
+                                        <button type="button" onclick="openModalTambahNarkotika()" class="shrink-0 px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-[#3B82F6] dark:text-blue-400 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-blue-100 dark:hover:bg-blue-800/50 transition-colors shadow-sm">+ Tambah</button>
+                                        <button type="button" onclick="openModalKelolaNarkotika()" class="shrink-0 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm">Kelola</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -565,8 +588,8 @@
                             </div>
 
                             <!-- 19. selectTempatRekomendasi -->
-                            <div class="flex flex-wrap items-start gap-2 mb-5">
-                                <div class="flex-1 min-w-[200px] w-full">
+                            <div class="flex flex-col sm:flex-row gap-3 mb-5">
+                                <div class="flex-1">
                                     <select id="selectTempatRekomendasi" disabled class="block w-full">
                                         <option value="">-- Pilih Tempat --</option>
                                         <option value="Bawaan Sistem" data-kategori="Rawat Jalan" style="display:none;" disabled>Hanya Rawat Jalan (Tanpa Instansi)</option>
@@ -581,14 +604,15 @@
                                                 elseif(str_starts_with($nm, 'Rehab di Lapas / Rutan - ')){ $kat='Rehab di Lapas / Rutan'; $nm=substr($nm,25); }
                                                 elseif(str_starts_with($nm, 'Tidak Rehab (Proses Hukum) - ')){ $kat='Tidak Rehab (Proses Hukum)'; $nm=substr($nm,29); }
                                             @endphp
-                                            <option value="{{ trim($nm) }}" data-kategori="{{ $kat }}" style="display:none;" disabled>{{ trim($nm) }}</option>
+                                            <!-- INI TAMBAHANNYA UNTUK FILTER OPSI KOSONG -->
+                                            @if(trim($nm) !== '')
+                                                <option value="{{ trim($nm) }}" data-kategori="{{ $kat }}" style="display:none;" disabled>{{ trim($nm) }}</option>
+                                            @endif
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="flex gap-2 shrink-0">
-                                    <button type="button" id="btnTambahRekomendasi" disabled onclick="openModalTambahRekomendasi()" class="shrink-0 px-4 py-2 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-800/50 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">+ Tambah</button>
-                                    <button type="button" id="btnKelolaRekomendasi" disabled onclick="openModalKelolaRekomendasi()" class="shrink-0 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">Kelola</button>
-                                </div>
+                                <button type="button" id="btnTambahRekomendasi" disabled onclick="openModalTambahRekomendasi()" class="shrink-0 px-4 py-2 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-800/50 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">+ Tambah</button>
+                                <button type="button" id="btnKelolaRekomendasi" disabled onclick="openModalKelolaRekomendasi()" class="shrink-0 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">Kelola</button>
                             </div>
                             <input type="hidden" name="rekomendasi_input" id="hidden_rekomendasi_input" value="{{ old('rekomendasi_input') }}">
                         </div>
@@ -620,6 +644,24 @@
                             4. Hasil Asesmen Final & Pelaksanaan
                         </h3>
 
+                        <!-- TAMBAHAN FORM BARU -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div class="md:col-span-2">
+                                <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Pasal Yang Disangkakan</label>
+                                <input type="text" name="pasal_sangkaan" value="{{ old('pasal_sangkaan') }}" class="block w-full rounded-[1.25rem] border-slate-200 dark:border-slate-700 shadow-sm focus:border-[#27C93F] focus:ring-2 focus:ring-green-500/20 text-sm font-medium bg-slate-50 dark:bg-[#1E293B] text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#0F172A] transition-all px-4 py-3 outline-none" placeholder="Cth: Pasal 114 ayat (1)...">
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Hasil Asesmen Hukum Final</label>
+                                <textarea name="hasil_asesmen_hukum" rows="3" class="block w-full rounded-[1.25rem] border-slate-200 dark:border-slate-700 shadow-sm focus:border-[#27C93F] focus:ring-2 focus:ring-green-500/20 text-sm font-medium bg-slate-50 dark:bg-[#1E293B] text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#0F172A] transition-all px-4 py-3 outline-none">{{ old('hasil_asesmen_hukum') }}</textarea>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Hasil Asesmen Medis Final</label>
+                                <textarea name="hasil_asesmen_medis" rows="3" class="block w-full rounded-[1.25rem] border-slate-200 dark:border-slate-700 shadow-sm focus:border-[#27C93F] focus:ring-2 focus:ring-green-500/20 text-sm font-medium bg-slate-50 dark:bg-[#1E293B] text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#0F172A] transition-all px-4 py-3 outline-none">{{ old('hasil_asesmen_medis') }}</textarea>
+                            </div>
+                        </div>
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="md:col-span-2">
                                 <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Status Pelaksanaan Rekomendasi</label>
@@ -628,6 +670,12 @@
                                     <option value="YA" {{ old('pelaksanaan') == 'YA' ? 'selected' : '' }}>YA (Dilaksanakan)</option>
                                     <option value="TIDAK" {{ old('pelaksanaan') == 'TIDAK' ? 'selected' : '' }}>TIDAK (Belum/Batal)</option>
                                 </select>
+                            </div>
+
+                            <!-- BARU: Keterangan Tambahan -->
+                            <div class="md:col-span-2 mt-2">
+                                <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Keterangan Tambahan</label>
+                                <textarea name="keterangan_tambahan" rows="3" class="block w-full rounded-[1.25rem] border-slate-200 dark:border-slate-700 shadow-sm focus:border-[#27C93F] focus:ring-2 focus:ring-green-500/20 text-sm font-medium bg-slate-50 dark:bg-[#1E293B] text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#0F172A] transition-all px-4 py-3 outline-none" placeholder="Opsional...">{{ old('keterangan_tambahan') }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -778,6 +826,56 @@
             </div>
             <div class="flex justify-center">
                 <button type="button" onclick="closeModalKelolaPekerjaan()" class="px-6 py-3.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-[11px] uppercase tracking-widest rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors w-full sm:w-auto shadow-sm">Tutup Kelola</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL TAMBAH NARKOTIKA -->
+    <div id="modalTambahNarkotika" class="fixed inset-0 z-[99] hidden items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-900/70 dark:bg-[#0B1120]/80 backdrop-blur-md transition-opacity" onclick="closeModalTambahNarkotika()"></div>
+        <div class="relative bg-white dark:bg-[#1E293B] w-full max-w-md p-8 rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] transform scale-95 opacity-0 transition-all border border-white/50 dark:border-slate-700/50">
+            <button type="button" onclick="closeModalTambahNarkotika()" class="absolute top-6 right-6 text-slate-400 hover:text-rose-500 transition-colors">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white mb-6 tracking-tight">Tambah Jenis Narkotika</h3>
+
+            <div class="mb-6">
+                <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 ml-1">Nama Jenis Zat / Narkotika</label>
+                <input type="text" id="inputNarkotikaBaru" required placeholder="Cth: Sabu-Sabu" class="block w-full rounded-[1.25rem] border-slate-200 dark:border-slate-700 shadow-sm focus:border-[#3B82F6] focus:ring-2 focus:ring-blue-500/20 text-sm font-medium bg-slate-50 dark:bg-[#0F172A] text-slate-900 dark:text-white px-4 py-3 outline-none transition-all">
+            </div>
+            <div class="flex flex-col-reverse sm:flex-row justify-end gap-3">
+                <button type="button" onclick="closeModalTambahNarkotika()" class="px-6 py-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm">Batal</button>
+                <button type="button" onclick="tambahNarkotikaJS(event)" class="px-6 py-3 bg-[#3B82F6] hover:bg-blue-600 text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-all shadow-md hover:-translate-y-0.5">Tambahkan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL KELOLA NARKOTIKA -->
+    <div id="modalKelolaNarkotika" class="fixed inset-0 z-[99] hidden items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-900/70 dark:bg-[#0B1120]/80 backdrop-blur-md transition-opacity" onclick="closeModalKelolaNarkotika()"></div>
+        <div class="relative bg-white dark:bg-[#1E293B] w-full max-w-lg p-8 rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] transform scale-95 opacity-0 transition-all border border-white/50 dark:border-slate-700/50">
+            <button type="button" onclick="closeModalKelolaNarkotika()" class="absolute top-6 right-6 text-slate-400 hover:text-rose-500 transition-colors">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white mb-6 tracking-tight">Kelola Narkotika</h3>
+            <div id="listKelolaNarkotika" class="max-h-[50vh] overflow-y-auto pr-2 space-y-2 mb-8 custom-select-scroll">
+                @forelse($masterNarkotika ?? [] as $nk)
+                    @if(trim($nk->jenis_narkotika) !== '')
+                    <div class="flex justify-between items-center p-4 border border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-[#0F172A]/50 rounded-2xl hover:bg-slate-100 dark:hover:bg-[#0F172A] transition-colors">
+                        <span class="text-sm font-bold text-slate-700 dark:text-slate-300">{{ $nk->jenis_narkotika }}</span>
+                        <form action="{{ Route::has('narkotika.destroy') ? route('narkotika.destroy', $nk->id) : url('narkotika/'.$nk->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini secara permanen dari database?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-[10px] uppercase tracking-widest font-black text-rose-500 dark:text-rose-400 bg-white dark:bg-[#1E293B] hover:bg-rose-50 dark:hover:bg-rose-900/30 border border-rose-100 dark:border-rose-900/50 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button>
+                        </form>
+                    </div>
+                    @endif
+                @empty
+                <div class="text-sm text-slate-500 dark:text-slate-400 text-center py-6 italic empty-msg bg-slate-50 dark:bg-[#0F172A] rounded-2xl">Belum ada data narkotika.</div>
+                @endforelse
+            </div>
+            <div class="flex justify-center">
+                <button type="button" onclick="closeModalKelolaNarkotika()" class="px-6 py-3.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-[11px] uppercase tracking-widest rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors w-full sm:w-auto shadow-sm">Tutup Kelola</button>
             </div>
         </div>
     </div>
@@ -1004,51 +1102,51 @@
         const daftarDesa = [ "Amadanom", "Ampeldento (Karangploso)", "Ampeldento (Pakis)", "Ampelgading", "Ardimulyo", "Argosari", "Argosuko", "Argotirto", "Argoyuwono", "Arjosari", "Arjowilangun", "Asrikaton", "Babadan", "Bakalan", "Balearjo", "Balesari", "Bambang", "Bandungrejo", "Bangelan", "Banjararum", "Banjarejo (Donomulyo)", "Banjarejo (Ngantang)", "Banjarejo (Pagelaran)", "Banjarejo (Pakis)", "Banjarsari", "Bantur", "Banturejo", "Baturetno (Dampit)", "Baturetno (Singosari)", "Bayem", "Bedali", "Belung", "Bendosari", "Benjor", "Blayu", "Bocek", "Bokor", "Bringin", "Brongkal", "Bululawang", "Bulupitu", "Bumirejo", "Bunutwetan", "Clumprit", "Codo", "Curungrejo", "Dadapan", "Dalisodo", "Dawuhan", "Dengkol", "Dilem", "Donomulyo", "Donowarih", "Druju", "Duwet", "Duwet Krajan", "Gading", "Gadingkembar", "Gadingkulon", "Gadungsari", "Gajahrejo", "Gampingan", "Ganjaran", "Gedangan", "Gedog Kulon", "Gedog Wetan", "Genengan", "Girimoyo", "Girimulyo", "Glanggang", "Gondanglegi Kulon", "Gondanglegi Wetan", "Gondowangi", "Gubukklakah", "Gunung Jati", "Gunungrejo", "Gunungronggo", "Gunungsari", "Harjokuncaran", "Jabung", "Jambangan", "Jambearjo", "Jambesari", "Jambuwer", "Jatiguwi", "Jatikerto", "Jatirejoyoso", "Jatisari (Pakisaji)", "Jatisari (Tajinan)", "Jedong", "Jenggolo", "Jeru (Tumpang)", "Jeru (Turen)", "Jogomulyan", "Jombok", "Kademangan", "Kaliasri", "Kalipare", "Kalirejo", "Kalisongo", "Kambingan", "Kanigoro", "Karanganyar", "Karangduren", "Karangkates", "Karangnongko", "Karangpandan", "Karangrejo", "Karangsari", "Karangsuko", "Karangwidoro", "Kasembon (Bululawang)", "Kasembon (Kasembon)", "Kasri", "Kaumrejo", "Kebobang", "Kebonagung", "Kedok", "Kedungbanteng", "Kedungpedaringan", "Kedungrejo", "Kedungsalam", "Kemantren", "Kemiri (Jabung)", "Kemiri (Kepanjen)", "Kemulan", "Kendalpayak", "Kenongo", "Kepatihan", "Kepuharjo", "Kesamben", "Ketawang", "Ketindan", "Kidal", "Kidangbang", "Klampok", "Klepu", "Kluwut", "Kranggan", "Krebet", "Krebet Senggrong", "Kromengan", "Kucur", "Kuwolu", "Landungsari", "Lang-Lang", "Lebakharjo", "Lumbangsari", "Madiredo", "Maguan", "Majangtengah", "Malangsuko", "Mangliawan", "Mangunrejo", "Mendalanwangi", "Mentaraman", "Mojosari", "Mulyoagung", "Mulyoarjo", "Mulyoasri", "Mulyorejo", "Ngabab", "Ngadas", "Ngadilangkung", "Ngadirejo (Jabung)", "Ngadirejo (Kromengan)", "Ngadireso", "Ngajum", "Ngantru", "Ngasem", "Ngawonggo", "Ngebruk (Poncokusumo)", "Ngebruk (Sumberpucung)", "Ngembal", "Ngenep", "Ngijo", "Ngingit", "Ngroto", "Pagak", "Pagedangan", "Pagelaran", "Pagersari", "Pait", "Pajaran", "Pakisaji", "Pakisjajar", "Pakiskembar", "Palaan", "Pamotan", "Pandanajeng", "Pandanlandung", "Pandanmulyo", "Pandanrejo (Pagak)", "Pandanrejo (Wagir)", "Pandansari (Ngantang)", "Pandansari (Poncokusumo)", "Pandansari Lor", "Pandesari", "Panggungrejo (Gondanglegi)", "Panggungrejo (Kepanjen)", "Parangargo", "Patokpicis", "Peniwen", "Permanu", "Petungsewu (Dau)", "Petungsewu (Wagir)", "Plandi", "Plaosan", "Pojok", "Poncokusumo", "Pondokagung", "Pringgodani", "Pringu", "Pucangsongo", "Pujiharjo", "Pujon Kidul", "Pujon Lor", "Pulungdowo", "Purwoasri", "Purwodadi (Donomulyo)", "Purwodadi (Tirtoyudo)", "Purwoharjo", "Purworejo (Donomulyo)", "Purworejo (Ngantang)", "Purwosekar", "Putat Kidul", "Putat Lor", "Putukrejo (Gondanglegi)", "Putukrejo (Kalipare)", "Randuagung", "Randugading", "Rejosari", "Rejoyoso", "Rembun", "Ringinkembar", "Ringinsari", "Sambigede", "Sanankerto", "Sananrejo", "Saptorenggo", "Sawahan", "Segaran", "Sekarbanyu", "Sekarpuro", "Selorejo", "Sempalwadak", "Sempol", "Senggreng", "Sengguruh", "Sepanjang", "Sidoasri", "Sidodadi (Gedangan)", "Sidodadi (Lawang)", "Sidodadi (Ngantang)", "Sidoluhur", "Sidomulyo", "Sidorahayu", "Sidorejo (Jabung)", "Sidorejo (Pagelaran)", "Sidorenggo", "Simojayan", "Sindurejo", "Sitiarjo", "Sitirejo", "Slamet", "Slamparejo", "Slorok", "Sonowangi", "Srigading", "Srigonco", "Srimulyo", "Sudimoro", "Sukoanyar (Pakis)", "Sukoanyar (Wajak)", "Sukodadi", "Sukodono", "Sukolilo (Jabung)", "Sukolilo (Wajak)", "Sukomulyo", "Sukonolo", "Sukopuro", "Sukoraharjo", "Sukorejo (Gondanglegi)", "Sukorejo (Tirtoyudo)", "Sukosari (Gondanglegi)", "Sukosari (Kasembon)", "Sukowilangun", "Sumberagung (Ngantang)", "Sumberagung (Sumbermanjing Wetan)", "Sumberbening", "Sumberdem", "Sumberejo (Gedangan)", "Sumberejo (Pagak)", "Sumberejo (Poncokusumo)", "Sumberjaya", "Sumberkerto", "Sumberkradenan", "Sumbermanjing Kulon", "Sumbermanjing Wetan", "Sumberngepoh", "Sumberoto", "Sumberpasir", "Sumberpetung", "Sumberporong", "Sumberpucung", "Sumberputih", "Sumbersekar", "Sumbersuko (Dampit)", "Sumbersuko (Tajinan)", "Sumbersuko (Wagir)", "Sumbertangkil", "Sumbertempur", "Sutojayan", "Suwaru", "Taji", "Tajinan", "Talangagung", "Talangsuko", "Talok", "Tamanasri", "Tamanharjo", "Tamankuncaran", "Tamansari", "Tamansatriyan", "Tambakasri (Sumbermanjing Wetan)", "Tambakasri (Tajinan)", "Tambakrejo", "Tanggung", "Tangkilsari", "Tawangagung", "Tawangargo", "Tawangrejeni", "Tawangsari", "Tegalgondo", "Tegalrejo", "Tegalsari", "Tegalweru", "Tempursari", "Ternyang", "Tirtomarto", "Tirtomoyo (Ampelgading)", "Tirtomoyo (Pakis)", "Tirtoyudo", "Tlogorejo", "Tlogosari (Donomulyo)", "Tlogosari (Tirtoyudo)", "Toyomarto", "Tulungrejo (Donomulyo)", "Tulungrejo (Ngantang)", "Tulusbesar", "Tumpakrejo (Gedangan)", "Tumpakrejo (Kalipare)", "Tumpang", "Tumpukrenteng", "Tunjungtirto", "Turirejo", "Undaan", "Urek-Urek", "Wadung", "Wajak", "Wandanpuro", "Watugede", "Waturejo", "Wirotaman", "Wiyurejo", "Wonoagung (Kasembon)", "Wonoagung (Tirtoyudo)", "Wonoayu", "Wonokerso", "Wonokerto", "Wonomulyo", "Wonorejo (Bantur)", "Wonorejo (Lawang)", "Wonorejo (Poncokusumo)", "Wonorejo (Singosari)", "Wonosari", "Wringinanom", "Wringinsongo" ];
 
         function initSearchableDropdown(inputId, listId, tipeId, updateFunc) {
-    const input = document.getElementById(inputId);
-    const list = document.getElementById(listId);
-    const tipe = document.getElementById(tipeId);
+            const input = document.getElementById(inputId);
+            const list = document.getElementById(listId);
+            const tipe = document.getElementById(tipeId);
 
-    // Tambahan safety check
-    if (!input || !list || !tipe) return;
+            // Tambahan safety check
+            if (!input || !list || !tipe) return;
 
-    const toggleIcon = list.previousElementSibling;
-    function render(filter = '') {
-        list.innerHTML = '';
-        const isKelurahan = tipe.value === 'Kelurahan';
-        const data = isKelurahan ? daftarKelurahan : daftarDesa;
-        const filtered = data.filter(item => item.toLowerCase().includes(filter.toLowerCase()));
+            const toggleIcon = list.previousElementSibling;
+            function render(filter = '') {
+                list.innerHTML = '';
+                const isKelurahan = tipe.value === 'Kelurahan';
+                const data = isKelurahan ? daftarKelurahan : daftarDesa;
+                const filtered = data.filter(item => item.toLowerCase().includes(filter.toLowerCase()));
 
-        if (filtered.length === 0) {
-            list.innerHTML = '<div class="px-3 py-2 text-slate-400 italic text-xs">Tidak ditemukan</div>';
-            return;
+                if (filtered.length === 0) {
+                    list.innerHTML = '<div class="px-3 py-2 text-slate-400 italic text-xs">Tidak ditemukan</div>';
+                    return;
+                }
+
+                filtered.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'px-3 py-2 hover:bg-indigo-50 cursor-pointer text-slate-700 border-b border-slate-50 last:border-0 text-sm font-medium';
+                    div.textContent = item;
+                    div.onclick = function() {
+                        input.value = item;
+                        list.classList.add('hidden');
+                        updateFunc();
+                    };
+                    list.appendChild(div);
+                });
+            }
+            input.addEventListener('focus', function() { render(this.value); list.classList.remove('hidden'); });
+            input.addEventListener('input', function() { render(this.value); list.classList.remove('hidden'); updateFunc(); });
+            toggleIcon.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (list.classList.contains('hidden')) {
+                    render(input.value);
+                    list.classList.remove('hidden');
+                    input.focus();
+                } else {
+                    list.classList.add('hidden');
+                }
+            });
+            tipe.addEventListener('change', function() { input.value = ''; render(); updateFunc(); });
         }
-
-        filtered.forEach(item => {
-            const div = document.createElement('div');
-            div.className = 'px-3 py-2 hover:bg-indigo-50 cursor-pointer text-slate-700 border-b border-slate-50 last:border-0 text-sm font-medium';
-            div.textContent = item;
-            div.onclick = function() {
-                input.value = item;
-                list.classList.add('hidden');
-                updateFunc();
-            };
-            list.appendChild(div);
-        });
-    }
-    input.addEventListener('focus', function() { render(this.value); list.classList.remove('hidden'); });
-    input.addEventListener('input', function() { render(this.value); list.classList.remove('hidden'); updateFunc(); });
-    toggleIcon.addEventListener('click', function(e) {
-        e.stopPropagation();
-        if (list.classList.contains('hidden')) {
-            render(input.value);
-            list.classList.remove('hidden');
-            input.focus();
-        } else {
-            list.classList.add('hidden');
-        }
-    });
-    tipe.addEventListener('change', function() { input.value = ''; render(); updateFunc(); });
-}
 
         document.addEventListener('click', function(e) {
             ['list_desa_ktp', 'list_desa_domisili'].forEach(id => {
@@ -1137,23 +1235,23 @@
 
         function toggleNarkotika() { document.getElementById('narkotika-dropdown').classList.toggle('hidden'); }
         function updateNarkotikaText() {
-    const textSpan = document.getElementById('narkotika-text');
+            const textSpan = document.getElementById('narkotika-text');
 
-    // KUNCI PERBAIKAN: Hentikan fungsi jika elemen tidak ditemukan agar skrip lain tidak ikut mati
-    if (!textSpan) return;
+            // KUNCI PERBAIKAN: Hentikan fungsi jika elemen tidak ditemukan agar skrip lain tidak ikut mati
+            if (!textSpan) return;
 
-    const checkboxes = document.querySelectorAll('.narkotika-cb:checked');
-    if (checkboxes.length === 0) {
-        textSpan.textContent = '-- Pilih Jenis Narkotika --';
-        textSpan.classList.remove('text-slate-900', 'dark:text-white', 'font-bold');
-        textSpan.classList.add('text-slate-500', 'dark:text-slate-400');
-    } else {
-        textSpan.textContent = Array.from(checkboxes).map(cb => cb.getAttribute('data-label')).join(', ');
-        textSpan.classList.add('text-slate-900', 'dark:text-white', 'font-bold');
-        textSpan.classList.remove('text-slate-500', 'dark:text-slate-400');
-    }
-    saveFormDraft();
-}
+            const checkboxes = document.querySelectorAll('.narkotika-cb:checked');
+            if (checkboxes.length === 0) {
+                textSpan.textContent = '-- Pilih Jenis Narkotika --';
+                textSpan.classList.remove('text-slate-900', 'dark:text-white', 'font-bold');
+                textSpan.classList.add('text-slate-500', 'dark:text-slate-400');
+            } else {
+                textSpan.textContent = Array.from(checkboxes).map(cb => cb.getAttribute('data-label')).join(', ');
+                textSpan.classList.add('text-slate-900', 'dark:text-white', 'font-bold');
+                textSpan.classList.remove('text-slate-500', 'dark:text-slate-400');
+            }
+            saveFormDraft();
+        }
 
         const saranInputs = document.querySelectorAll('.saran-cc-input');
         const hiddenSaran = document.getElementById('hidden_saran_cc');
@@ -1404,8 +1502,12 @@
                     const emptyMsg = listKelola.querySelector('.empty-msg');
                     if(emptyMsg) emptyMsg.style.display = 'none';
 
-                    const draftId = 'draft-rek-' + v.replace(/\s+/g, '-').toLowerCase() + '-' + r.value.replace(/\s+/g, '-').toLowerCase();
-                    const draftHtml = `<div data-kategori="${r.value}" class="rekomendasi-item flex justify-between items-center p-4 border border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-[#0F172A]/50 rounded-2xl hover:bg-slate-100 dark:hover:bg-[#0F172A] transition-colors" id="${draftId}"><span class="text-sm font-bold text-slate-700 dark:text-slate-300">${v}</span><button type="button" onclick="hapusDraftRekomendasi('${v}', '${draftId}')" class="text-[10px] uppercase tracking-widest font-black text-rose-500 dark:text-rose-400 bg-white dark:bg-[#1E293B] hover:bg-rose-50 dark:hover:bg-rose-900/30 border border-rose-100 dark:border-rose-900/50 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button></div>`;
+                    // PERBAIKAN: Hilangkan karakter kutip/spasi yang merusak syntax HTML & JS
+                    const safeV = v.replace(/'/g, "\\'").replace(/"/g, "&quot;").replace(/\n/g, " ");
+                    const safeIdV = v.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+                    const draftId = 'draft-rek-' + safeIdV + '-' + r.value.replace(/\s+/g, '-').toLowerCase();
+
+                    const draftHtml = `<div data-kategori="${r.value}" class="rekomendasi-item flex justify-between items-center p-4 border border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-[#0F172A]/50 rounded-2xl hover:bg-slate-100 dark:hover:bg-[#0F172A] transition-colors" id="${draftId}"><span class="text-sm font-bold text-slate-700 dark:text-slate-300">${v}</span><button type="button" onclick="hapusDraftRekomendasi('${safeV}', '${draftId}')" class="text-[10px] uppercase tracking-widest font-black text-rose-500 dark:text-rose-400 bg-white dark:bg-[#1E293B] hover:bg-rose-50 dark:hover:bg-rose-900/30 border border-rose-100 dark:border-rose-900/50 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button></div>`;
                     listKelola.insertAdjacentHTML('afterbegin', draftHtml);
 
                     let savedRek = JSON.parse(localStorage.getItem('customRekomendasi')) || [];
@@ -1439,7 +1541,24 @@
 
             const lsPek = JSON.parse(localStorage.getItem('customPekerjaan'))||[]; const sPek = document.getElementById('selectPekerjaan'); const lPek = document.getElementById('listKelolaPekerjaan'); lsPek.forEach(v => { if(sPek && !Array.from(sPek.options).some(o=>o.value===v)){ const op=document.createElement('option');op.value=v;op.textContent=v;op.className='dark:bg-slate-800';sPek.appendChild(op); if(lPek){ const em=lPek.querySelector('.empty-msg');if(em)em.remove(); const id='draft-pek-'+v.replace(/\s+/g,'-').toLowerCase(); lPek.insertAdjacentHTML('afterbegin',`<div class="flex justify-between items-center p-4 border border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-[#0F172A]/50 rounded-2xl hover:bg-slate-100 dark:hover:bg-[#0F172A] transition-colors" id="${id}"><span class="text-sm font-bold text-slate-700 dark:text-slate-300">${v}</span><button type="button" onclick="hapusDraftPekerjaan('${v}', '${id}')" class="text-[10px] uppercase tracking-widest font-black text-rose-500 dark:text-rose-400 bg-white dark:bg-[#1E293B] hover:bg-rose-50 dark:hover:bg-rose-900/30 border border-rose-100 dark:border-rose-900/50 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button></div>`); } } });
 
-            const lsRek = JSON.parse(localStorage.getItem('customRekomendasi'))||[]; const sRek = document.getElementById('selectTempatRekomendasi'); const lRek = document.getElementById('listKelolaRekomendasi'); lsRek.forEach(obj => { if(sRek && !Array.from(sRek.options).some(o=>o.value===obj.val && o.getAttribute('data-kategori')===obj.cat)){ const op=document.createElement('option');op.value=obj.val;op.textContent=obj.val;op.setAttribute('data-kategori',obj.cat);op.className='dark:bg-slate-800';op.style.display='none';op.disabled=true;sRek.appendChild(op); if(lRek){ const em=lRek.querySelector('.empty-msg');if(em)em.remove(); const id='draft-rek-'+obj.val.replace(/\s+/g,'-').toLowerCase()+'-'+obj.cat.replace(/\s+/g,'-').toLowerCase(); lRek.insertAdjacentHTML('afterbegin',`<div data-kategori="${obj.cat}" class="rekomendasi-item hidden justify-between items-center p-4 border border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-[#0F172A]/50 rounded-2xl hover:bg-slate-100 dark:hover:bg-[#0F172A] transition-colors" id="${id}"><span class="text-sm font-bold text-slate-700 dark:text-slate-300">${obj.val}</span><button type="button" onclick="hapusDraftRekomendasi('${obj.val}', '${id}')" class="text-[10px] uppercase tracking-widest font-black text-rose-500 dark:text-rose-400 bg-white dark:bg-[#1E293B] hover:bg-rose-50 dark:hover:bg-rose-900/30 border border-rose-100 dark:border-rose-900/50 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button></div>`); } } });
+            const lsRek = JSON.parse(localStorage.getItem('customRekomendasi'))||[];
+            const sRek = document.getElementById('selectTempatRekomendasi');
+            const lRek = document.getElementById('listKelolaRekomendasi');
+            lsRek.forEach(obj => {
+                if(sRek && !Array.from(sRek.options).some(o=>o.value===obj.val && o.getAttribute('data-kategori')===obj.cat)){
+                    const op=document.createElement('option');op.value=obj.val;op.textContent=obj.val;op.setAttribute('data-kategori',obj.cat);op.className='dark:bg-slate-800';op.style.display='none';op.disabled=true;sRek.appendChild(op);
+                    if(lRek){
+                        const em=lRek.querySelector('.empty-msg');if(em)em.remove();
+
+                        // PERBAIKAN: Render ulang dengan string yang di-escape dari local storage
+                        const safeVal = obj.val.replace(/'/g, "\\'").replace(/"/g, "&quot;").replace(/\n/g, " ");
+                        const safeIdV = obj.val.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+                        const id = 'draft-rek-' + safeIdV + '-' + obj.cat.replace(/\s+/g,'-').toLowerCase();
+
+                        lRek.insertAdjacentHTML('afterbegin',`<div data-kategori="${obj.cat}" class="rekomendasi-item hidden justify-between items-center p-4 border border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-[#0F172A]/50 rounded-2xl hover:bg-slate-100 dark:hover:bg-[#0F172A] transition-colors" id="${id}"><span class="text-sm font-bold text-slate-700 dark:text-slate-300">${obj.val}</span><button type="button" onclick="hapusDraftRekomendasi('${safeVal}', '${id}')" class="text-[10px] uppercase tracking-widest font-black text-rose-500 dark:text-rose-400 bg-white dark:bg-[#1E293B] hover:bg-rose-50 dark:hover:bg-rose-900/30 border border-rose-100 dark:border-rose-900/50 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button></div>`);
+                    }
+                }
+            });
 
             initAllCustomSelects();
             loadFormDraft();

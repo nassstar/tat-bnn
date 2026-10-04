@@ -11,31 +11,25 @@
             .custom-select-scroll::-webkit-scrollbar-thumb:hover { background: #475569; }
         }
 
-        /* Animasi Indikator Autosave */
         @keyframes pulse-soft { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         .autosave-active { animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
 
-        /* Animasi Blobs Latar Belakang */
-        @keyframes blob {
-            0% { transform: translate(0px, 0px) scale(1); }
-            33% { transform: translate(30px, -40px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
-            100% { transform: translate(0px, 0px) scale(1); }
-        }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
+        @keyframes blob { 0% { transform: translate(0px, 0px) scale(1); } 33% { transform: translate(30px, -40px) scale(1.1); } 66% { transform: translate(-20px, 20px) scale(0.9); } 100% { transform: translate(0px, 0px) scale(1); } }
         .animate-float { animation: float 6s ease-in-out infinite; }
         .animate-blob { animation: blob 15s infinite alternate; }
         .animation-delay-2000 { animation-delay: 4s; }
         .animation-delay-4000 { animation-delay: 8s; }
     </style>
 
-    <!-- BACKGROUND BASE & BLOBS (Berada di lapisan paling belakang) -->
+    <!-- BACKGROUND BASE & BLOBS -->
     <div class="fixed inset-0 z-0 bg-[#F8FAFC] dark:bg-[#0B1120] transition-colors duration-500 pointer-events-none overflow-hidden">
         <div class="absolute top-[-10%] left-[-5%] w-[45vw] h-[45vw] min-w-[500px] min-h-[500px] bg-blue-200/70 dark:bg-blue-600/20 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[90px] animate-blob transition-colors duration-700"></div>
         <div class="absolute bottom-[-10%] right-[-5%] w-[50vw] h-[50vw] min-w-[500px] min-h-[500px] bg-indigo-200/60 dark:bg-indigo-600/20 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[90px] animate-blob animation-delay-2000 transition-colors duration-700"></div>
         <div class="absolute top-[15%] right-[20%] w-[35vw] h-[35vw] min-w-[400px] min-h-[400px] bg-cyan-200/60 dark:bg-cyan-600/20 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[90px] animate-blob animation-delay-4000 transition-colors duration-700"></div>
     </div>
 
-    <!-- HEADER (Dikeluarkan dari kotak putih, menyatu dengan background) -->
+    <!-- HEADER -->
     <x-slot name="header">
         <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 max-w-[1400px] mx-auto w-full">
             <div class="flex items-center gap-4">
@@ -81,7 +75,7 @@
 
             @if ($errors->any())
                 <div class="mb-6 p-4 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800/50 rounded-2xl flex items-start shadow-sm transition-colors duration-300">
-                    <svg class="w-5 h-5 text-rose-500 mt-0.5 flex-shrink-0 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <svg class="w-5 h-5 text-rose-500 mt-0.5 flex-shrink-0 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                     <div>
                         <h4 class="text-sm font-extrabold text-rose-800 dark:text-rose-400">Gagal Menyimpan Data!</h4>
                         <ul class="text-[13px] font-semibold text-rose-600 dark:text-rose-300 mt-1 list-disc list-inside ml-1">
@@ -91,7 +85,7 @@
                 </div>
             @endif
 
-            <!-- KONTAINER RAKSASA MAC SOFT UI (overflow-visible agar dropdown tidak terpotong) -->
+            <!-- KONTAINER RAKSASA MAC SOFT UI -->
             <div class="bg-white/95 dark:bg-[#1E293B]/95 backdrop-blur-xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.3)] rounded-[2.5rem] border border-white/60 dark:border-slate-700/50 overflow-visible transition-colors duration-300 p-6 sm:p-10 space-y-8 pb-32">
 
                 <!-- 1 FORM UTAMA -->
@@ -124,7 +118,7 @@
                             </div>
                         </div>
 
-                        <!-- 9 Elemen Identitas Dasar (Grid 3 Kolom) -->
+                        <!-- 9 Elemen Identitas Dasar -->
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                             <div>
                                 <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Nama Lengkap <span class="text-rose-500">*</span></label>
@@ -170,7 +164,7 @@
                                 </select>
                             </div>
 
-                            <!-- Dropdown Pekerjaan Baru -->
+                            <!-- Dropdown Pekerjaan -->
                             <div>
                                 <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Pekerjaan</label>
                                 <div class="flex gap-2">
@@ -613,7 +607,10 @@
                                                 elseif(str_starts_with($nm, 'Rehab di Lapas / Rutan - ')){ $kat='Rehab di Lapas / Rutan'; $nm=substr($nm,25); }
                                                 elseif(str_starts_with($nm, 'Tidak Rehab (Proses Hukum) - ')){ $kat='Tidak Rehab (Proses Hukum)'; $nm=substr($nm,29); }
                                             @endphp
-                                            <option value="{{ trim($nm) }}" data-kategori="{{ $kat }}" style="display:none;" disabled>{{ trim($nm) }}</option>
+                                            <!-- INI TAMBAHANNYA UNTUK FILTER OPSI KOSONG -->
+                                            @if(trim($nm) !== '')
+                                                <option value="{{ trim($nm) }}" data-kategori="{{ $kat }}" style="display:none;" disabled>{{ trim($nm) }}</option>
+                                            @endif
                                         @endforeach
                                     </select>
                                 </div>
@@ -1040,22 +1037,48 @@
         const daftarDesa = [ "Amadanom", "Ampeldento (Karangploso)", "Ampeldento (Pakis)", "Ampelgading", "Ardimulyo", "Argosari", "Argosuko", "Argotirto", "Argoyuwono", "Arjosari", "Arjowilangun", "Asrikaton", "Babadan", "Bakalan", "Balearjo", "Balesari", "Bambang", "Bandungrejo", "Bangelan", "Banjararum", "Banjarejo (Donomulyo)", "Banjarejo (Ngantang)", "Banjarejo (Pagelaran)", "Banjarejo (Pakis)", "Banjarsari", "Bantur", "Banturejo", "Baturetno (Dampit)", "Baturetno (Singosari)", "Bayem", "Bedali", "Belung", "Bendosari", "Benjor", "Blayu", "Bocek", "Bokor", "Bringin", "Brongkal", "Bululawang", "Bulupitu", "Bumirejo", "Bunutwetan", "Clumprit", "Codo", "Curungrejo", "Dadapan", "Dalisodo", "Dawuhan", "Dengkol", "Dilem", "Donomulyo", "Donowarih", "Druju", "Duwet", "Duwet Krajan", "Gading", "Gadingkembar", "Gadingkulon", "Gadungsari", "Gajahrejo", "Gampingan", "Ganjaran", "Gedangan", "Gedog Kulon", "Gedog Wetan", "Genengan", "Girimoyo", "Girimulyo", "Glanggang", "Gondanglegi Kulon", "Gondanglegi Wetan", "Gondowangi", "Gubukklakah", "Gunung Jati", "Gunungrejo", "Gunungronggo", "Gunungsari", "Harjokuncaran", "Jabung", "Jambangan", "Jambearjo", "Jambesari", "Jambuwer", "Jatiguwi", "Jatikerto", "Jatirejoyoso", "Jatisari (Pakisaji)", "Jatisari (Tajinan)", "Jedong", "Jenggolo", "Jeru (Tumpang)", "Jeru (Turen)", "Jogomulyan", "Jombok", "Kademangan", "Kaliasri", "Kalipare", "Kalirejo", "Kalisongo", "Kambingan", "Kanigoro", "Karanganyar", "Karangduren", "Karangkates", "Karangnongko", "Karangpandan", "Karangrejo", "Karangsari", "Karangsuko", "Karangwidoro", "Kasembon (Bululawang)", "Kasembon (Kasembon)", "Kasri", "Kaumrejo", "Kebobang", "Kebonagung", "Kedok", "Kedungbanteng", "Kedungpedaringan", "Kedungrejo", "Kedungsalam", "Kemantren", "Kemiri (Jabung)", "Kemiri (Kepanjen)", "Kemulan", "Kendalpayak", "Kenongo", "Kepatihan", "Kepuharjo", "Kesamben", "Ketawang", "Ketindan", "Kidal", "Kidangbang", "Klampok", "Klepu", "Kluwut", "Kranggan", "Krebet", "Krebet Senggrong", "Kromengan", "Kucur", "Kuwolu", "Landungsari", "Lang-Lang", "Lebakharjo", "Lumbangsari", "Madiredo", "Maguan", "Majangtengah", "Malangsuko", "Mangliawan", "Mangunrejo", "Mendalanwangi", "Mentaraman", "Mojosari", "Mulyoagung", "Mulyoarjo", "Mulyoasri", "Mulyorejo", "Ngabab", "Ngadas", "Ngadilangkung", "Ngadirejo (Jabung)", "Ngadirejo (Kromengan)", "Ngadireso", "Ngajum", "Ngantru", "Ngasem", "Ngawonggo", "Ngebruk (Poncokusumo)", "Ngebruk (Sumberpucung)", "Ngembal", "Ngenep", "Ngijo", "Ngingit", "Ngroto", "Pagak", "Pagedangan", "Pagelaran", "Pagersari", "Pait", "Pajaran", "Pakisaji", "Pakisjajar", "Pakiskembar", "Palaan", "Pamotan", "Pandanajeng", "Pandanlandung", "Pandanmulyo", "Pandanrejo (Pagak)", "Pandanrejo (Wagir)", "Pandansari (Ngantang)", "Pandansari (Poncokusumo)", "Pandansari Lor", "Pandesari", "Panggungrejo (Gondanglegi)", "Panggungrejo (Kepanjen)", "Parangargo", "Patokpicis", "Peniwen", "Permanu", "Petungsewu (Dau)", "Petungsewu (Wagir)", "Plandi", "Plaosan", "Pojok", "Poncokusumo", "Pondokagung", "Pringgodani", "Pringu", "Pucangsongo", "Pujiharjo", "Pujon Kidul", "Pujon Lor", "Pulungdowo", "Purwoasri", "Purwodadi (Donomulyo)", "Purwodadi (Tirtoyudo)", "Purwoharjo", "Purworejo (Donomulyo)", "Purworejo (Ngantang)", "Purwosekar", "Putat Kidul", "Putat Lor", "Putukrejo (Gondanglegi)", "Putukrejo (Kalipare)", "Randuagung", "Randugading", "Rejosari", "Rejoyoso", "Rembun", "Ringinkembar", "Ringinsari", "Sambigede", "Sanankerto", "Sananrejo", "Saptorenggo", "Sawahan", "Segaran", "Sekarbanyu", "Sekarpuro", "Selorejo", "Sempalwadak", "Sempol", "Senggreng", "Sengguruh", "Sepanjang", "Sidoasri", "Sidodadi (Gedangan)", "Sidodadi (Lawang)", "Sidodadi (Ngantang)", "Sidoluhur", "Sidomulyo", "Sidorahayu", "Sidorejo (Jabung)", "Sidorejo (Pagelaran)", "Sidorenggo", "Simojayan", "Sindurejo", "Sitiarjo", "Sitirejo", "Slamet", "Slamparejo", "Slorok", "Sonowangi", "Srigading", "Srigonco", "Srimulyo", "Sudimoro", "Sukoanyar (Pakis)", "Sukoanyar (Wajak)", "Sukodadi", "Sukodono", "Sukolilo (Jabung)", "Sukolilo (Wajak)", "Sukomulyo", "Sukonolo", "Sukopuro", "Sukoraharjo", "Sukorejo (Gondanglegi)", "Sukorejo (Tirtoyudo)", "Sukosari (Gondanglegi)", "Sukosari (Kasembon)", "Sukowilangun", "Sumberagung (Ngantang)", "Sumberagung (Sumbermanjing Wetan)", "Sumberbening", "Sumberdem", "Sumberejo (Gedangan)", "Sumberejo (Pagak)", "Sumberejo (Poncokusumo)", "Sumberjaya", "Sumberkerto", "Sumberkradenan", "Sumbermanjing Kulon", "Sumbermanjing Wetan", "Sumberngepoh", "Sumberoto", "Sumberpasir", "Sumberpetung", "Sumberporong", "Sumberpucung", "Sumberputih", "Sumbersekar", "Sumbersuko (Dampit)", "Sumbersuko (Tajinan)", "Sumbersuko (Wagir)", "Sumbertangkil", "Sumbertempur", "Sutojayan", "Suwaru", "Taji", "Tajinan", "Talangagung", "Talangsuko", "Talok", "Tamanasri", "Tamanharjo", "Tamankuncaran", "Tamansari", "Tamansatriyan", "Tambakasri (Sumbermanjing Wetan)", "Tambakasri (Tajinan)", "Tambakrejo", "Tanggung", "Tangkilsari", "Tawangagung", "Tawangargo", "Tawangrejeni", "Tawangsari", "Tegalgondo", "Tegalrejo", "Tegalsari", "Tegalweru", "Tempursari", "Ternyang", "Tirtomarto", "Tirtomoyo (Ampelgading)", "Tirtomoyo (Pakis)", "Tirtoyudo", "Tlogorejo", "Tlogosari (Donomulyo)", "Tlogosari (Tirtoyudo)", "Toyomarto", "Tulungrejo (Donomulyo)", "Tulungrejo (Ngantang)", "Tulusbesar", "Tumpakrejo (Gedangan)", "Tumpakrejo (Kalipare)", "Tumpang", "Tumpukrenteng", "Tunjungtirto", "Turirejo", "Undaan", "Urek-Urek", "Wadung", "Wajak", "Wandanpuro", "Watugede", "Waturejo", "Wirotaman", "Wiyurejo", "Wonoagung (Kasembon)", "Wonoagung (Tirtoyudo)", "Wonoayu", "Wonokerso", "Wonokerto", "Wonomulyo", "Wonorejo (Bantur)", "Wonorejo (Lawang)", "Wonorejo (Poncokusumo)", "Wonorejo (Singosari)", "Wonosari", "Wringinanom", "Wringinsongo" ];
 
         function initSearchableDropdown(inputId, listId, tipeId, updateFunc) {
-            const input = document.getElementById(inputId); const list = document.getElementById(listId); const tipe = document.getElementById(tipeId); const toggleIcon = list.previousElementSibling;
+            const input = document.getElementById(inputId);
+            const list = document.getElementById(listId);
+            const tipe = document.getElementById(tipeId);
 
             if (!input || !list || !tipe) return;
 
+            const toggleIcon = list.previousElementSibling;
             function render(filter = '') {
-                list.innerHTML = ''; const isKelurahan = tipe.value === 'Kelurahan'; const data = isKelurahan ? daftarKelurahan : daftarDesa;
+                list.innerHTML = '';
+                const isKelurahan = tipe.value === 'Kelurahan';
+                const data = isKelurahan ? daftarKelurahan : daftarDesa;
                 const filtered = data.filter(item => item.toLowerCase().includes(filter.toLowerCase()));
-                if (filtered.length === 0) { list.innerHTML = '<div class="px-3 py-2 text-slate-400 italic text-xs">Tidak ditemukan</div>'; return; }
+
+                if (filtered.length === 0) {
+                    list.innerHTML = '<div class="px-3 py-2 text-slate-400 italic text-xs">Tidak ditemukan</div>';
+                    return;
+                }
+
                 filtered.forEach(item => {
-                    const div = document.createElement('div'); div.className = 'px-3 py-2 hover:bg-indigo-50 cursor-pointer text-slate-700 border-b border-slate-50 last:border-0 text-sm font-medium'; div.textContent = item;
-                    div.onclick = function() { input.value = item; list.classList.add('hidden'); updateFunc(); }; list.appendChild(div);
+                    const div = document.createElement('div');
+                    div.className = 'px-3 py-2 hover:bg-indigo-50 cursor-pointer text-slate-700 border-b border-slate-50 last:border-0 text-sm font-medium';
+                    div.textContent = item;
+                    div.onclick = function() {
+                        input.value = item;
+                        list.classList.add('hidden');
+                        updateFunc();
+                    };
+                    list.appendChild(div);
                 });
             }
             input.addEventListener('focus', function() { render(this.value); list.classList.remove('hidden'); });
             input.addEventListener('input', function() { render(this.value); list.classList.remove('hidden'); updateFunc(); });
-            toggleIcon.addEventListener('click', function(e) { e.stopPropagation(); if (list.classList.contains('hidden')) { render(input.value); list.classList.remove('hidden'); input.focus(); } else { list.classList.add('hidden'); } });
+            toggleIcon.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (list.classList.contains('hidden')) {
+                    render(input.value);
+                    list.classList.remove('hidden');
+                    input.focus();
+                } else {
+                    list.classList.add('hidden');
+                }
+            });
             tipe.addEventListener('change', function() { input.value = ''; render(); updateFunc(); });
         }
 
@@ -1411,8 +1434,12 @@
                     const emptyMsg = listKelola.querySelector('.empty-msg');
                     if(emptyMsg) emptyMsg.style.display = 'none';
 
-                    const draftId = 'draft-rek-' + v.replace(/\s+/g, '-').toLowerCase() + '-' + r.value.replace(/\s+/g, '-').toLowerCase();
-                    const draftHtml = `<div data-kategori="${r.value}" class="rekomendasi-item flex justify-between items-center p-4 border border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-[#0F172A]/50 rounded-2xl hover:bg-slate-100 dark:hover:bg-[#0F172A] transition-colors" id="${draftId}"><span class="text-sm font-bold text-slate-700 dark:text-slate-300">${v}</span><button type="button" onclick="hapusDraftRekomendasi('${v}', '${draftId}')" class="text-[10px] uppercase tracking-widest font-black text-rose-500 dark:text-rose-400 bg-white dark:bg-[#1E293B] hover:bg-rose-50 dark:hover:bg-rose-900/30 border border-rose-100 dark:border-rose-900/50 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button></div>`;
+                    // PERBAIKAN: Hilangkan karakter kutip/spasi yang merusak syntax HTML & JS
+                    const safeV = v.replace(/'/g, "\\'").replace(/"/g, "&quot;").replace(/\n/g, " ");
+                    const safeIdV = v.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+                    const draftId = 'draft-rek-' + safeIdV + '-' + r.value.replace(/\s+/g, '-').toLowerCase();
+
+                    const draftHtml = `<div data-kategori="${r.value}" class="rekomendasi-item flex justify-between items-center p-4 border border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-[#0F172A]/50 rounded-2xl hover:bg-slate-100 dark:hover:bg-[#0F172A] transition-colors" id="${draftId}"><span class="text-sm font-bold text-slate-700 dark:text-slate-300">${v}</span><button type="button" onclick="hapusDraftRekomendasi('${safeV}', '${draftId}')" class="text-[10px] uppercase tracking-widest font-black text-rose-500 dark:text-rose-400 bg-white dark:bg-[#1E293B] hover:bg-rose-50 dark:hover:bg-rose-900/30 border border-rose-100 dark:border-rose-900/50 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button></div>`;
                     listKelola.insertAdjacentHTML('afterbegin', draftHtml);
 
                     let savedRek = JSON.parse(localStorage.getItem('customRekomendasi')) || [];
@@ -1446,7 +1473,24 @@
 
             const lsPek = JSON.parse(localStorage.getItem('customPekerjaan'))||[]; const sPek = document.getElementById('selectPekerjaan'); const lPek = document.getElementById('listKelolaPekerjaan'); lsPek.forEach(v => { if(sPek && !Array.from(sPek.options).some(o=>o.value===v)){ const op=document.createElement('option');op.value=v;op.textContent=v;op.className='dark:bg-slate-800';sPek.appendChild(op); if(lPek){ const em=lPek.querySelector('.empty-msg');if(em)em.remove(); const id='draft-pek-'+v.replace(/\s+/g,'-').toLowerCase(); lPek.insertAdjacentHTML('afterbegin',`<div class="flex justify-between items-center p-4 border border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-[#0F172A]/50 rounded-2xl hover:bg-slate-100 dark:hover:bg-[#0F172A] transition-colors" id="${id}"><span class="text-sm font-bold text-slate-700 dark:text-slate-300">${v}</span><button type="button" onclick="hapusDraftPekerjaan('${v}', '${id}')" class="text-[10px] uppercase tracking-widest font-black text-rose-500 dark:text-rose-400 bg-white dark:bg-[#1E293B] hover:bg-rose-50 dark:hover:bg-rose-900/30 border border-rose-100 dark:border-rose-900/50 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button></div>`); } } });
 
-            const lsRek = JSON.parse(localStorage.getItem('customRekomendasi'))||[]; const sRek = document.getElementById('selectTempatRekomendasi'); const lRek = document.getElementById('listKelolaRekomendasi'); lsRek.forEach(obj => { if(sRek && !Array.from(sRek.options).some(o=>o.value===obj.val && o.getAttribute('data-kategori')===obj.cat)){ const op=document.createElement('option');op.value=obj.val;op.textContent=obj.val;op.setAttribute('data-kategori',obj.cat);op.className='dark:bg-slate-800';op.style.display='none';op.disabled=true;sRek.appendChild(op); if(lRek){ const em=lRek.querySelector('.empty-msg');if(em)em.remove(); const id='draft-rek-'+obj.val.replace(/\s+/g,'-').toLowerCase()+'-'+obj.cat.replace(/\s+/g,'-').toLowerCase(); lRek.insertAdjacentHTML('afterbegin',`<div data-kategori="${obj.cat}" class="rekomendasi-item hidden justify-between items-center p-4 border border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-[#0F172A]/50 rounded-2xl hover:bg-slate-100 dark:hover:bg-[#0F172A] transition-colors" id="${id}"><span class="text-sm font-bold text-slate-700 dark:text-slate-300">${obj.val}</span><button type="button" onclick="hapusDraftRekomendasi('${obj.val}', '${id}')" class="text-[10px] uppercase tracking-widest font-black text-rose-500 dark:text-rose-400 bg-white dark:bg-[#1E293B] hover:bg-rose-50 dark:hover:bg-rose-900/30 border border-rose-100 dark:border-rose-900/50 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button></div>`); } } });
+            const lsRek = JSON.parse(localStorage.getItem('customRekomendasi'))||[];
+            const sRek = document.getElementById('selectTempatRekomendasi');
+            const lRek = document.getElementById('listKelolaRekomendasi');
+            lsRek.forEach(obj => {
+                if(sRek && !Array.from(sRek.options).some(o=>o.value===obj.val && o.getAttribute('data-kategori')===obj.cat)){
+                    const op=document.createElement('option');op.value=obj.val;op.textContent=obj.val;op.setAttribute('data-kategori',obj.cat);op.className='dark:bg-slate-800';op.style.display='none';op.disabled=true;sRek.appendChild(op);
+                    if(lRek){
+                        const em=lRek.querySelector('.empty-msg');if(em)em.remove();
+
+                        // PERBAIKAN: Render ulang dengan string yang di-escape dari local storage
+                        const safeVal = obj.val.replace(/'/g, "\\'").replace(/"/g, "&quot;").replace(/\n/g, " ");
+                        const safeIdV = obj.val.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+                        const id = 'draft-rek-' + safeIdV + '-' + obj.cat.replace(/\s+/g,'-').toLowerCase();
+
+                        lRek.insertAdjacentHTML('afterbegin',`<div data-kategori="${obj.cat}" class="rekomendasi-item hidden justify-between items-center p-4 border border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-[#0F172A]/50 rounded-2xl hover:bg-slate-100 dark:hover:bg-[#0F172A] transition-colors" id="${id}"><span class="text-sm font-bold text-slate-700 dark:text-slate-300">${obj.val}</span><button type="button" onclick="hapusDraftRekomendasi('${safeVal}', '${id}')" class="text-[10px] uppercase tracking-widest font-black text-rose-500 dark:text-rose-400 bg-white dark:bg-[#1E293B] hover:bg-rose-50 dark:hover:bg-rose-900/30 border border-rose-100 dark:border-rose-900/50 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button></div>`);
+                    }
+                }
+            });
 
             initAllCustomSelects();
             loadFormDraft();
@@ -1481,7 +1525,18 @@
 
             document.getElementById('manual_ktp').addEventListener('input', updateAlamatKtp); document.getElementById('manual_domisili').addEventListener('input', updateAlamatDomisili);
 
-            if(mainForm) { mainForm.addEventListener('input', saveFormDraft); mainForm.addEventListener('change', saveFormDraft); mainForm.addEventListener('submit', function(e) { updateAlamatKtp(); updateAlamatDomisili(); updateRekomendasiPreview(); updateSaranHidden(); localStorage.removeItem('formKlienEditDraft_{{ $asesmen->id }}'); localStorage.removeItem('shared_tes_urine_new'); }); }
+            if(mainForm) {
+                mainForm.addEventListener('input', saveFormDraft);
+                mainForm.addEventListener('change', saveFormDraft);
+                mainForm.addEventListener('submit', function(e) {
+                    updateAlamatKtp();
+                    updateAlamatDomisili();
+                    updateRekomendasiPreview();
+                    updateSaranHidden();
+                    localStorage.removeItem('formKlienEditDraft_{{ $asesmen->id }}');
+                    localStorage.removeItem('shared_tes_urine_{{ $asesmen->id }}');
+                });
+            }
         });
     </script>
 </x-app-layout>
