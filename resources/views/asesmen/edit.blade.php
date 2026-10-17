@@ -37,7 +37,7 @@
                     <svg class="w-6 h-6 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                 </a>
                 <div>
-                    <div class="inline-flex items-center gap-2 px-2 py-0.5 rounded text-[10px] font-black bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-500 uppercase tracking-wider mb-1 border border-amber-200 dark:border-amber-800/50 shadow-sm">
+                    <div class="inline-flex items-center gap-2 px-2 py-0.5 rounded text-[10px] font-black bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 uppercase tracking-wider mb-1 border border-amber-200 dark:border-amber-800/50 shadow-sm">
                         Mode Edit Data
                     </div>
                     <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
@@ -63,13 +63,6 @@
                 <div class="mb-6 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 rounded-2xl flex items-start shadow-sm transition-colors duration-300">
                     <svg class="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                     <div><h4 class="text-sm font-extrabold text-emerald-800 dark:text-emerald-400">Berhasil!</h4><p class="text-[13px] font-semibold text-emerald-600 dark:text-emerald-300 mt-1">{{ session('success') }}</p></div>
-                </div>
-            @endif
-
-            @if (session('error'))
-                <div class="mb-6 p-4 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800/50 rounded-2xl flex items-start shadow-sm transition-colors duration-300">
-                    <svg class="w-5 h-5 text-rose-500 mt-0.5 flex-shrink-0 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                    <div><h4 class="text-sm font-extrabold text-rose-800 dark:text-rose-400">Peringatan Sistem!</h4><p class="text-[13px] font-semibold text-rose-600 dark:text-rose-300 mt-1">{{ session('error') }}</p></div>
                 </div>
             @endif
 
@@ -317,7 +310,7 @@
                             <!-- Dropdown Pendidikan -->
                             <div>
                                 <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Pendidikan</label>
-                                <div class="flex gap-2">
+                                <div class="flex flex-wrap items-start gap-2">
                                     <div class="flex-1 min-w-[200px] w-full">
                                         <select name="pendidikan_input" id="selectPendidikan" class="block w-full">
                                             <option value="">-- Pilih Pendidikan --</option>
@@ -331,8 +324,10 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <button type="button" onclick="openModalTambahPendidikan()" class="shrink-0 px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-[#3B82F6] dark:text-blue-400 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-blue-100 dark:hover:bg-blue-800/50 transition-colors shadow-sm">+ Tambah</button>
-                                    <button type="button" onclick="openModalKelolaPendidikan()" class="shrink-0 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm">Kelola</button>
+                                    <div class="flex gap-2 shrink-0">
+                                        <button type="button" onclick="openModalTambahPendidikan()" class="shrink-0 px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-[#3B82F6] dark:text-blue-400 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-blue-100 dark:hover:bg-blue-800/50 transition-colors shadow-sm">+ Tambah</button>
+                                        <button type="button" onclick="openModalKelolaPendidikan()" class="shrink-0 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm">Kelola</button>
+                                    </div>
                                 </div>
                             </div>
                             <div>
@@ -421,7 +416,7 @@
                                 <input type="text" name="status_hukum" value="{{ old('status_hukum', $asesmen->status_hukum) }}" class="block w-full rounded-[1.25rem] border-slate-200 dark:border-slate-700 shadow-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 text-sm font-medium bg-slate-50 dark:bg-[#1E293B] text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#0F172A] transition-all px-4 py-3 outline-none" placeholder="Cth: Tersangka">
                             </div>
 
-                            <!-- 2. keterlibatan_jaringan -->
+                            <!-- 2. keterlibatan_jaringan (DIUBAH MENJADI INPUT TEKS) -->
                             <div>
                                 <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Keterlibatan Jaringan</label>
                                 <input type="text" name="keterlibatan_jaringan" value="{{ old('keterlibatan_jaringan', $asesmen->keterlibatan_jaringan) }}" class="block w-full rounded-[1.25rem] border-slate-200 dark:border-slate-700 shadow-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 text-sm font-medium bg-slate-50 dark:bg-[#1E293B] text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#0F172A] transition-all px-4 py-3 outline-none" placeholder="Masukkan keterangan jaringan...">
@@ -475,7 +470,7 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 mb-6">
+                        <div class="grid grid-cols-1 gap-6 mb-6">
                             <!-- PENDETEKSI OTOMATIS POSITIF / NEGATIF -->
                             @php
                                 $savedUrineEdit = old('tes_urine', $asesmen->tes_urine ?? '');
@@ -520,6 +515,28 @@
                                         <p id="tes_urine_preview" class="text-sm font-black text-[#3B82F6] dark:text-blue-400">{{ $savedUrineEdit ?: '-' }}</p>
                                     </div>
                                     <input type="hidden" name="tes_urine" id="tes_urine_hidden" value="{{ $savedUrineEdit }}">
+                                </div>
+                            </div>
+
+                            <!-- NEW: JENIS ZAT NARKOTIKA -->
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Jenis Narkotika / Zat Adiktif</label>
+                                <div class="flex gap-2">
+                                    <div class="flex-1 min-w-[200px] w-full">
+                                        <select name="narkotika_input" id="selectNarkotika" class="block w-full">
+                                            <option value="">-- Pilih Jenis Narkotika --</option>
+                                            @php $currentNarkotika = old('narkotika_input', $asesmen->narkotika_input ?? ($asesmen->narkotika->jenis_narkotika ?? '')); @endphp
+                                            @foreach($masterNarkotika ?? [] as $nk)
+                                                @if(trim($nk->jenis_narkotika) !== '')
+                                                    <option value="{{ $nk->jenis_narkotika }}" {{ $currentNarkotika == $nk->jenis_narkotika ? 'selected' : '' }}>
+                                                        {{ $nk->jenis_narkotika }}
+                                                    </option>
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <button type="button" onclick="openModalTambahNarkotika()" class="shrink-0 px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-[#3B82F6] dark:text-blue-400 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-blue-100 dark:hover:bg-blue-800/50 transition-colors shadow-sm">+ Tambah</button>
+                                    <button type="button" onclick="openModalKelolaNarkotika()" class="shrink-0 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm">Kelola</button>
                                 </div>
                             </div>
                         </div>
@@ -620,12 +637,6 @@
                             <input type="hidden" name="rekomendasi_input" id="hidden_rekomendasi_input" value="{{ old('rekomendasi_input', $asesmen->rekomendasi->tempat_rehabilitasi ?? $asesmen->rekomendasi_input) }}">
                         </div>
 
-                        <!-- 20. keterangan_tambahan -->
-                        <div class="mb-5">
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Keterangan Tambahan TAT</label>
-                            <textarea name="keterangan_tambahan" rows="2" class="block w-full rounded-[1.25rem] border-slate-200 dark:border-slate-700 shadow-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 text-sm font-medium bg-slate-50 dark:bg-[#1E293B] text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#0F172A] transition-all px-4 py-3 outline-none">{{ old('keterangan_tambahan', $asesmen->keterangan_tambahan) }}</textarea>
-                        </div>
-
                         <!-- 21. saran_case_conference -->
                         <div>
                             <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Saran Sidang Case Conference</label>
@@ -653,6 +664,24 @@
                             4. Hasil Asesmen Final & Pelaksanaan
                         </h3>
 
+                        <!-- TAMBAHAN FORM BARU -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div class="md:col-span-2">
+                                <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Pasal Yang Disangkakan</label>
+                                <input type="text" name="pasal_sangkaan" value="{{ old('pasal_sangkaan', $asesmen->pasal_sangkaan) }}" class="block w-full rounded-[1.25rem] border-slate-200 dark:border-slate-700 shadow-sm focus:border-[#27C93F] focus:ring-2 focus:ring-green-500/20 text-sm font-medium bg-slate-50 dark:bg-[#1E293B] text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#0F172A] transition-all px-4 py-3 outline-none" placeholder="Cth: Pasal 114 ayat (1)...">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Hasil Asesmen Hukum Final</label>
+                                <textarea name="hasil_asesmen_hukum" rows="3" class="block w-full rounded-[1.25rem] border-slate-200 dark:border-slate-700 shadow-sm focus:border-[#27C93F] focus:ring-2 focus:ring-green-500/20 text-sm font-medium bg-slate-50 dark:bg-[#1E293B] text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#0F172A] transition-all px-4 py-3 outline-none">{{ old('hasil_asesmen_hukum', $asesmen->hasil_asesmen_hukum) }}</textarea>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Hasil Asesmen Medis Final</label>
+                                <textarea name="hasil_asesmen_medis" rows="3" class="block w-full rounded-[1.25rem] border-slate-200 dark:border-slate-700 shadow-sm focus:border-[#27C93F] focus:ring-2 focus:ring-green-500/20 text-sm font-medium bg-slate-50 dark:bg-[#1E293B] text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#0F172A] transition-all px-4 py-3 outline-none">{{ old('hasil_asesmen_medis', $asesmen->hasil_asesmen_medis) }}</textarea>
+                            </div>
+                        </div>
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="md:col-span-2">
                                 <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Status Pelaksanaan Rekomendasi</label>
@@ -661,6 +690,12 @@
                                     <option value="YA" {{ old('pelaksanaan', $asesmen->pelaksanaan) == 'YA' ? 'selected' : '' }}>YA (Dilaksanakan)</option>
                                     <option value="TIDAK" {{ old('pelaksanaan', $asesmen->pelaksanaan) == 'TIDAK' ? 'selected' : '' }}>TIDAK (Belum/Batal)</option>
                                 </select>
+                            </div>
+                            
+                            <!-- BARU: Keterangan Tambahan -->
+                            <div class="md:col-span-2 mt-2">
+                                <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Keterangan Tambahan <span class="font-normal lowercase tracking-normal text-slate-400">(Opsional)</span></label>
+                                <textarea name="keterangan_tambahan" rows="3" class="block w-full rounded-[1.25rem] border-slate-200 dark:border-slate-700 shadow-sm focus:border-[#27C93F] focus:ring-2 focus:ring-green-500/20 text-sm font-medium bg-slate-50 dark:bg-[#1E293B] text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#0F172A] transition-all px-4 py-3 outline-none" placeholder="Masukkan keterangan tambahan jika ada...">{{ old('keterangan_tambahan', $asesmen->keterangan_tambahan) }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -811,6 +846,56 @@
             </div>
             <div class="flex justify-center">
                 <button type="button" onclick="closeModalKelolaPekerjaan()" class="px-6 py-3.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-[11px] uppercase tracking-widest rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors w-full sm:w-auto shadow-sm">Tutup Kelola</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL TAMBAH NARKOTIKA -->
+    <div id="modalTambahNarkotika" class="fixed inset-0 z-[99] hidden items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-900/70 dark:bg-[#0B1120]/80 backdrop-blur-md transition-opacity" onclick="closeModalTambahNarkotika()"></div>
+        <div class="relative bg-white dark:bg-[#1E293B] w-full max-w-md p-8 rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] transform scale-95 opacity-0 transition-all border border-white/50 dark:border-slate-700/50">
+            <button type="button" onclick="closeModalTambahNarkotika()" class="absolute top-6 right-6 text-slate-400 hover:text-rose-500 transition-colors">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white mb-6 tracking-tight">Tambah Jenis Narkotika</h3>
+
+            <div class="mb-6">
+                <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 ml-1">Nama Jenis Zat / Narkotika</label>
+                <input type="text" id="inputNarkotikaBaru" required placeholder="Cth: Sabu-Sabu" class="block w-full rounded-[1.25rem] border-slate-200 dark:border-slate-700 shadow-sm focus:border-[#3B82F6] focus:ring-2 focus:ring-blue-500/20 text-sm font-medium bg-slate-50 dark:bg-[#0F172A] text-slate-900 dark:text-white px-4 py-3 outline-none transition-all">
+            </div>
+            <div class="flex flex-col-reverse sm:flex-row justify-end gap-3">
+                <button type="button" onclick="closeModalTambahNarkotika()" class="px-6 py-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm">Batal</button>
+                <button type="button" onclick="tambahNarkotikaJS(event)" class="px-6 py-3 bg-[#3B82F6] hover:bg-blue-600 text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-all shadow-md hover:-translate-y-0.5">Tambahkan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL KELOLA NARKOTIKA -->
+    <div id="modalKelolaNarkotika" class="fixed inset-0 z-[99] hidden items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-900/70 dark:bg-[#0B1120]/80 backdrop-blur-md transition-opacity" onclick="closeModalKelolaNarkotika()"></div>
+        <div class="relative bg-white dark:bg-[#1E293B] w-full max-w-lg p-8 rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] transform scale-95 opacity-0 transition-all border border-white/50 dark:border-slate-700/50">
+            <button type="button" onclick="closeModalKelolaNarkotika()" class="absolute top-6 right-6 text-slate-400 hover:text-rose-500 transition-colors">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white mb-6 tracking-tight">Kelola Narkotika</h3>
+            <div id="listKelolaNarkotika" class="max-h-[50vh] overflow-y-auto pr-2 space-y-2 mb-8 custom-select-scroll">
+                @forelse($masterNarkotika ?? [] as $nk)
+                    @if(trim($nk->jenis_narkotika) !== '')
+                    <div class="flex justify-between items-center p-4 border border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-[#0F172A]/50 rounded-2xl hover:bg-slate-100 dark:hover:bg-[#0F172A] transition-colors">
+                        <span class="text-sm font-bold text-slate-700 dark:text-slate-300">{{ $nk->jenis_narkotika }}</span>
+                        <form action="{{ Route::has('narkotika.destroy') ? route('narkotika.destroy', $nk->id) : url('narkotika/'.$nk->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini secara permanen dari database?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-[10px] uppercase tracking-widest font-black text-rose-500 dark:text-rose-400 bg-white dark:bg-[#1E293B] hover:bg-rose-50 dark:hover:bg-rose-900/30 border border-rose-100 dark:border-rose-900/50 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button>
+                        </form>
+                    </div>
+                    @endif
+                @empty
+                <div class="text-sm text-slate-500 dark:text-slate-400 text-center py-6 italic empty-msg bg-slate-50 dark:bg-[#0F172A] rounded-2xl">Belum ada data narkotika.</div>
+                @endforelse
+            </div>
+            <div class="flex justify-center">
+                <button type="button" onclick="closeModalKelolaNarkotika()" class="px-6 py-3.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-[11px] uppercase tracking-widest rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors w-full sm:w-auto shadow-sm">Tutup Kelola</button>
             </div>
         </div>
     </div>
@@ -1041,6 +1126,7 @@
             const list = document.getElementById(listId);
             const tipe = document.getElementById(tipeId);
 
+            // Tambahan safety check
             if (!input || !list || !tipe) return;
 
             const toggleIcon = list.previousElementSibling;
@@ -1170,6 +1256,8 @@
         function toggleNarkotika() { document.getElementById('narkotika-dropdown').classList.toggle('hidden'); }
         function updateNarkotikaText() {
             const textSpan = document.getElementById('narkotika-text');
+
+            // KUNCI PERBAIKAN: Hentikan fungsi jika elemen tidak ditemukan agar skrip lain tidak ikut mati
             if (!textSpan) return;
 
             const checkboxes = document.querySelectorAll('.narkotika-cb:checked');
@@ -1465,6 +1553,84 @@
             localStorage.setItem('customRekomendasi', JSON.stringify(savedRek));
         }
 
+        function openModalTambahNarkotika() {
+            const modal = document.getElementById('modalTambahNarkotika');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            setTimeout(() => { modal.children[1].classList.remove('opacity-0', 'scale-95'); document.getElementById('inputNarkotikaBaru').focus(); }, 10);
+        }
+        function closeModalTambahNarkotika() {
+            const modal = document.getElementById('modalTambahNarkotika');
+            modal.children[1].classList.add('opacity-0', 'scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+        }
+        function openModalKelolaNarkotika() {
+            const modal = document.getElementById('modalKelolaNarkotika');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            setTimeout(() => { modal.children[1].classList.remove('opacity-0', 'scale-95'); }, 10);
+        }
+        function closeModalKelolaNarkotika() {
+            const modal = document.getElementById('modalKelolaNarkotika');
+            modal.children[1].classList.add('opacity-0', 'scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+        }
+
+        function tambahNarkotikaJS(event) {
+            event.preventDefault();
+            const inputVal = document.getElementById('inputNarkotikaBaru').value.trim();
+            if(inputVal) {
+                const selectElement = document.querySelector('select[name="narkotika_input"]');
+                let exists = Array.from(selectElement.options).some(opt => opt.value === inputVal);
+                if(!exists) {
+                    const newOption = document.createElement('option');
+                    newOption.value = inputVal; newOption.textContent = inputVal;
+                    newOption.style.display = ''; newOption.disabled = false;
+                    newOption.className = 'dark:bg-slate-800';
+                    selectElement.appendChild(newOption);
+
+                    const listKelola = document.getElementById('listKelolaNarkotika');
+                    const emptyMsg = listKelola.querySelector('.empty-msg');
+                    if(emptyMsg) emptyMsg.remove();
+
+                    // Anti-syntax error from quotes
+                    const safeV = inputVal.replace(/'/g, "\\'").replace(/"/g, "&quot;").replace(/\n/g, " ");
+                    const safeIdV = inputVal.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+                    const draftId = 'draft-nark-' + safeIdV;
+
+                    const draftHtml = `
+                        <div class="flex justify-between items-center p-4 border border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-[#0F172A]/50 rounded-2xl hover:bg-slate-100 dark:hover:bg-[#0F172A] transition-colors" id="${draftId}">
+                            <span class="text-sm font-bold text-slate-700 dark:text-slate-300">${inputVal}</span>
+                            <button type="button" onclick="hapusDraftNarkotika('${safeV}', '${draftId}')" class="text-[10px] uppercase tracking-widest font-black text-rose-500 dark:text-rose-400 bg-white dark:bg-[#1E293B] hover:bg-rose-50 dark:hover:bg-rose-900/30 border border-rose-100 dark:border-rose-900/50 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button>
+                        </div>
+                    `;
+                    listKelola.insertAdjacentHTML('afterbegin', draftHtml);
+
+                    let savedNark = JSON.parse(localStorage.getItem('customNarkotika')) || [];
+                    if (!savedNark.includes(inputVal)) { savedNark.push(inputVal); localStorage.setItem('customNarkotika', JSON.stringify(savedNark)); }
+                }
+                selectElement.value = inputVal;
+                selectElement.dispatchEvent(new Event('change'));
+                closeModalTambahNarkotika();
+                document.getElementById('inputNarkotikaBaru').value = '';
+                saveFormDraft();
+            }
+        }
+
+        function hapusDraftNarkotika(val, elementId) {
+            if (!confirm('Apakah Anda yakin ingin menghapus data ini dari daftar memori?')) return;
+            const selectElement = document.querySelector('select[name="narkotika_input"]');
+            const optionToRemove = Array.from(selectElement.options).find(opt => opt.value === val);
+            if (optionToRemove) optionToRemove.remove();
+            const draftElement = document.getElementById(elementId);
+            if (draftElement) draftElement.remove();
+            selectElement.value = "";
+            selectElement.dispatchEvent(new Event('change'));
+            saveFormDraft();
+
+            let savedNark = JSON.parse(localStorage.getItem('customNarkotika')) || [];
+            savedNark = savedNark.filter(item => item !== val);
+            localStorage.setItem('customNarkotika', JSON.stringify(savedNark));
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // Panggil Fungsi Sinkronisasi Urine
             syncTesUrine();
@@ -1492,9 +1658,23 @@
                 }
             });
 
+            const lsNark = JSON.parse(localStorage.getItem('customNarkotika'))||[]; 
+            const sNark = document.getElementById('selectNarkotika'); 
+            const lNark = document.getElementById('listKelolaNarkotika'); 
+            lsNark.forEach(v => { 
+                if(sNark && !Array.from(sNark.options).some(o=>o.value===v)){ 
+                    const op=document.createElement('option');op.value=v;op.textContent=v;op.className='dark:bg-slate-800';sNark.appendChild(op); 
+                    if(lNark){ 
+                        const em=lNark.querySelector('.empty-msg');if(em)em.remove(); 
+                        const safeV=v.replace(/'/g,"\\'").replace(/"/g,"&quot;").replace(/\n/g," ");const safeIdV=v.replace(/[^a-zA-Z0-9]/g,'-').toLowerCase();const id='draft-nark-'+safeIdV; 
+                        lNark.insertAdjacentHTML('afterbegin',`<div class="flex justify-between items-center p-4 border border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-[#0F172A]/50 rounded-2xl hover:bg-slate-100 dark:hover:bg-[#0F172A] transition-colors" id="${id}"><span class="text-sm font-bold text-slate-700 dark:text-slate-300">${v}</span><button type="button" onclick="hapusDraftNarkotika('${safeV}', '${id}')" class="text-[10px] uppercase tracking-widest font-black text-rose-500 dark:text-rose-400 bg-white dark:bg-[#1E293B] hover:bg-rose-50 dark:hover:bg-rose-900/30 border border-rose-100 dark:border-rose-900/50 px-4 py-2 rounded-xl transition-colors shadow-sm">Hapus</button></div>`); 
+                    } 
+                } 
+            });
+
             initAllCustomSelects();
             loadFormDraft();
-            toggleModeKtp(); toggleModeDomisili(); updateNarkotikaText();
+            toggleModeKtp(); toggleModeDomisili();
 
             // Mengamankan logika rakitan real-time Alamat
             ['jalan_ktp', 'desa_ktp', 'kecamatan_ktp'].forEach(id => {

@@ -376,11 +376,15 @@
                                                 <div class="text-[11px] font-medium text-slate-500 dark:text-slate-400">Reg: <span class="font-bold text-slate-700 dark:text-slate-300">{{ $item->no_register ?? '-' }}</span></div>
                                                 <div class="mt-2.5 flex flex-col gap-2">
                                                     <div>
-                                                        @if($isLengkapTotal)
-                                                            <span class="inline-flex px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-500/20">DATA LENGKAP</span>
-                                                        @else
-                                                            <span class="inline-flex px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-500 border border-amber-200/50 dark:border-amber-500/20">BELUM LENGKAP</span>
-                                                        @endif
+                                                        @if($item->is_lengkap)
+    <span class="inline-flex px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 shadow-sm mt-2">
+        DATA LENGKAP
+    </span>
+@else
+    <span class="inline-flex px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-500 border border-amber-200 dark:border-amber-800/50 shadow-sm mt-2">
+        BELUM LENGKAP
+    </span>
+@endif
                                                     </div>
                                                     <div class="pt-2">
                                                         <div id="text-tanggal-{{ $item->id }}" class="flex items-center gap-1.5">

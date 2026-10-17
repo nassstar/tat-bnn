@@ -1,4 +1,4 @@
-<x-app-layout>
+ i <x-app-layout>
     <!-- CSS Custom untuk Animasi Autosave & Scrollbar -->
     <style>
         /* Animasi Indikator Autosave */

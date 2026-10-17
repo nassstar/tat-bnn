@@ -96,12 +96,14 @@ class AsesmenController extends Controller
         $masterNarkotika = Narkotika::orderBy('jenis_narkotika', 'asc')->get();
         $masterRekomendasi = Rekomendasi::orderBy('tempat_rehabilitasi', 'asc')->get();
 
-        // TAMBAHKAN BARIS INI:
         $masterZat = \App\Models\MasterOpsi::where('kategori', 'zat')->get();
 
-        // Pastikan 'masterZat' dimasukkan ke dalam compact
         return view('asesmen.create', compact(
-            'masterPendidikan', 'masterPekerjaan', 'masterNarkotika', 'masterRekomendasi', 'masterZat'
+            'masterPendidikan',
+            'masterPekerjaan',
+            'masterNarkotika',
+            'masterRekomendasi',
+            'masterZat'
         ));
     }
 
@@ -120,12 +122,6 @@ class AsesmenController extends Controller
             'nik.unique' => 'Peringatan: NIK ini sudah pernah terdaftar di dalam sistem! Silakan gunakan NIK lain atau gunakan fitur Edit Data.',
         ]);
 
-        if ($request->has('narkotika_id') && is_array($request->narkotika_id)) {
-            $request->merge([
-                'narkotika_id' => implode(',', $request->narkotika_id)
-            ]);
-        }
-
         $validatedData = $request->validate([
             'foto_klien' => 'nullable|image|mimes:jpeg,png,jpg',
             'nama_lengkap' => 'required|string|max:255',
@@ -137,10 +133,11 @@ class AsesmenController extends Controller
             'kewarganegaraan' => 'nullable|string|max:255',
             'agama' => 'nullable|string|max:255',
 
-            // Key dummy ini tetap di validasi agar masuk ke $validatedData
+            // Pastikan field input tambahan ini masuk validasi
             'pendidikan_input' => 'nullable|string|max:255',
             'pekerjaan_input' => 'nullable|string|max:255',
             'rekomendasi_input' => 'nullable|string|max:255',
+            'narkotika_input' => 'nullable|string|max:255', // PERBAIKAN: Validasi Narkotika Input
 
             'alamat_ktp' => 'nullable|string',
             'alamat_domisili' => 'nullable|string',
@@ -153,7 +150,6 @@ class AsesmenController extends Controller
             'tgl_berkas' => 'nullable|date',
             'tgl_pelaksanaan' => 'nullable|date',
             'tgl_tangkap' => 'nullable|date',
-            'narkotika_id' => 'nullable|string',
             'berat_bb' => 'nullable|numeric',
             'pasal_sangkaan' => 'nullable|string',
             'deskripsi_bb' => 'nullable|string',
@@ -184,7 +180,7 @@ class AsesmenController extends Controller
         }
 
         // =====================================================================
-        // PERBAIKAN: LOGIKA ANTI-NULL UNTUK MENCEGAH ERROR 1048 DI DATABASE
+        // LOGIKA PENYIMPANAN DATA DARI DROPDOWN KE TABEL MASTER LALU DIAMBIL ID-NYA
         // =====================================================================
         $pendidikanVal = $request->filled('pendidikan_input') ? $request->pendidikan_input : '-';
         $pendidikan = Pendidikan::firstOrCreate(['nama_pendidikan' => $pendidikanVal]);
@@ -198,14 +194,21 @@ class AsesmenController extends Controller
         $rekomendasi = Rekomendasi::firstOrCreate(['tempat_rehabilitasi' => $rekomendasiVal]);
         $validatedData['rekomendasi_id'] = $rekomendasi->id;
 
+        // PERBAIKAN: Memproses narkotika_input menjadi narkotika_id
+        $narkotikaVal = $request->filled('narkotika_input') ? $request->narkotika_input : '-';
+        $narkotika = Narkotika::firstOrCreate(['jenis_narkotika' => $narkotikaVal]);
+        $validatedData['narkotika_id'] = $narkotika->id;
+
         // Default Status Pelaksanaan
         $validatedData['pelaksanaan'] = $request->pelaksanaan ?? 'TIDAK';
         // =====================================================================
 
+        // Buang variabel input sementara agar tidak dikirim paksa ke database
         $dataSiapSimpan = Arr::except($validatedData, [
             'pendidikan_input',
             'pekerjaan_input',
-            'rekomendasi_input'
+            'rekomendasi_input',
+            'narkotika_input' // PERBAIKAN: Buang input narkotika sementara ini
         ]);
 
         Asesmen::create($dataSiapSimpan);
@@ -243,12 +246,15 @@ class AsesmenController extends Controller
         $masterNarkotika = Narkotika::orderBy('jenis_narkotika', 'asc')->get();
         $masterRekomendasi = Rekomendasi::orderBy('tempat_rehabilitasi', 'asc')->get();
 
-        // TAMBAHKAN BARIS INI:
         $masterZat = \App\Models\MasterOpsi::where('kategori', 'zat')->get();
 
-        // Pastikan 'masterZat' dimasukkan ke dalam compact
         return view('asesmen.edit', compact(
-            'asesmen', 'masterPendidikan', 'masterPekerjaan', 'masterNarkotika', 'masterRekomendasi', 'masterZat'
+            'asesmen',
+            'masterPendidikan',
+            'masterPekerjaan',
+            'masterNarkotika',
+            'masterRekomendasi',
+            'masterZat'
         ));
     }
 
@@ -267,12 +273,6 @@ class AsesmenController extends Controller
             'nik.unique' => 'Peringatan: NIK ini sudah digunakan oleh Klien lain.',
         ]);
 
-        if ($request->has('narkotika_id') && is_array($request->narkotika_id)) {
-            $request->merge([
-                'narkotika_id' => implode(',', $request->narkotika_id)
-            ]);
-        }
-
         $validatedData = $request->validate([
             'foto_klien' => 'nullable|image|mimes:jpeg,png,jpg',
             'nama_lengkap' => 'required|string|max:255',
@@ -284,9 +284,11 @@ class AsesmenController extends Controller
             'kewarganegaraan' => 'nullable|string|max:255',
             'agama' => 'nullable|string|max:255',
 
+            // Pastikan field input tambahan ini masuk validasi
             'pendidikan_input' => 'nullable|string|max:255',
             'pekerjaan_input' => 'nullable|string|max:255',
             'rekomendasi_input' => 'nullable|string|max:255',
+            'narkotika_input' => 'nullable|string|max:255', // PERBAIKAN: Validasi Narkotika Input
 
             'alamat_ktp' => 'nullable|string',
             'alamat_domisili' => 'nullable|string',
@@ -299,7 +301,6 @@ class AsesmenController extends Controller
             'tgl_berkas' => 'nullable|date',
             'tgl_pelaksanaan' => 'nullable|date',
             'tgl_tangkap' => 'nullable|date',
-            'narkotika_id' => 'nullable|string',
             'berat_bb' => 'nullable|numeric',
             'pasal_sangkaan' => 'nullable|string',
             'deskripsi_bb' => 'nullable|string',
@@ -335,7 +336,7 @@ class AsesmenController extends Controller
         }
 
         // =====================================================================
-        // PERBAIKAN: LOGIKA ANTI-NULL UNTUK MENCEGAH ERROR 1048 DI DATABASE
+        // LOGIKA PENYIMPANAN DATA DARI DROPDOWN KE TABEL MASTER LALU DIAMBIL ID-NYA
         // =====================================================================
         $pendidikanVal = $request->filled('pendidikan_input') ? $request->pendidikan_input : '-';
         $pendidikan = Pendidikan::firstOrCreate(['nama_pendidikan' => $pendidikanVal]);
@@ -349,13 +350,20 @@ class AsesmenController extends Controller
         $rekomendasi = Rekomendasi::firstOrCreate(['tempat_rehabilitasi' => $rekomendasiVal]);
         $validatedData['rekomendasi_id'] = $rekomendasi->id;
 
+        // PERBAIKAN: Memproses narkotika_input menjadi narkotika_id pada proses Edit
+        $narkotikaVal = $request->filled('narkotika_input') ? $request->narkotika_input : '-';
+        $narkotika = Narkotika::firstOrCreate(['jenis_narkotika' => $narkotikaVal]);
+        $validatedData['narkotika_id'] = $narkotika->id;
+
         $validatedData['pelaksanaan'] = $request->pelaksanaan ?? 'TIDAK';
         // =====================================================================
 
+        // Buang variabel input sementara agar tidak dikirim paksa ke database
         $dataSiapUpdate = Arr::except($validatedData, [
             'pendidikan_input',
             'pekerjaan_input',
-            'rekomendasi_input'
+            'rekomendasi_input',
+            'narkotika_input' // PERBAIKAN: Buang input narkotika sementara ini
         ]);
 
         $asesmen->update($dataSiapUpdate);
@@ -716,7 +724,6 @@ class AsesmenController extends Controller
         $asesmen->lama_perawatan = $request->input('lama_perawatan');
         $asesmen->keterangan_diagnosis = $request->input('keterangan_diagnosis');
 
-        // BARIS BARU: Simpan input keterangan hukum rekomendasi
         $asesmen->rekomendasi_keterangan = $request->input('rekomendasi_keterangan');
 
         $asesmen->rekomendasi_tempat_rehab = $request->input('rekomendasi_tempat_rehab');

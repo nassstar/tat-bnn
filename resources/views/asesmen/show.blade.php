@@ -203,7 +203,7 @@
                 <!-- ========================================== -->
                 <!-- CARD 2: DATA ADMINISTRASI                  -->
                 <!-- ========================================== -->
-                <div class="bg-white dark:bg-[#0F172A] p-6 md:p-8 rounded-[2rem] border border-slate-100 dark:border-slate-700/50 shadow-sm relative overflow-hidden z-20 transition-colors">
+                <div class="bg-white dark:bg-[#0F172A] p-6 md:p-8 rounded-[2rem] border border-slate-100 dark:border-slate-700/50 shadow-sm relative overflow-hidden z-20 transition-colors mt-8">
                     <div class="absolute top-0 left-0 w-full h-1.5 bg-indigo-500"></div>
                     <h3 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-widest mb-6 border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center gap-2 mt-1">
                         <svg class="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
@@ -254,7 +254,7 @@
                 <!-- ========================================== -->
                 <!-- CARD 3: CASE CONFERENCE                    -->
                 <!-- ========================================== -->
-                <div class="bg-white dark:bg-[#0F172A] p-6 md:p-8 rounded-[2rem] border border-slate-100 dark:border-slate-700/50 shadow-sm relative overflow-hidden z-20 transition-colors">
+                <div class="bg-white dark:bg-[#0F172A] p-6 md:p-8 rounded-[2rem] border border-slate-100 dark:border-slate-700/50 shadow-sm relative overflow-hidden z-20 transition-colors mt-8">
                     <div class="absolute top-0 left-0 w-full h-1.5 bg-[#FFBD2E]"></div>
                     <h3 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-widest mb-8 border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center gap-2 mt-1">
                         <svg class="w-5 h-5 text-[#FFBD2E]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path></svg>
@@ -278,7 +278,8 @@
                         </div>
                         <div>
                             <span class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Zat / Narkotika</span>
-                            <div class="block w-full rounded-[1.25rem] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#1E293B] px-4 py-3 text-[13px] font-bold text-slate-900 dark:text-white shadow-sm">{{ $asesmen->narkotika->jenis_narkotika ?? '-' }}</div>
+                            <!-- SINKRONISASI UPDATE DROPDOWN -->
+                            <div class="block w-full rounded-[1.25rem] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#1E293B] px-4 py-3 text-[13px] font-bold text-slate-900 dark:text-white shadow-sm">{{ $asesmen->narkotika_input ?? $asesmen->narkotika->jenis_narkotika ?? '-' }}</div>
                         </div>
                     </div>
 
@@ -302,11 +303,6 @@
                             <span class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Dapat Dari Siapa</span>
                             <div class="block w-full rounded-[1.25rem] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#1E293B] px-4 py-3 text-[13px] font-bold text-slate-800 dark:text-slate-200 shadow-sm">{{ $asesmen->dapat_dari_siapa ?? '-' }}</div>
                         </div>
-                    </div>
-
-                    <div class="mb-8">
-                        <span class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Analisis Aspek Hukum <span class="font-medium text-slate-400 normal-case tracking-normal">(Case Conference)</span></span>
-                        <div class="block w-full min-h-[60px] rounded-[1.25rem] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#1E293B] px-4 py-4 text-[13px] font-medium whitespace-pre-line leading-relaxed text-slate-800 dark:text-slate-200 shadow-sm">{{ $asesmen->aspek_hukum ?? '-' }}</div>
                     </div>
 
                     <!-- B. SIDANG MEDIS -->
@@ -343,11 +339,6 @@
                                 @endif
                             </div>
                         </div>
-                    </div>
-
-                    <div class="mb-8">
-                        <span class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Analisis Aspek Medis <span class="font-medium text-slate-400 normal-case tracking-normal">(Case Conference)</span></span>
-                        <div class="block w-full min-h-[60px] rounded-[1.25rem] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#1E293B] px-4 py-4 text-[13px] font-medium whitespace-pre-line leading-relaxed text-slate-800 dark:text-slate-200 shadow-sm">{{ $asesmen->aspek_medis ?? '-' }}</div>
                     </div>
 
                     <!-- C. KONDISI SOSIO-PSIKOLOGIS & POLA PEMAKAIAN -->
@@ -396,13 +387,6 @@
                         </div>
                     </div>
 
-                    <div class="mb-6">
-                        <span class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Keterangan Tambahan TAT</span>
-                        <div class="block w-full rounded-[1.25rem] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#1E293B] px-4 py-3 text-[13px] font-medium italic leading-relaxed text-slate-700 dark:text-slate-300 shadow-sm">
-                            "{{ $asesmen->keterangan_tambahan ?? '-' }}"
-                        </div>
-                    </div>
-
                     <div>
                         <span class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Saran Sidang Case Conference</span>
                         <div class="block w-full rounded-[1.25rem] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#1E293B] p-5 shadow-sm">
@@ -424,7 +408,7 @@
                 <!-- ========================================== -->
                 <!-- CARD 4: HASIL ASESMEN FINAL & PELAKSANAAN -->
                 <!-- ========================================== -->
-                <div class="bg-white dark:bg-[#0F172A] p-6 md:p-8 rounded-[2rem] border border-slate-100 dark:border-slate-700/50 shadow-sm relative overflow-hidden z-20 transition-colors">
+                <div class="bg-white dark:bg-[#0F172A] p-6 md:p-8 rounded-[2rem] border border-slate-100 dark:border-slate-700/50 shadow-sm relative overflow-hidden z-20 transition-colors mt-8">
                     <div class="absolute top-0 left-0 w-full h-1.5 bg-[#27C93F]"></div>
                     <h3 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-widest mb-6 border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center gap-2 mt-1">
                         <svg class="w-5 h-5 text-[#27C93F]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
@@ -441,7 +425,8 @@
                             <div class="block w-full min-h-[80px] rounded-[1.25rem] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#1E293B] px-4 py-4 text-[13px] font-medium leading-relaxed whitespace-pre-line text-slate-800 dark:text-slate-200 shadow-sm">{{ $asesmen->hasil_asesmen_hukum ?? '-' }}</div>
                         </div>
                         <div>
-                            <span class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Hasil Rujukan Medis Final</span>
+                            <!-- SINKRONISASI UPDATE LABEL -->
+                            <span class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Hasil Asesmen Medis Final</span>
                             <div class="block w-full min-h-[80px] rounded-[1.25rem] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#1E293B] px-4 py-4 text-[13px] font-medium leading-relaxed whitespace-pre-line text-slate-800 dark:text-slate-200 shadow-sm">{{ $asesmen->hasil_asesmen_medis ?? '-' }}</div>
                         </div>
                         <div class="md:col-span-2 pt-2 border-t border-slate-100 dark:border-slate-800 mt-2">
@@ -458,13 +443,19 @@
                                 <span class="text-[13px] font-bold text-slate-400 dark:text-slate-500">-</span>
                             @endif
                         </div>
+                        
+                        <!-- SINKRONISASI KETERANGAN TAMBAHAN -->
+                        <div class="md:col-span-2 pt-2 border-t border-slate-100 dark:border-slate-800 mt-4">
+                            <span class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Keterangan Tambahan</span>
+                            <div class="block w-full min-h-[60px] rounded-[1.25rem] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#1E293B] px-4 py-4 text-[13px] font-medium italic leading-relaxed whitespace-pre-line text-slate-700 dark:text-slate-300 shadow-sm">{{ $asesmen->keterangan_tambahan ?? '-' }}</div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- ========================================== -->
                 <!-- CARD 5: DATA SURAT BERITA ACARA            -->
                 <!-- ========================================== -->
-                <div class="bg-white dark:bg-[#0F172A] p-6 md:p-8 rounded-[2rem] border border-slate-100 dark:border-slate-700/50 shadow-sm relative overflow-hidden transition-colors w-full">
+                <div class="bg-white dark:bg-[#0F172A] p-6 md:p-8 rounded-[2rem] border border-slate-100 dark:border-slate-700/50 shadow-sm relative overflow-hidden transition-colors w-full mt-8">
                     <div class="absolute top-0 left-0 w-full h-1.5 bg-[#10B981]"></div>
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-slate-100 dark:border-slate-800 pb-4 gap-4 mt-1">
                         <h3 class="text-sm font-black text-emerald-600 dark:text-emerald-500 uppercase tracking-widest flex items-center gap-2">
@@ -616,7 +607,7 @@
                 <!-- ========================================== -->
                 <!-- CARD 6: DATA SURAT REKOMENDASI             -->
                 <!-- ========================================== -->
-                <div class="bg-white dark:bg-[#0F172A] p-6 md:p-8 rounded-[2rem] border border-slate-100 dark:border-slate-700/50 shadow-sm relative overflow-hidden transition-colors w-full mb-10">
+                <div class="bg-white dark:bg-[#0F172A] p-6 md:p-8 rounded-[2rem] border border-slate-100 dark:border-slate-700/50 shadow-sm relative overflow-hidden transition-colors w-full mb-10 mt-8">
                     <div class="absolute top-0 left-0 w-full h-1.5 bg-[#8B5CF6]"></div>
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-slate-100 dark:border-slate-800 pb-4 gap-4 mt-1">
                         <h3 class="text-sm font-black text-purple-600 dark:text-purple-400 uppercase tracking-widest flex items-center gap-2">
