@@ -324,43 +324,42 @@
                         </thead>
                         <tbody class="divide-y divide-slate-50 dark:divide-slate-800/50 bg-white dark:bg-[#1E293B]">
                             @forelse($asesmens as $index => $item)
-                                @php
-                                    $usiaKlien = '-';
-                                    if (!empty($item->tgl_lahir)) {
-                                        try { $usiaKlien = \Carbon\Carbon::parse($item->tgl_lahir)->age . ' Tahun'; } catch (\Exception $e) {}
-                                    }
-                                    $bb_gabungan = ($item->berat_bb ? $item->berat_bb . ' gr' : '') . ($item->berat_bb && $item->deskripsi_bb ? ' - ' : '') . ($item->deskripsi_bb ?? '');
-
-                                    // LOGIKA KELENGKAPAN DATA
-                                    $kolomWajib = [
-                                        'no_register', 'no_bln', 'asal_pengajuan', 'no_surat_pengajuan', 'no_lkn',
-                                        'tgl_surat', 'tgl_berkas', 'tgl_pelaksanaan', 'tgl_tangkap',
-                                        'nama_lengkap', 'nik', 'kewarganegaraan', 'agama', 'tempat_lahir', 'tgl_lahir', 'jenis_kelamin', 'no_hp',
-                                        'pendidikan_id', 'pekerjaan_id', 'penghasilan_rata_rata', 'alamat_ktp', 'alamat_domisili',
-                                        'narkotika_id', 'berat_bb', 'deskripsi_bb', 'pasal_sangkaan',
-                                        'status_hukum', 'keterlibatan_jaringan', 'cara_mendapatkan', 'dapat_dari_siapa',
-                                        'tes_urine', 'hasil_asesmen_hukum', 'hasil_asesmen_medis',
-                                        'aspek_hukum', 'aspek_medis', 'kesehatan_fisik', 'psikologi',
-                                        'alasan_penggunaan', 'kondisi_keluarga', 'tingkat_ketergantungan', 'pola_pemakaian', 'kondisi_lingkungan', 'saran_case_conference'
-                                    ];
-
-                                    $isDataUtamaLengkap = true;
-                                    foreach($kolomWajib as $kol) {
-                                        if ($item->$kol === null || trim((string)$item->$kol) === '') {
-                                            $isDataUtamaLengkap = false;
-                                            break;
+                                    @php
+                                        $usiaKlien = '-';
+                                        if (!empty($item->tgl_lahir)) {
+                                            try { $usiaKlien = \Carbon\Carbon::parse($item->tgl_lahir)->age . ' Tahun'; } catch (\Exception $e) {}
                                         }
-                                    }
+                                        $bb_gabungan = ($item->berat_bb ? $item->berat_bb . ' gr' : '') . ($item->berat_bb && $item->deskripsi_bb ? ' - ' : '') . ($item->deskripsi_bb ?? '');
 
-                                    $isBaLengkap = !empty($item->no_ba) && !empty($item->ketua_tat_nama);
-                                    $isRekomLengkap = !empty($item->no_surat_rekomendasi) && !empty($item->kepada_yth);
-                                    $isLengkapTotal = $isDataUtamaLengkap && $isBaLengkap && $isRekomLengkap;
-                                @endphp
+                                        // LOGIKA KELENGKAPAN DATA
+                                        $kolomWajib = [
+                                            'no_register', 'no_bln', 'asal_pengajuan', 'no_surat_pengajuan', 'no_lkn',
+                                            'tgl_surat', 'tgl_berkas', 'tgl_pelaksanaan', 'tgl_tangkap',
+                                            'nama_lengkap', 'nik', 'kewarganegaraan', 'tempat_lahir', 'tgl_lahir', 'jenis_kelamin', 'no_hp',
+                                            'pendidikan_id', 'pekerjaan_id', 'alamat_ktp', 'alamat_domisili',
+                                            'narkotika_id', 'berat_bb', 'deskripsi_bb', 'pasal_sangkaan',
+                                            'status_hukum', 'keterlibatan_jaringan', 'cara_mendapatkan', 'dapat_dari_siapa',
+                                            'tes_urine', 'hasil_asesmen_hukum', 'hasil_asesmen_medis',
+                                            'alasan_penggunaan', 'kondisi_keluarga', 'tingkat_ketergantungan', 'pola_pemakaian', 'kondisi_lingkungan'
+                                        ];
+
+                                        $isDataUtamaLengkap = true;
+                                        foreach($kolomWajib as $kol) {
+                                            if ($item->$kol === null || trim((string)$item->$kol) === '' || trim((string)$item->$kol) === '-') {
+                                                $isDataUtamaLengkap = false;
+                                                break;
+                                            }
+                                        }
+
+                                        $isBaLengkap = !empty($item->no_ba) && !empty($item->ketua_tat_nama) && trim((string)$item->no_ba) !== '-';
+                                        $isRekomLengkap = !empty($item->no_surat_rekomendasi) && !empty($item->kepada_yth) && trim((string)$item->no_surat_rekomendasi) !== '-';
+                                        $isLengkapTotal = $isDataUtamaLengkap && $isBaLengkap && $isRekomLengkap;
+                                    @endphp
 
                                 <tr class="hover:bg-slate-50 dark:hover:bg-[#0F172A] transition-colors duration-200 group">
                                     <td class="px-6 py-5 text-xs font-bold text-slate-400 dark:text-slate-500 align-top">{{ $asesmens->firstItem() + $index }}</td>
 
-                                    <!-- Identitas Klien -->
+                                    <!-- Kolom Identitas -->
                                     <td class="px-6 py-5 align-top">
                                         <div class="flex items-start gap-4">
                                             <div class="flex-shrink-0 w-10 h-10 relative">
@@ -376,15 +375,40 @@
                                                 <div class="text-[11px] font-medium text-slate-500 dark:text-slate-400">Reg: <span class="font-bold text-slate-700 dark:text-slate-300">{{ $item->no_register ?? '-' }}</span></div>
                                                 <div class="mt-2.5 flex flex-col gap-2">
                                                     <div>
-                                                        @if($item->is_lengkap)
-    <span class="inline-flex px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 shadow-sm mt-2">
-        DATA LENGKAP
-    </span>
-@else
-    <span class="inline-flex px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-500 border border-amber-200 dark:border-amber-800/50 shadow-sm mt-2">
-        BELUM LENGKAP
-    </span>
-@endif
+                                                        @php
+                                                            $kolomWajib = [
+                                                                'no_register', 'no_bln', 'asal_pengajuan', 'no_surat_pengajuan', 'no_lkn',
+                                                                'tgl_surat', 'tgl_berkas', 'tgl_pelaksanaan', 'tgl_tangkap',
+                                                                'nama_lengkap', 'nik', 'kewarganegaraan', 'tempat_lahir', 'tgl_lahir', 'jenis_kelamin', 'no_hp',
+                                                                'pendidikan_id', 'pekerjaan_id', 'alamat_ktp', 'alamat_domisili',
+                                                                'narkotika_id', 'berat_bb', 'deskripsi_bb', 'pasal_sangkaan',
+                                                                'status_hukum', 'keterlibatan_jaringan', 'cara_mendapatkan', 'dapat_dari_siapa',
+                                                                'tes_urine', 'hasil_asesmen_hukum', 'hasil_asesmen_medis',
+                                                                'alasan_penggunaan', 'kondisi_keluarga', 'tingkat_ketergantungan', 'pola_pemakaian', 'kondisi_lingkungan'
+                                                            ];
+
+                                                            $isDataUtamaLengkap = true;
+                                                            foreach($kolomWajib as $kol) {
+                                                                if ($item->$kol === null || trim((string)$item->$kol) === '' || trim((string)$item->$kol) === '-') {
+                                                                    $isDataUtamaLengkap = false;
+                                                                    break;
+                                                                }
+                                                            }
+
+                                                            $isBaLengkap = !empty($item->no_ba) && !empty($item->ketua_tat_nama) && trim((string)$item->no_ba) !== '-';
+                                                            $isRekomLengkap = !empty($item->no_surat_rekomendasi) && !empty($item->kepada_yth) && trim((string)$item->no_surat_rekomendasi) !== '-';
+                                                            $isLengkapTotal = $isDataUtamaLengkap && $isBaLengkap && $isRekomLengkap;
+                                                        @endphp
+
+                                                        @if($isLengkapTotal)
+                                                            <span class="inline-flex px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 shadow-sm mt-2">
+                                                                DATA LENGKAP
+                                                            </span>
+                                                        @else
+                                                            <span class="inline-flex px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-500 border border-amber-200 dark:border-amber-800/50 shadow-sm mt-2">
+                                                                BELUM LENGKAP
+                                                            </span>
+                                                        @endif
                                                     </div>
                                                     <div class="pt-2">
                                                         <div id="text-tanggal-{{ $item->id }}" class="flex items-center gap-1.5">
@@ -550,8 +574,20 @@
                                                             <span class="block text-[9px] font-black text-emerald-600 dark:text-emerald-500 uppercase tracking-widest mb-1">Rekomendasi (Instansi)</span>
                                                             <p class="font-black text-sm text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 px-3 py-1.5 rounded-lg inline-block">{{ $item->rekomendasi_input ?? $item->rekomendasi->tempat_rehabilitasi ?? '-' }}</p>
                                                         </div>
-                                                        <div><span class="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Keterangan Hukum</span><p class="font-medium text-sm text-slate-600 dark:text-slate-400 italic">"{{ $item->rekomendasi_keterangan ?? $item->keterangan_tambahan ?? '-' }}"</p></div>
-                                                        <div><span class="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Saran Sidang</span><p class="font-bold text-sm text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-[#0F172A] p-3.5 rounded-xl border border-slate-100 dark:border-slate-700/50 whitespace-pre-line">{{ $item->saran_case_conference ?? '-' }}</p></div>
+                                                        <div><span class="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Keterangan Hukum</span><p class="font-medium text-sm text-slate-600 dark:text-slate-400 italic">"{{ $item->keterangan_tambahan ?? 'Tidak ada keterangan tambahan.' }}"</p></div>
+                                                        <div>
+                                                            <span class="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Saran Sidang</span>
+                                                            <div class="font-bold text-sm text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-[#0F172A] p-3.5 rounded-xl border border-slate-100 dark:border-slate-700/50 space-y-1">
+                                                                @if($item->saran_1 || $item->saran_2 || $item->saran_3 || $item->saran_4)
+                                                                    @if($item->saran_1) <p>1. {{ $item->saran_1 }}</p> @endif
+                                                                    @if($item->saran_2) <p>2. {{ $item->saran_2 }}</p> @endif
+                                                                    @if($item->saran_3) <p>3. {{ $item->saran_3 }}</p> @endif
+                                                                    @if($item->saran_4) <p>4. {{ $item->saran_4 }}</p> @endif
+                                                                @else
+                                                                    <p>-</p>
+                                                                @endif
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

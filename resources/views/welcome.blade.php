@@ -124,7 +124,7 @@
                     <!-- Judul Utama -->
                     <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.1] transition-colors duration-500">
                         Manajemen Data <br>
-                        <span class="text-[#3B82F6] dark:text-blue-400 transition-colors duration-500">Asesmen Terpadu</span> <br>
+                        <span class="text-[#3B82F6] dark:text-blue-400 transition-colors duration-500">Tim Asesmen Terpadu</span> <br>
                         & Klien BNN.
                     </h1>
 
