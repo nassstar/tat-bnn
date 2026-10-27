@@ -73,36 +73,74 @@
             <!-- 2. BLOK MANAJEMEN DATA MASSAL (SOLID PUTIH) -->
             @can('manage-data')
             <div class="bg-white dark:bg-[#1E293B] p-6 sm:p-8 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-[0_15px_40px_-10px_rgba(0,0,0,0.05)] dark:shadow-[0_15px_40px_-10px_rgba(0,0,0,0.3)] transition-colors duration-300 relative z-20 isolate transform-gpu">
-                <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6">
-                    <div class="flex items-start gap-4">
-                        <div class="p-3 bg-emerald-50 dark:bg-emerald-800/40 text-emerald-500 dark:text-emerald-400 rounded-2xl border border-emerald-100 dark:border-emerald-700/50">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        </div>
-                        <div>
-                            <h3 class="font-black text-slate-800 dark:text-slate-200 text-base tracking-tight">Manajemen Data Massal Excel</h3>
-                            <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1 max-w-2xl leading-relaxed">Unduh template kosong untuk diisi secara luring (offline), lalu unggah kembali ke sistem untuk mempercepat proses input data banyak klien sekaligus.</p>
+                <!-- Header Card -->
+                <div class="flex items-start gap-4 mb-6 border-b border-slate-100 dark:border-slate-800 pb-5">
+                    <div class="p-3 bg-emerald-50 dark:bg-emerald-800/40 text-emerald-500 dark:text-emerald-400 rounded-2xl border border-emerald-100 dark:border-emerald-700/50">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-slate-800 dark:text-slate-200 text-base tracking-tight">Manajemen Data Massal Excel</h3>
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1 max-w-2xl leading-relaxed">Unduh template kosong untuk diisi secara luring (offline), lalu unggah pada kolom yang sesuai untuk mempercepat proses input data banyak klien sekaligus.</p>
+                    </div>
+                </div>
+
+                <!-- 2 Columns Action Area (Desain Baru) -->
+                <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 relative z-10">
+                    <!-- KOLOM 1: DOWNLOAD TEMPLATE (Kiri - Porsi 5) -->
+                    <div class="xl:col-span-5 flex flex-col h-full">
+                        <h4 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3 ml-1">Langkah 1: Unduh Template Kosong</h4>
+                        <div class="flex flex-col sm:flex-row gap-4 h-full">
+                            <a href="{{ route('asesmen.downloadTemplate', ['type' => 'rekap']) }}" class="flex-1 flex flex-col justify-center items-center p-8 bg-slate-50 dark:bg-[#0B1120] border border-slate-200 dark:border-slate-700/60 rounded-[1.5rem] font-bold text-[10px] uppercase tracking-widest text-emerald-600 dark:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-[#0F172A] hover:border-emerald-300 dark:hover:border-emerald-500/50 transition-all shadow-sm transform-gpu hover:-translate-y-1 group" title="Unduh Template Rekap TAT">
+                                <svg class="w-6 h-6 mb-3 text-emerald-500 dark:text-emerald-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4M12 14v-8m0 8l-3-3m3 3l3-3"></path></svg>
+                                Template Rekap
+                            </a>
+                            <a href="{{ route('asesmen.downloadTemplate', ['type' => 'cc']) }}" class="flex-1 flex flex-col justify-center items-center p-8 bg-slate-50 dark:bg-[#0B1120] border border-slate-200 dark:border-slate-700/60 rounded-[1.5rem] font-bold text-[10px] uppercase tracking-widest text-sky-600 dark:text-sky-500 hover:bg-sky-50 dark:hover:bg-[#0F172A] hover:border-sky-300 dark:hover:border-sky-500/50 transition-all shadow-sm transform-gpu hover:-translate-y-1 group" title="Unduh Template Case Conference">
+                                <svg class="w-6 h-6 mb-3 text-sky-500 dark:text-sky-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4M12 14v-8m0 8l-3-3m3 3l3-3"></path></svg>
+                                Template Case Conf
+                            </a>
                         </div>
                     </div>
 
-                    <div class="flex flex-col sm:flex-row items-center gap-3 w-full xl:w-auto">
-                        <!-- DUA TOMBOL TEMPLATE -->
-                        <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                            <a href="{{ route('asesmen.downloadTemplate', ['type' => 'rekap']) }}" class="w-full sm:w-auto inline-flex justify-center items-center px-4 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-[10px] uppercase tracking-widest text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 hover:border-emerald-200 transition-colors shadow-sm transform-gpu" title="Unduh Template Rekap TAT">
-                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                Template Rekap
-                            </a>
-                            <a href="{{ route('asesmen.downloadTemplate', ['type' => 'cc']) }}" class="w-full sm:w-auto inline-flex justify-center items-center px-4 py-2.5 bg-slate-50 dark:bg-[#0F172A] border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-[10px] uppercase tracking-widest text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 hover:border-emerald-200 transition-colors shadow-sm transform-gpu" title="Unduh Template Case Conference">
-                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                Template Case Conf.
-                            </a>
+                    <!-- KOLOM 2: UPLOAD DATA (Kanan - Porsi 7) -->
+                    <div class="xl:col-span-7 flex flex-col h-full bg-slate-100 dark:bg-slate-500/20 p-5 rounded-[2rem] border border-slate-200 dark:border-slate-500/30 shadow-inner">
+                        <h4 class="text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-widest mb-3 ml-2">Langkah 2: Unggah Data & Opsi Import</h4>
+                        
+                        <!-- OPSI GLOBAL: Peringatan Data Ganda -->
+                        <div class="mb-4 p-5 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-[1.5rem] transition-colors hover:bg-amber-100 dark:hover:bg-amber-500/20 shadow-sm">
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input type="checkbox" id="global_update_existing" value="yes" class="mt-0.5 w-4 h-4 rounded text-amber-500 focus:ring-amber-500 bg-white dark:bg-[#0B1120] border-amber-300 dark:border-amber-700 shadow-sm cursor-pointer transition-colors">
+                                <div>
+                                    <span class="block text-sm font-bold text-amber-800 dark:text-amber-500 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Izinkan Perbarui Data Lama (Timpa NIK Ganda)</span>
+                                    <span class="block text-[11px] font-medium text-amber-700/70 dark:text-amber-100/60 mt-1.5 leading-relaxed">Jika dicentang, sistem akan menimpa data Klien lama yang NIK-nya terdeteksi sama dengan isi Excel. Biarkan kosong jika Anda ingin sistem menampilkan peringatan Error saat mendeteksi duplikasi NIK.</span>
+                                </div>
+                            </label>
                         </div>
 
-                        <!-- TOMBOL IMPORT -->
-                        <form action="{{ route('asesmen.import') }}" method="POST" enctype="multipart/form-data" class="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-2 bg-slate-50 dark:bg-[#0F172A] p-1.5 rounded-[1.25rem] border border-slate-200 dark:border-slate-700 shadow-sm transform-gpu">
-                            @csrf
-                            <input type="file" name="file_excel" accept=".xlsx, .xls, .csv" required class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-2 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:uppercase file:tracking-widest file:bg-white dark:file:bg-slate-800 file:text-slate-700 dark:file:text-slate-300 hover:file:bg-slate-100 dark:hover:file:bg-slate-700 cursor-pointer transition-colors shadow-sm">
-                            <button type="submit" class="w-full sm:w-auto px-5 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[10px] uppercase tracking-widest font-black rounded-xl hover:bg-slate-800 dark:hover:bg-slate-100 transition shadow-md">Import</button>
-                        </form>
+                        <div class="flex flex-col gap-3">
+                            <!-- Import Rekap -->
+                            <form action="{{ route('asesmen.import', ['type' => 'rekap']) }}" method="POST" enctype="multipart/form-data" class="import-form flex flex-col sm:flex-row items-center justify-between bg-white dark:bg-[#0B1120] p-3 rounded-[1.25rem] border border-slate-200 dark:border-slate-800 shadow-sm hover:border-emerald-300 dark:hover:border-emerald-500/50 transition-colors gap-3">
+                                @csrf
+                                <input type="hidden" name="update_existing" class="hidden_update_existing" value="">
+                                
+                                <div class="flex flex-col sm:flex-row items-center w-full gap-3 sm:gap-0">
+                                    <span class="text-[10px] font-black text-emerald-600 dark:text-emerald-500 w-32 shrink-0 pl-2 uppercase tracking-widest text-center sm:text-left">Data Rekap TAT:</span>
+                                    <input type="file" name="file_excel" accept=".xlsx, .xls, .csv" required class="block w-full text-[10px] text-slate-500 dark:text-slate-400 file:mr-3 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-widest file:bg-slate-100 dark:file:bg-white file:text-slate-700 dark:file:text-slate-900 hover:file:bg-slate-200 dark:hover:file:bg-slate-200 cursor-pointer transition-colors outline-none">
+                                </div>
+                                <button type="submit" class="w-full sm:w-auto px-8 py-3 bg-[#10B981] text-white text-[10px] uppercase tracking-widest font-black rounded-xl hover:bg-emerald-600 transition shadow-md shadow-emerald-500/20 whitespace-nowrap transform-gpu hover:-translate-y-0.5">Import</button>
+                            </form>
+
+                            <!-- Import Case Conf -->
+                            <form action="{{ route('asesmen.import', ['type' => 'cc']) }}" method="POST" enctype="multipart/form-data" class="import-form flex flex-col sm:flex-row items-center justify-between bg-white dark:bg-[#0B1120] p-3 rounded-[1.25rem] border border-slate-200 dark:border-slate-800 shadow-sm hover:border-sky-300 dark:hover:border-sky-500/50 transition-colors gap-3">
+                                @csrf
+                                <input type="hidden" name="update_existing" class="hidden_update_existing" value="">
+                                
+                                <div class="flex flex-col sm:flex-row items-center w-full gap-3 sm:gap-0">
+                                    <span class="text-[10px] font-black text-sky-600 dark:text-sky-500 w-32 shrink-0 pl-2 uppercase tracking-widest text-center sm:text-left">Data Case Conf:</span>
+                                    <input type="file" name="file_excel" accept=".xlsx, .xls, .csv" required class="block w-full text-[10px] text-slate-500 dark:text-slate-400 file:mr-3 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-widest file:bg-slate-100 dark:file:bg-white file:text-slate-700 dark:file:text-slate-900 hover:file:bg-slate-200 dark:hover:file:bg-slate-200 cursor-pointer transition-colors outline-none">
+                                </div>
+                                <button type="submit" class="w-full sm:w-auto px-8 py-3 bg-[#0EA5E9] text-white text-[10px] uppercase tracking-widest font-black rounded-xl hover:bg-sky-600 transition shadow-md shadow-sky-500/20 whitespace-nowrap transform-gpu hover:-translate-y-0.5">Import</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -113,7 +151,6 @@
             <!-- ============================================== -->
             <div class="bg-white dark:bg-[#1E293B] p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-[0_15px_40px_-10px_rgba(0,0,0,0.05)] dark:shadow-[0_15px_40px_-10px_rgba(0,0,0,0.3)] mb-6 transition-colors duration-300 relative z-40 isolate transform-gpu">
                 <form action="{{ route('asesmen.index') }}" method="GET" class="flex flex-col lg:flex-row gap-5">
-
                     <!-- Kolom Pencarian Teks -->
                     <div class="flex-1">
                         <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2 ml-1">Pencarian Data</label>
@@ -127,7 +164,6 @@
 
                     <!-- Kolom Filter Waktu (Tanggal, Bulan, Tahun - Custom Mac UI Dropdown) -->
                     <div class="flex flex-col sm:flex-row gap-3">
-
                         <!-- Filter Tanggal Harian (DATEPICKER-ID) -->
                         <div class="w-full sm:w-auto relative">
                             <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2 ml-1">Tanggal</label>
@@ -213,7 +249,6 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
                     <!-- Tombol Aksi -->
@@ -325,10 +360,14 @@
                         <tbody class="divide-y divide-slate-50 dark:divide-slate-800/50 bg-white dark:bg-[#1E293B]">
                             @forelse($asesmens as $index => $item)
                                     @php
+                                        // LOGIKA CERDAS USIA: Prioritaskan kolom 'usia', jika kosong baru hitung dari 'tgl_lahir'
                                         $usiaKlien = '-';
-                                        if (!empty($item->tgl_lahir)) {
+                                        if (!empty($item->usia)) {
+                                            $usiaKlien = $item->usia . ' Tahun';
+                                        } elseif (!empty($item->tgl_lahir)) {
                                             try { $usiaKlien = \Carbon\Carbon::parse($item->tgl_lahir)->age . ' Tahun'; } catch (\Exception $e) {}
                                         }
+
                                         $bb_gabungan = ($item->berat_bb ? $item->berat_bb . ' gr' : '') . ($item->berat_bb && $item->deskripsi_bb ? ' - ' : '') . ($item->deskripsi_bb ?? '');
 
                                         // LOGIKA KELENGKAPAN DATA
@@ -375,31 +414,6 @@
                                                 <div class="text-[11px] font-medium text-slate-500 dark:text-slate-400">Reg: <span class="font-bold text-slate-700 dark:text-slate-300">{{ $item->no_register ?? '-' }}</span></div>
                                                 <div class="mt-2.5 flex flex-col gap-2">
                                                     <div>
-                                                        @php
-                                                            $kolomWajib = [
-                                                                'no_register', 'no_bln', 'asal_pengajuan', 'no_surat_pengajuan', 'no_lkn',
-                                                                'tgl_surat', 'tgl_berkas', 'tgl_pelaksanaan', 'tgl_tangkap',
-                                                                'nama_lengkap', 'nik', 'kewarganegaraan', 'tempat_lahir', 'tgl_lahir', 'jenis_kelamin', 'no_hp',
-                                                                'pendidikan_id', 'pekerjaan_id', 'alamat_ktp', 'alamat_domisili',
-                                                                'narkotika_id', 'berat_bb', 'deskripsi_bb', 'pasal_sangkaan',
-                                                                'status_hukum', 'keterlibatan_jaringan', 'cara_mendapatkan', 'dapat_dari_siapa',
-                                                                'tes_urine', 'hasil_asesmen_hukum', 'hasil_asesmen_medis',
-                                                                'alasan_penggunaan', 'kondisi_keluarga', 'tingkat_ketergantungan', 'pola_pemakaian', 'kondisi_lingkungan'
-                                                            ];
-
-                                                            $isDataUtamaLengkap = true;
-                                                            foreach($kolomWajib as $kol) {
-                                                                if ($item->$kol === null || trim((string)$item->$kol) === '' || trim((string)$item->$kol) === '-') {
-                                                                    $isDataUtamaLengkap = false;
-                                                                    break;
-                                                                }
-                                                            }
-
-                                                            $isBaLengkap = !empty($item->no_ba) && !empty($item->ketua_tat_nama) && trim((string)$item->no_ba) !== '-';
-                                                            $isRekomLengkap = !empty($item->no_surat_rekomendasi) && !empty($item->kepada_yth) && trim((string)$item->no_surat_rekomendasi) !== '-';
-                                                            $isLengkapTotal = $isDataUtamaLengkap && $isBaLengkap && $isRekomLengkap;
-                                                        @endphp
-
                                                         @if($isLengkapTotal)
                                                             <span class="inline-flex px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 shadow-sm mt-2">
                                                                 DATA LENGKAP
@@ -569,25 +583,63 @@
                                                         <div><span class="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Pola Pemakaian</span><p class="font-bold text-sm text-slate-800 dark:text-slate-200">{{ $item->pola_pemakaian ?? '-' }}</p></div>
                                                         <div><span class="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Kondisi Lingkungan</span><p class="font-medium text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line">{{ $item->kondisi_lingkungan ?? '-' }}</p></div>
                                                     </div>
+                                                    
                                                     <div class="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-700/50">
                                                         <div>
                                                             <span class="block text-[9px] font-black text-emerald-600 dark:text-emerald-500 uppercase tracking-widest mb-1">Rekomendasi (Instansi)</span>
                                                             <p class="font-black text-sm text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 px-3 py-1.5 rounded-lg inline-block">{{ $item->rekomendasi_input ?? $item->rekomendasi->tempat_rehabilitasi ?? '-' }}</p>
                                                         </div>
-                                                        <div><span class="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Keterangan Hukum</span><p class="font-medium text-sm text-slate-600 dark:text-slate-400 italic">"{{ $item->keterangan_tambahan ?? 'Tidak ada keterangan tambahan.' }}"</p></div>
-                                                        <div>
-                                                            <span class="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Saran Sidang</span>
-                                                            <div class="font-bold text-sm text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-[#0F172A] p-3.5 rounded-xl border border-slate-100 dark:border-slate-700/50 space-y-1">
-                                                                @if($item->saran_1 || $item->saran_2 || $item->saran_3 || $item->saran_4)
-                                                                    @if($item->saran_1) <p>1. {{ $item->saran_1 }}</p> @endif
-                                                                    @if($item->saran_2) <p>2. {{ $item->saran_2 }}</p> @endif
-                                                                    @if($item->saran_3) <p>3. {{ $item->saran_3 }}</p> @endif
-                                                                    @if($item->saran_4) <p>4. {{ $item->saran_4 }}</p> @endif
+                                                        <div><span class="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Keterangan Tambahan</span><p class="font-medium text-sm text-slate-600 dark:text-slate-400 italic">"{{ $item->keterangan_tambahan ?? 'Tidak ada keterangan tambahan.' }}"</p></div>
+                                                        
+                                                        <div class="pt-2">
+                                                            <span class="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2">Saran Sidang</span>
+                                                            <div class="font-bold text-sm text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-[#0B1120] p-4 rounded-xl border border-slate-100 dark:border-slate-800/60 shadow-inner">
+                                                                @php
+                                                                    $hasSaran = false;
+                                                                    if (!empty(trim($item->saran_1)) && trim($item->saran_1) !== '-') $hasSaran = true;
+                                                                    if (!empty(trim($item->saran_2)) && trim($item->saran_2) !== '-') $hasSaran = true;
+                                                                    if (!empty(trim($item->saran_3)) && trim($item->saran_3) !== '-') $hasSaran = true;
+                                                                    if (!empty(trim($item->saran_4)) && trim($item->saran_4) !== '-') $hasSaran = true;
+                                                                @endphp
+
+                                                                @if($hasSaran)
+                                                                    <ul class="space-y-3">
+                                                                        @if(!empty(trim($item->saran_1)) && trim($item->saran_1) !== '-')
+                                                                        <li class="flex items-start gap-3">
+                                                                            <span class="text-slate-400 dark:text-slate-500 font-black shrink-0">1.</span>
+                                                                            <span class="flex-1 leading-snug text-slate-700 dark:text-slate-300 font-bold text-[13px]">{{ $item->saran_1 }}</span>
+                                                                        </li>
+                                                                        @endif
+                                                                        
+                                                                        @if(!empty(trim($item->saran_2)) && trim($item->saran_2) !== '-')
+                                                                        <li class="flex items-start gap-3">
+                                                                            <span class="text-slate-400 dark:text-slate-500 font-black shrink-0">2.</span>
+                                                                            <span class="flex-1 leading-snug text-slate-700 dark:text-slate-300 font-bold text-[13px]">{{ $item->saran_2 }}</span>
+                                                                        </li>
+                                                                        @endif
+                                                                        
+                                                                        @if(!empty(trim($item->saran_3)) && trim($item->saran_3) !== '-')
+                                                                        <li class="flex items-start gap-3">
+                                                                            <span class="text-slate-400 dark:text-slate-500 font-black shrink-0">3.</span>
+                                                                            <span class="flex-1 leading-snug text-slate-700 dark:text-slate-300 font-bold text-[13px]">{{ $item->saran_3 }}</span>
+                                                                        </li>
+                                                                        @endif
+                                                                        
+                                                                        @if(!empty(trim($item->saran_4)) && trim($item->saran_4) !== '-')
+                                                                        <li class="flex items-start gap-3">
+                                                                            <span class="text-slate-400 dark:text-slate-500 font-black shrink-0">4.</span>
+                                                                            <span class="flex-1 leading-snug text-slate-700 dark:text-slate-300 font-bold text-[13px]">{{ $item->saran_4 }}</span>
+                                                                        </li>
+                                                                        @endif
+                                                                    </ul>
                                                                 @else
-                                                                    <p>-</p>
+                                                                    <div class="flex items-center justify-center py-2">
+                                                                        <span class="text-slate-400 dark:text-slate-500 font-bold italic text-[12px] tracking-widest uppercase">- Belum ada saran sidang -</span>
+                                                                    </div>
                                                                 @endif
                                                             </div>
                                                         </div>
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -628,7 +680,7 @@
         </div>
     </div>
 
-    <!-- Script Animasi Filter & Expand -->
+    <!-- Script Animasi Filter & Expand & Checkbox -->
     <script>
         function toggleExpand(id) {
             const expandRow = document.getElementById('expand-row-' + id);
@@ -656,5 +708,24 @@
                 textDiv.classList.remove('hidden'); textDiv.classList.add('flex');
             }
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Script untuk menyinkronkan Checkbox Timpa Data ke Form Import
+            const globalCheckbox = document.getElementById('global_update_existing');
+            const hiddenInputs = document.querySelectorAll('.hidden_update_existing');
+            
+            if(globalCheckbox) {
+                hiddenInputs.forEach(input => {
+                    input.value = globalCheckbox.checked ? 'yes' : '';
+                });
+
+                globalCheckbox.addEventListener('change', function() {
+                    const isChecked = this.checked;
+                    hiddenInputs.forEach(input => {
+                        input.value = isChecked ? 'yes' : '';
+                    });
+                });
+            }
+        });
     </script>
 </x-app-layout>

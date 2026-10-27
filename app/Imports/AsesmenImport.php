@@ -16,7 +16,8 @@ class AsesmenImport implements ToModel, WithStartRow
 {
     public function startRow(): int
     {
-        return 3;
+        // Tetap mulai dari baris 1 agar filter pintar kita bekerja
+        return 1;
     }
 
     private function parseDecimal($value)
@@ -62,21 +63,53 @@ class AsesmenImport implements ToModel, WithStartRow
         }
     }
 
+    // =========================================================================
+    // FUNGSI PENERJEMAH OTOMATIS JENIS KELAMIN (L/P)
+    // =========================================================================
+    private function parseJenisKelamin($value)
+    {
+        $val = strtoupper(trim((string)$value));
+        if ($val === 'L' || $val === 'LAKI-LAKI' || $val === 'LAKI LAKI' || $val === 'PRIA') {
+            return 'L';
+        } elseif ($val === 'P' || $val === 'PEREMPUAN' || $val === 'WANITA') {
+            return 'P';
+        }
+        return '-'; // Default jika kosong/tidak jelas
+    }
+
     public function model(array $row)
     {
-        // =======================================================
-        // KUNCI PERBAIKAN: Hanya Trim spasi, jangan Uppercase semua
-        // =======================================================
+        // Bersihkan semua kolom dari spasi nyasar
         $row = array_map(function($value) {
             return is_string($value) ? trim($value) : $value;
         }, $row);
 
-        // Lewati baris kosong
+        // =========================================================================
+        // FILTER PINTAR: SKIP BARIS KOSONG DAN BARIS HEADER
+        // =========================================================================
         if (!isset($row[1]) || trim((string)$row[1]) === '') {
             return null;
         }
 
-        $isCaseConference = in_array(strtoupper(trim($row[3] ?? '')), ['L', 'P', 'LAKI-LAKI', 'PEREMPUAN']);
+        $kolomA = strtoupper(trim((string)($row[0] ?? '')));
+        $kolomB = strtoupper(trim((string)($row[1] ?? '')));
+
+        if (
+            strpos($kolomA, 'NO') !== false ||
+            strpos($kolomA, 'DATA CASE CONFERENCE') !== false ||
+            strpos($kolomB, 'NAMA KLIEN') !== false ||
+            strpos($kolomB, 'NO/ BLN') !== false ||
+            strpos($kolomA, 'REKAP DATA TAT BNNP') !== false
+        ) {
+            return null;
+        }
+
+        // =========================================================================
+        // DETEKSI OTOMATIS JENIS TEMPLATE YANG DI-UPLOAD
+        // =========================================================================
+        // Pada Template Case Conf, Kolom [3] adalah P/L.
+        $jkCaseConf = strtoupper(trim((string)($row[3] ?? '')));
+        $isCaseConference = in_array($jkCaseConf, ['L', 'P', 'LAKI-LAKI', 'PEREMPUAN', 'LAKI LAKI', 'PRIA', 'WANITA']);
 
         if ($isCaseConference) {
             // =======================================================
@@ -96,11 +129,11 @@ class AsesmenImport implements ToModel, WithStartRow
             $usiaBersih = preg_replace('/[^0-9]/', '', $usiaString);
 
             return new Asesmen([
-                // KUNCI: HANYA NAMA LENGKAP YANG DIJADIKAN HURUF BALOK OTOMATIS
                 'nama_lengkap'              => isset($row[1]) ? mb_strtoupper($row[1], 'UTF-8') : '-',
-
                 'usia'                      => $usiaBersih !== '' ? (int)$usiaBersih : null,
-                'jenis_kelamin'             => $row[3] ?? '-',
+
+                // MENGGUNAKAN PENERJEMAH JENIS KELAMIN
+                'jenis_kelamin'             => $this->parseJenisKelamin($row[3]),
 
                 'pekerjaan_id'              => $pekerjaan->id,
                 'pendidikan_id'             => $pendidikan->id,
@@ -120,13 +153,15 @@ class AsesmenImport implements ToModel, WithStartRow
                 'tingkat_ketergantungan'    => $row[17] ?? '-',
                 'pola_pemakaian'            => $row[18] ?? '-',
                 'kondisi_lingkungan'        => $row[19] ?? '-',
-                'keterangan_tambahan'       => $row[21] ?? '-',
 
+                // Menyimpan Saran
+                'keterangan_tambahan'       => $row[21] ?? '-',
                 'saran_1'                   => $row[22] ?? null,
                 'saran_2'                   => $row[23] ?? null,
                 'saran_3'                   => $row[24] ?? null,
                 'saran_4'                   => $row[25] ?? null,
 
+                // Field Bawaan yang kosong
                 'nik'                       => '-',
                 'no_bln'                    => '-',
                 'asal_pengajuan'            => '-',
@@ -137,7 +172,7 @@ class AsesmenImport implements ToModel, WithStartRow
                 'tempat_lahir'              => '-',
                 'hasil_asesmen_hukum'       => '-',
                 'hasil_asesmen_medis'       => '-',
-                'pasal_sangkakan'           => '-',
+                'pasal_sangkaan'            => '-',
             ]);
 
         } else {
@@ -186,15 +221,16 @@ class AsesmenImport implements ToModel, WithStartRow
                 'no_lkn'                => $row[7] ?? '-',
                 'tgl_tangkap'           => $this->parseDate($row[8] ?? null),
 
-                // KUNCI: HANYA NAMA LENGKAP YANG DIJADIKAN HURUF BALOK OTOMATIS
                 'nama_lengkap'          => isset($row[9]) ? mb_strtoupper($row[9], 'UTF-8') : '-',
-
                 'no_register'           => $row[10] ?? '-',
                 'alamat_ktp'            => $row[11] ?? '-',
                 'alamat_domisili'       => $row[12] ?? '-',
                 'tempat_lahir'          => $row[13] ?? '-',
                 'tgl_lahir'             => $this->parseDate($row[14] ?? null),
-                'jenis_kelamin'         => $row[15] ?? '-',
+
+                // MENGGUNAKAN PENERJEMAH JENIS KELAMIN
+                'jenis_kelamin'         => $this->parseJenisKelamin($row[15]),
+
                 'usia'                  => $usiaBersihLama !== '' ? (int)$usiaBersihLama : null,
 
                 'pendidikan_id'         => $pendidikan->id,
@@ -207,6 +243,7 @@ class AsesmenImport implements ToModel, WithStartRow
                 'berat_bb'              => $this->parseDecimal($row[22] ?? null),
 
                 'pasal_sangkaan'        => $row[23] ?? '-',
+
                 'hasil_asesmen_hukum'   => $row[24] ?? '-',
                 'hasil_asesmen_medis'   => $row[25] ?? '-',
 

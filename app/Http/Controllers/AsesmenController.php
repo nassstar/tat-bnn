@@ -77,7 +77,6 @@ class AsesmenController extends Controller
         $masterPekerjaan = Pekerjaan::orderBy('nama_pekerjaan', 'asc')->get();
         $masterNarkotika = Narkotika::orderBy('jenis_narkotika', 'asc')->get();
         $masterRekomendasi = Rekomendasi::orderBy('tempat_rehabilitasi', 'asc')->get();
-
         $masterZat = \App\Models\MasterOpsi::where('kategori', 'zat')->get();
 
         return view('asesmen.create', compact(
@@ -92,13 +91,11 @@ class AsesmenController extends Controller
     public function store(Request $request)
     {
         if (!Gate::allows('manage-data')) {
-            abort(403, 'Anda tidak memiliki hak akses untuk mengelola data.');
+            abort(403, 'Anda tidak memiliki hak akses.');
         }
 
-        $request->validate([
-            'nik' => 'required|max:16|unique:asesmens,nik',
-        ], [
-            'nik.unique' => 'Peringatan: NIK ini sudah pernah terdaftar di dalam sistem! Silakan gunakan NIK lain atau gunakan fitur Edit Data.',
+        $request->validate(['nik' => 'required|max:16|unique:asesmens,nik'], [
+            'nik.unique' => 'Peringatan: NIK ini sudah pernah terdaftar di dalam sistem!',
         ]);
 
         $validatedData = $request->validate([
@@ -112,12 +109,10 @@ class AsesmenController extends Controller
             'no_hp' => 'nullable|string|max:20',
             'kewarganegaraan' => 'nullable|string|max:255',
             'agama' => 'nullable|string|max:255',
-
             'pendidikan_input' => 'nullable|string|max:255',
             'pekerjaan_input' => 'nullable|string|max:255',
             'rekomendasi_input' => 'nullable|string|max:255',
             'narkotika_input' => 'nullable|string|max:255',
-
             'alamat_ktp' => 'nullable|string',
             'alamat_domisili' => 'nullable|string',
             'no_register' => 'nullable|string|max:100',
@@ -149,7 +144,6 @@ class AsesmenController extends Controller
             'pola_pemakaian' => 'nullable|string|max:255',
             'kondisi_lingkungan' => 'nullable|string',
             'keterangan_tambahan' => 'nullable|string',
-
             'saran_1' => 'nullable|string',
             'saran_2' => 'nullable|string',
             'saran_3' => 'nullable|string',
@@ -162,39 +156,49 @@ class AsesmenController extends Controller
             $validatedData['usia'] = null;
         }
 
-        // KUNCI: HANYA NAMA LENGKAP YANG DIJADIKAN HURUF BALOK OTOMATIS
         if (!empty($validatedData['nama_lengkap'])) {
             $validatedData['nama_lengkap'] = mb_strtoupper($validatedData['nama_lengkap'], 'UTF-8');
         }
 
-        if ($request->hasFile('foto_klien')) {
-            $validatedData['foto_klien'] = $request->file('foto_klien')->store('foto-klien', 'public');
-        }
+        // Susun Saran Conference (Tetap digabung untuk backup/kompatibilitas lama jika perlu)
+        $saranArray = array_filter([$request->saran_1, $request->saran_2, $request->saran_3, $request->saran_4]);
+        $validatedData['saran_case_conference'] = implode(', ', $saranArray);
 
-        $pendidikanVal = $request->filled('pendidikan_input') ? $request->pendidikan_input : '-';
-        $pendidikan = Pendidikan::firstOrCreate(['nama_pendidikan' => $pendidikanVal]);
-        $validatedData['pendidikan_id'] = $pendidikan->id;
-
-        $pekerjaanVal = $request->filled('pekerjaan_input') ? $request->pekerjaan_input : '-';
-        $pekerjaan = Pekerjaan::firstOrCreate(['nama_pekerjaan' => $pekerjaanVal]);
-        $validatedData['pekerjaan_id'] = $pekerjaan->id;
-
-        $rekomendasiVal = $request->filled('rekomendasi_input') ? $request->rekomendasi_input : '-';
-        $rekomendasi = Rekomendasi::firstOrCreate(['tempat_rehabilitasi' => $rekomendasiVal]);
-        $validatedData['rekomendasi_id'] = $rekomendasi->id;
-
-        $narkotikaVal = $request->filled('narkotika_input') ? $request->narkotika_input : '-';
-        $narkotika = Narkotika::firstOrCreate(['jenis_narkotika' => $narkotikaVal]);
-        $validatedData['narkotika_id'] = $narkotika->id;
-
-        $validatedData['pelaksanaan'] = $request->pelaksanaan ?? 'TIDAK';
-
+        // Buang data yang tidak ada di kolom database
         $dataSiapSimpan = Arr::except($validatedData, [
             'pendidikan_input',
             'pekerjaan_input',
             'rekomendasi_input',
-            'narkotika_input'
+            'narkotika_input',
+            'foto_klien'
         ]);
+        // Catatan: saran_1 sampai saran_4 tidak dibuang agar ikut tersimpan ke database.
+
+        // LOGIKA PENYIMPANAN FOTO
+        if ($request->hasFile('foto_klien')) {
+            $dataSiapSimpan['foto_klien'] = $request->file('foto_klien')->store('foto-klien', 'public');
+        }
+
+        // PASTIKAN NO HP TERSIMPAN!
+        $dataSiapSimpan['no_hp'] = $request->no_hp;
+
+        $pendidikanVal = $request->filled('pendidikan_input') ? $request->pendidikan_input : '-';
+        $pendidikan = Pendidikan::firstOrCreate(['nama_pendidikan' => $pendidikanVal]);
+        $dataSiapSimpan['pendidikan_id'] = $pendidikan->id;
+
+        $pekerjaanVal = $request->filled('pekerjaan_input') ? $request->pekerjaan_input : '-';
+        $pekerjaan = Pekerjaan::firstOrCreate(['nama_pekerjaan' => $pekerjaanVal]);
+        $dataSiapSimpan['pekerjaan_id'] = $pekerjaan->id;
+
+        $rekomendasiVal = $request->filled('rekomendasi_input') ? $request->rekomendasi_input : '-';
+        $rekomendasi = Rekomendasi::firstOrCreate(['tempat_rehabilitasi' => $rekomendasiVal]);
+        $dataSiapSimpan['rekomendasi_id'] = $rekomendasi->id;
+
+        $narkotikaVal = $request->filled('narkotika_input') ? $request->narkotika_input : '-';
+        $narkotika = Narkotika::firstOrCreate(['jenis_narkotika' => $narkotikaVal]);
+        $dataSiapSimpan['narkotika_id'] = $narkotika->id;
+
+        $dataSiapSimpan['pelaksanaan'] = $request->pelaksanaan ?? 'TIDAK';
 
         Asesmen::create($dataSiapSimpan);
 
@@ -206,13 +210,9 @@ class AsesmenController extends Controller
         if (!Gate::allows('read-only')) {
             abort(403, 'Akses ditolak. Akun Anda tidak memiliki peran yang valid.');
         }
+        $asesmen = Asesmen::with(['pendidikan', 'pekerjaan', 'narkotika', 'anggotaTim'])->findOrFail($id);
 
-        $asesmen = Asesmen::with([
-            'pendidikan',
-            'pekerjaan',
-            'narkotika',
-            'anggotaTim'
-        ])->findOrFail($id);
+
 
         return view('asesmen.show', compact('asesmen'));
     }
@@ -224,7 +224,6 @@ class AsesmenController extends Controller
         $masterPekerjaan = Pekerjaan::orderBy('nama_pekerjaan', 'asc')->get();
         $masterNarkotika = Narkotika::orderBy('jenis_narkotika', 'asc')->get();
         $masterRekomendasi = Rekomendasi::orderBy('tempat_rehabilitasi', 'asc')->get();
-
         $masterZat = \App\Models\MasterOpsi::where('kategori', 'zat')->get();
 
         return view('asesmen.edit', compact(
@@ -243,9 +242,7 @@ class AsesmenController extends Controller
             abort(403, 'Anda tidak memiliki hak akses untuk mengelola data.');
         }
 
-        $request->validate([
-            'nik' => 'required|max:16|unique:asesmens,nik,' . $id,
-        ], [
+        $request->validate(['nik' => 'required|max:16|unique:asesmens,nik,' . $id], [
             'nik.unique' => 'Peringatan: NIK ini sudah digunakan oleh Klien lain.',
         ]);
 
@@ -260,12 +257,10 @@ class AsesmenController extends Controller
             'no_hp' => 'nullable|string|max:20',
             'kewarganegaraan' => 'nullable|string|max:255',
             'agama' => 'nullable|string|max:255',
-
             'pendidikan_input' => 'nullable|string|max:255',
             'pekerjaan_input' => 'nullable|string|max:255',
             'rekomendasi_input' => 'nullable|string|max:255',
             'narkotika_input' => 'nullable|string|max:255',
-
             'alamat_ktp' => 'nullable|string',
             'alamat_domisili' => 'nullable|string',
             'no_register' => 'nullable|string|max:100',
@@ -297,7 +292,6 @@ class AsesmenController extends Controller
             'pola_pemakaian' => 'nullable|string|max:255',
             'kondisi_lingkungan' => 'nullable|string',
             'keterangan_tambahan' => 'nullable|string',
-
             'saran_1' => 'nullable|string',
             'saran_2' => 'nullable|string',
             'saran_3' => 'nullable|string',
@@ -312,42 +306,50 @@ class AsesmenController extends Controller
             $validatedData['usia'] = null;
         }
 
-        // KUNCI: HANYA NAMA LENGKAP YANG DIJADIKAN HURUF BALOK OTOMATIS
         if (!empty($validatedData['nama_lengkap'])) {
             $validatedData['nama_lengkap'] = mb_strtoupper($validatedData['nama_lengkap'], 'UTF-8');
         }
 
-        if ($request->hasFile('foto_klien')) {
-            if ($asesmen->foto_klien) {
-                Storage::disk('public')->delete($asesmen->foto_klien);
-            }
-            $validatedData['foto_klien'] = $request->file('foto_klien')->store('foto-klien', 'public');
-        }
+        $saranArray = array_filter([$request->saran_1, $request->saran_2, $request->saran_3, $request->saran_4]);
+        $validatedData['saran_case_conference'] = implode(', ', $saranArray);
 
-        $pendidikanVal = $request->filled('pendidikan_input') ? $request->pendidikan_input : '-';
-        $pendidikan = Pendidikan::firstOrCreate(['nama_pendidikan' => $pendidikanVal]);
-        $validatedData['pendidikan_id'] = $pendidikan->id;
-
-        $pekerjaanVal = $request->filled('pekerjaan_input') ? $request->pekerjaan_input : '-';
-        $pekerjaan = Pekerjaan::firstOrCreate(['nama_pekerjaan' => $pekerjaanVal]);
-        $validatedData['pekerjaan_id'] = $pekerjaan->id;
-
-        $rekomendasiVal = $request->filled('rekomendasi_input') ? $request->rekomendasi_input : '-';
-        $rekomendasi = Rekomendasi::firstOrCreate(['tempat_rehabilitasi' => $rekomendasiVal]);
-        $validatedData['rekomendasi_id'] = $rekomendasi->id;
-
-        $narkotikaVal = $request->filled('narkotika_input') ? $request->narkotika_input : '-';
-        $narkotika = Narkotika::firstOrCreate(['jenis_narkotika' => $narkotikaVal]);
-        $validatedData['narkotika_id'] = $narkotika->id;
-
-        $validatedData['pelaksanaan'] = $request->pelaksanaan ?? 'TIDAK';
-
+        // Buang data mentah
         $dataSiapUpdate = Arr::except($validatedData, [
             'pendidikan_input',
             'pekerjaan_input',
             'rekomendasi_input',
-            'narkotika_input'
+            'narkotika_input',
+            'foto_klien'
         ]);
+
+        // LOGIKA PENYIMPANAN FOTO (UPDATE)
+        if ($request->hasFile('foto_klien')) {
+            if ($asesmen->foto_klien && Storage::disk('public')->exists($asesmen->foto_klien)) {
+                Storage::disk('public')->delete($asesmen->foto_klien);
+            }
+            $dataSiapUpdate['foto_klien'] = $request->file('foto_klien')->store('foto-klien', 'public');
+        }
+
+        // PASTIKAN NO HP TETAP TERSIMPAN!
+        $dataSiapUpdate['no_hp'] = $request->no_hp;
+
+        $pendidikanVal = $request->filled('pendidikan_input') ? $request->pendidikan_input : '-';
+        $pendidikan = Pendidikan::firstOrCreate(['nama_pendidikan' => $pendidikanVal]);
+        $dataSiapUpdate['pendidikan_id'] = $pendidikan->id;
+
+        $pekerjaanVal = $request->filled('pekerjaan_input') ? $request->pekerjaan_input : '-';
+        $pekerjaan = Pekerjaan::firstOrCreate(['nama_pekerjaan' => $pekerjaanVal]);
+        $dataSiapUpdate['pekerjaan_id'] = $pekerjaan->id;
+
+        $rekomendasiVal = $request->filled('rekomendasi_input') ? $request->rekomendasi_input : '-';
+        $rekomendasi = Rekomendasi::firstOrCreate(['tempat_rehabilitasi' => $rekomendasiVal]);
+        $dataSiapUpdate['rekomendasi_id'] = $rekomendasi->id;
+
+        $narkotikaVal = $request->filled('narkotika_input') ? $request->narkotika_input : '-';
+        $narkotika = Narkotika::firstOrCreate(['jenis_narkotika' => $narkotikaVal]);
+        $dataSiapUpdate['narkotika_id'] = $narkotika->id;
+
+        $dataSiapUpdate['pelaksanaan'] = $request->pelaksanaan ?? 'TIDAK';
 
         $asesmen->update($dataSiapUpdate);
 
@@ -359,18 +361,17 @@ class AsesmenController extends Controller
         if (!Gate::allows('manage-data')) {
             abort(403, 'Anda tidak memiliki hak akses untuk mengelola data.');
         }
-
         $asesmen = Asesmen::findOrFail($id);
-
         if ($asesmen->foto_klien) {
             Storage::disk('public')->delete($asesmen->foto_klien);
         }
-
         $asesmen->delete();
-
         return redirect()->route('asesmen.index')->with('success', 'Data Asesmen berhasil dihapus!');
     }
 
+    // =========================================================================
+    // FUNGSI IMPORT (DISESUAIKAN UNTUK 2 TIPE)
+    // =========================================================================
     public function import(Request $request)
     {
         if (!Gate::allows('manage-data')) {
@@ -385,13 +386,23 @@ class AsesmenController extends Controller
             'file_excel.max' => 'Ukuran file tidak boleh lebih dari 10 MB.'
         ]);
 
+        $type = $request->query('type', 'rekap'); // Default rekap
+
+        // ===================================================================
+        // PERBAIKAN DI SINI: Cek apakah valuenya benar-benar "yes"
+        // ===================================================================
+        $updateExisting = $request->input('update_existing') === 'yes';
+
         try {
-            Excel::import(new \App\Imports\AsesmenImport, $request->file('file_excel'));
-            return redirect()->back()->with('success', 'Data dari Excel berhasil diproses! Klien baru telah ditambahkan dan klien lama telah diperbarui datanya.');
-        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-            return redirect()->back()->with('error', 'Gagal memproses data. Pastikan format tabel sesuai dengan template unduhan.');
+            if ($type === 'cc') {
+                Excel::import(new \App\Imports\AsesmenCaseConfImport($updateExisting), $request->file('file_excel'));
+                return redirect()->back()->with('success', 'Data Case Conference berhasil diimport dan disimpan!');
+            } else {
+                Excel::import(new \App\Imports\AsesmenRekapImport($updateExisting), $request->file('file_excel'));
+                return redirect()->back()->with('success', 'Data Rekap TAT berhasil diimport dan disimpan!');
+            }
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan sistem saat memproses file: ' . $e->getMessage());
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
@@ -400,7 +411,6 @@ class AsesmenController extends Controller
         if (!Gate::allows('manage-data')) {
             abort(403, 'Anda tidak memiliki hak akses untuk mengunduh template.');
         }
-
         $type = $request->get('type', 'rekap');
         $emptyRequest = new Request(['search' => 'XXXXXXXXX_EMPTY_TEMPLATE_XXXXXXXXX']);
 
@@ -416,11 +426,9 @@ class AsesmenController extends Controller
         if (!Gate::allows('read-only')) {
             abort(403, 'Akses ditolak. Akun Anda tidak memiliki peran yang valid.');
         }
-
         $asesmen = Asesmen::findOrFail($id);
         $pdf = Pdf::loadView('asesmen.pdf', compact('asesmen'));
         $pdf->setPaper('A4', 'portrait');
-
         return $pdf->stream('Ringkasan_Asesmen_' . str_replace(' ', '_', $asesmen->nama_lengkap) . '.pdf');
     }
 
@@ -465,51 +473,38 @@ class AsesmenController extends Controller
 
         $asesmen->no_ba = $request->no_ba;
         $asesmen->tgl_ba = $request->tgl_ba;
-        // $asesmen->tgl_asesmen = $request->tgl_asesmen;
         $asesmen->ketua_tat_nama = $request->ketua_tat_nama;
         $asesmen->ketua_tat_nrp = $request->ketua_tat_nrp;
         $asesmen->no_kep_tim = $request->no_kep_tim;
         $asesmen->tgl_kep_tim = $request->tgl_kep_tim;
-
         $asesmen->narasi_medis = $request->narasi_medis;
         $asesmen->narasi_hukum = $request->narasi_hukum;
-
         $asesmen->alat_bukti_no_sk = $request->alat_bukti_no_sk;
         $asesmen->alat_bukti_tgl_sk = $request->alat_bukti_tgl_sk;
         $asesmen->alat_bukti_dokter = $request->alat_bukti_dokter;
         $asesmen->alat_bukti_hasil = $request->alat_bukti_hasil;
-
         $asesmen->status_klien = $request->status_klien;
         $asesmen->kesimpulan_jenis_zat = $request->kesimpulan_jenis_zat;
         $asesmen->kesimpulan_pola_pakai = $request->kesimpulan_pola_pakai;
         $asesmen->kesimpulan_kategori = $request->kesimpulan_kategori;
         $asesmen->diagnosis_medis = $request->diagnosis_medis;
-
         $asesmen->rekomendasi_tempat_rehab = $request->rekomendasi_tempat_rehab;
         $asesmen->rekomendasi_durasi = $request->rekomendasi_durasi;
-
-        // Simpan Asli Tanpa Uppercase
         $asesmen->rekomendasi_keterangan = $request->rekomendasi_keterangan;
 
-        // Duplikat Rekomendasi Durasi ke Lama Perawatan
         if ($request->has('rekomendasi_durasi')) {
             $asesmen->lama_perawatan = $request->rekomendasi_durasi;
         }
-
         if ($request->has('tes_urine')) {
             $asesmen->tes_urine = $request->tes_urine;
         }
 
         $asesmen->save();
 
-        $asesmen->anggotaTim()->sync(array_merge(
-            (array) $request->tim_medis,
-            (array) $request->tim_hukum
-        ));
+        $asesmen->anggotaTim()->sync(array_merge((array) $request->tim_medis, (array) $request->tim_hukum));
 
         if ($request->input('action') === 'save_only' || $request->input('action') === 'save') {
-            return redirect()->route('asesmen.show', $asesmen->id)
-                ->with('success', 'Data Berita Acara berhasil disimpan dan diperbarui!');
+            return redirect()->route('asesmen.show', $asesmen->id)->with('success', 'Data Berita Acara berhasil disimpan dan diperbarui!');
         }
 
         return $this->prosesCetakBeritaAcaraWord($asesmen);
@@ -520,7 +515,6 @@ class AsesmenController extends Controller
         if (!Gate::allows('akses-dokumen')) {
             abort(403, 'Anda tidak memiliki akses ke fitur dokumen.');
         }
-
         $asesmen = Asesmen::with(['rekomendasi', 'narkotika', 'pendidikan', 'pekerjaan', 'anggotaTim'])->findOrFail($id);
         return $this->prosesCetakBeritaAcaraWord($asesmen);
     }
@@ -528,7 +522,6 @@ class AsesmenController extends Controller
     private function prosesCetakBeritaAcaraWord(Asesmen $asesmen)
     {
         $templatePath = storage_path('app/templates/template_berita_acara.docx');
-
         if (!file_exists($templatePath)) {
             return redirect()->back()->with('error', 'Template Word Berita Acara tidak ditemukan di folder storage.');
         }
@@ -579,7 +572,6 @@ class AsesmenController extends Controller
         }
 
         $templateProcessor->setValue('tgl_asesmen', $asesmen->tgl_asesmen ? Carbon::parse($asesmen->tgl_asesmen)->translatedFormat('d F Y') : '-');
-
         $templateProcessor->setValue('tgl_kep_tim', $asesmen->tgl_kep_tim ? mb_strtoupper(Carbon::parse($asesmen->tgl_kep_tim)->translatedFormat('d F Y'), 'UTF-8') : '-');
         $templateProcessor->setValue('alat_bukti_tgl_sk', $asesmen->alat_bukti_tgl_sk ? mb_strtoupper(Carbon::parse($asesmen->alat_bukti_tgl_sk)->translatedFormat('d F Y'), 'UTF-8') : '-');
 
@@ -681,25 +673,19 @@ class AsesmenController extends Controller
         $asesmen->nama_narkotika_medis = $request->input('nama_narkotika_medis');
         $asesmen->lama_perawatan = $request->input('lama_perawatan');
         $asesmen->keterangan_diagnosis = $request->input('keterangan_diagnosis');
-
-        // Simpan Asli Tanpa Uppercase
         $asesmen->rekomendasi_keterangan = $request->input('rekomendasi_keterangan');
-
         $asesmen->rekomendasi_tempat_rehab = $request->input('rekomendasi_tempat_rehab');
         $asesmen->rekomendasi_durasi = $request->input('lama_perawatan');
-
         $asesmen->tgl_rekomendasi = $request->input('tgl_rekomendasi');
         $asesmen->tgl_keputusan = $request->input('tgl_keputusan');
 
         $asesmen->save();
 
         if ($request->input('action') === 'save') {
-            return redirect()->route('asesmen.show', $asesmen->id)
-                ->with('success', 'Data Form Rekomendasi berhasil disimpan!');
+            return redirect()->route('asesmen.show', $asesmen->id)->with('success', 'Data Form Rekomendasi berhasil disimpan!');
         }
 
         $templatePath = storage_path('app/templates/template_rekomendasi.docx');
-
         if (!file_exists($templatePath)) {
             return redirect()->back()->with('error', 'Template Word tidak ditemukan.');
         }
@@ -739,9 +725,7 @@ class AsesmenController extends Controller
         $templateProcessor->setValue('nama_narkotika', $asesmen->nama_narkotika_medis ?? '-');
         $templateProcessor->setValue('keterangan_diagnosis', $asesmen->keterangan_diagnosis ?? '-');
         $templateProcessor->setValue('lama_perawatan', $asesmen->lama_perawatan ?? '-');
-
         $templateProcessor->setValue('rekomendasi_keterangan', $asesmen->rekomendasi_keterangan ?? '-');
-
         $templateProcessor->setValue('nama_lengkap', $asesmen->nama_lengkap);
         $templateProcessor->setValue('nik', $asesmen->nik);
         $templateProcessor->setValue('tempat_lahir', $asesmen->tempat_lahir ?? '-');
@@ -761,12 +745,10 @@ class AsesmenController extends Controller
         $templateProcessor->setValue('hari', $hari_pelaksanaan);
         $templateProcessor->setValue('jenis_narkotika', $asesmen->narkotika->jenis_narkotika ?? '-');
         $templateProcessor->setValue('tingkat_ketergantungan', $asesmen->tingkat_ketergantungan ?? '-');
-
         $templateProcessor->setValue('rekomendasi_tat', $tempatBersihRek);
 
         $fileName = 'Surat_Rekomendasi_TAT_' . str_replace(' ', '_', $asesmen->nama_lengkap) . '.docx';
         $tempPath = storage_path('app/temp_' . $fileName);
-
         $templateProcessor->saveAs($tempPath);
 
         return response()->download($tempPath, $fileName)->deleteFileAfterSend(true);
@@ -779,7 +761,6 @@ class AsesmenController extends Controller
         }
 
         $type = $request->get('type', 'default');
-
         if ($type === 'cc') {
             $namaFile = 'Data_Case_Conference_' . date('Ymd_His') . '.xlsx';
             return Excel::download(new \App\Exports\AsesmenCCExport($request), $namaFile);
@@ -797,31 +778,22 @@ class AsesmenController extends Controller
         if (!Gate::allows('manage-data')) {
             abort(403, 'Anda tidak memiliki hak akses untuk mengelola data.');
         }
-
-        $request->validate([
-            'tanggal_ditambahkan' => 'required|date',
-        ]);
-
+        $request->validate(['tanggal_ditambahkan' => 'required|date']);
         $asesmen = Asesmen::findOrFail($id);
-
         $jamAsli = $asesmen->created_at ? \Carbon\Carbon::parse($asesmen->created_at)->format('H:i:s') : '00:00:00';
         $asesmen->created_at = $request->tanggal_ditambahkan . ' ' . $jamAsli;
-
         $asesmen->save();
-
         return redirect()->back()->with('success', 'Tanggal klien ditambahkan berhasil diperbarui!');
     }
 
     public function destroyPendidikan(string $id)
     {
         if (!Gate::allows('manage-data')) {
-            abort(403, 'Anda tidak memiliki hak akses untuk mengelola data.');
+            abort(403, 'Anda tidak memiliki hak akses.');
         }
-
         try {
             $pendidikan = \App\Models\Pendidikan::findOrFail($id);
             $pendidikan->delete();
-
             return redirect()->back()->with('success', 'Pilihan Pendidikan berhasil dihapus secara permanen dari sistem!');
         } catch (\Illuminate\Database\QueryException $e) {
             if ($e->getCode() == '23000') {
@@ -836,13 +808,11 @@ class AsesmenController extends Controller
     public function destroyRekomendasi(string $id)
     {
         if (!Gate::allows('manage-data')) {
-            abort(403, 'Anda tidak memiliki hak akses untuk mengelola data.');
+            abort(403, 'Anda tidak memiliki hak akses.');
         }
-
         try {
             $rekomendasi = \App\Models\Rekomendasi::findOrFail($id);
             $rekomendasi->delete();
-
             return redirect()->back()->with('success', 'Opsi Rekomendasi berhasil dihapus secara permanen dari sistem!');
         } catch (\Illuminate\Database\QueryException $e) {
             if ($e->getCode() == '23000') {

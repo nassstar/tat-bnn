@@ -396,36 +396,33 @@
                     </div>
 
                     <div>
-                        <span class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Saran Sidang Case Conference</span>
-                        <div class="block w-full rounded-[1.25rem] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#1E293B] p-5 shadow-sm">
+                                <span class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Saran Sidang Case Conference</span>
+                                <div class="block w-full rounded-[1.25rem] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#1E293B] p-5 shadow-sm">
+                                    
+                                    @php
+                                        $saranString = $asesmen->saran_case_conference ?? '';
+                                        $saranList = $saranString && $saranString !== '-' ? array_map('trim', explode(',', $saranString)) : [];
+                                    @endphp
 
-                            @if($asesmen->saran_1 || $asesmen->saran_2 || $asesmen->saran_3 || $asesmen->saran_4)
-                                <div class="space-y-3">
-                                    <div class="flex items-start gap-3">
-                                        <span class="font-bold text-slate-700 dark:text-slate-300">1.</span>
-                                        <div class="flex-1 text-[13px] font-bold text-slate-800 dark:text-slate-200">{{ $asesmen->saran_1 ?? '-' }}</div>
-                                    </div>
-                                    <div class="flex items-start gap-3">
-                                        <span class="font-bold text-slate-700 dark:text-slate-300">2.</span>
-                                        <div class="flex-1 text-[13px] font-bold text-slate-800 dark:text-slate-200">{{ $asesmen->saran_2 ?? '-' }}</div>
-                                    </div>
-                                    <div class="flex items-start gap-3">
-                                        <span class="font-bold text-slate-700 dark:text-slate-300">3.</span>
-                                        <div class="flex-1 text-[13px] font-bold text-slate-800 dark:text-slate-200">{{ $asesmen->saran_3 ?? '-' }}</div>
-                                    </div>
-                                    <div class="flex items-start gap-3">
-                                        <span class="font-bold text-slate-700 dark:text-slate-300">4.</span>
-                                        <div class="flex-1 text-[13px] font-bold text-slate-800 dark:text-slate-200">{{ $asesmen->saran_4 ?? '-' }}</div>
-                                    </div>
-                                </div>
-                            @else
-                                <div class="text-[13px] font-bold text-slate-400 dark:text-slate-500 text-center py-2 uppercase tracking-widest">
-                                    - Belum ada saran -
-                                </div>
-                            @endif
+                                    @if(count($saranList) > 0)
+                                        <div class="space-y-3">
+                                            @foreach($saranList as $index => $saranText)
+                                                @if(!empty($saranText) && $saranText !== '-')
+                                                <div class="flex items-start gap-3">
+                                                    <span class="font-bold text-slate-700 dark:text-slate-300">{{ $index + 1 }}.</span>
+                                                    <div class="flex-1 text-[13px] font-bold text-slate-800 dark:text-slate-200">{{ $saranText }}</div>
+                                                </div>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <div class="text-[13px] font-bold text-slate-400 dark:text-slate-500 text-center py-2 uppercase tracking-widest">
+                                            - Belum ada saran -
+                                        </div>
+                                    @endif
 
-                        </div>
-                    </div>
+                                </div>
+                            </div>
 
                 </div>
 

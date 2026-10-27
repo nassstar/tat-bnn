@@ -149,21 +149,7 @@
                         @endauth
                     </div>
 
-                    <!-- Statistik / Fitur Bawah -->
-                    <div class="grid grid-cols-3 gap-4 pt-6 mt-2 border-t border-slate-100 dark:border-slate-800 max-w-lg transition-colors duration-500">
-                        <div>
-                            <h4 class="text-2xl font-black text-slate-900 dark:text-white transition-colors duration-500 tracking-tight">100%</h4>
-                            <p class="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mt-1 transition-colors duration-500">Data Terpusat & Aman</p>
-                        </div>
-                        <div>
-                            <h4 class="text-2xl font-black text-slate-900 dark:text-white transition-colors duration-500 tracking-tight">Ms.Excel</h4>
-                            <p class="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mt-1 transition-colors duration-500">Impor & Ekspor Cepat</p>
-                        </div>
-                        <div>
-                            <h4 class="text-2xl font-black text-slate-900 dark:text-white transition-colors duration-500 tracking-tight">Ms.Word</h4>
-                            <p class="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mt-1 transition-colors duration-500">Cetak Berita Acara</p>
-                        </div>
-                    </div>
+                    
                 </div>
 
                 <!-- Kanan: Card UI Interaktif -->

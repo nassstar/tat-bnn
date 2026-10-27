@@ -646,14 +646,17 @@
                         <div>
                             <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Saran Sidang Case Conference</label>
                             <div class="grid grid-cols-1 gap-3">
-                                <!-- Tambahkan name="saran_X" dan panggil $asesmen->saran_X di value -->
-                                <input type="text" name="saran_1" value="{{ old('saran_1', $asesmen->saran_1) }}" class="block w-full rounded-[1.25rem] border-slate-200 dark:border-slate-700 shadow-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 text-sm font-medium bg-slate-50 dark:bg-[#1E293B] text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#0F172A] transition-all px-4 py-3 outline-none" placeholder="1. ...">
+                                @php
+                                    $saranLama = $asesmen->saran_case_conference ?? '';
+                                    $saranList = $saranLama ? array_map('trim', explode(",", $saranLama)) : [];
+                                @endphp
+                                <input type="text" name="saran_1" value="{{ old('saran_1', $saranList[0] ?? '') }}" class="block w-full rounded-[1.25rem] border-slate-200 dark:border-slate-700 shadow-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 text-sm font-medium bg-slate-50 dark:bg-[#1E293B] text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#0F172A] transition-all px-4 py-3 outline-none" placeholder="1. ...">
 
-                                <input type="text" name="saran_2" value="{{ old('saran_2', $asesmen->saran_2) }}" class="block w-full rounded-[1.25rem] border-slate-200 dark:border-slate-700 shadow-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 text-sm font-medium bg-slate-50 dark:bg-[#1E293B] text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#0F172A] transition-all px-4 py-3 outline-none" placeholder="2. ...">
+                                <input type="text" name="saran_2" value="{{ old('saran_2', $saranList[1] ?? '') }}" class="block w-full rounded-[1.25rem] border-slate-200 dark:border-slate-700 shadow-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 text-sm font-medium bg-slate-50 dark:bg-[#1E293B] text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#0F172A] transition-all px-4 py-3 outline-none" placeholder="2. ...">
 
-                                <input type="text" name="saran_3" value="{{ old('saran_3', $asesmen->saran_3) }}" class="block w-full rounded-[1.25rem] border-slate-200 dark:border-slate-700 shadow-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 text-sm font-medium bg-slate-50 dark:bg-[#1E293B] text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#0F172A] transition-all px-4 py-3 outline-none" placeholder="3. ...">
+                                <input type="text" name="saran_3" value="{{ old('saran_3', $saranList[2] ?? '') }}" class="block w-full rounded-[1.25rem] border-slate-200 dark:border-slate-700 shadow-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 text-sm font-medium bg-slate-50 dark:bg-[#1E293B] text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#0F172A] transition-all px-4 py-3 outline-none" placeholder="3. ...">
 
-                                <input type="text" name="saran_4" value="{{ old('saran_4', $asesmen->saran_4) }}" class="block w-full rounded-[1.25rem] border-slate-200 dark:border-slate-700 shadow-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 text-sm font-medium bg-slate-50 dark:bg-[#1E293B] text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#0F172A] transition-all px-4 py-3 outline-none" placeholder="4. ...">
+                                <input type="text" name="saran_4" value="{{ old('saran_4', $saranList[3] ?? '') }}" class="block w-full rounded-[1.25rem] border-slate-200 dark:border-slate-700 shadow-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 text-sm font-medium bg-slate-50 dark:bg-[#1E293B] text-slate-900 dark:text-white focus:bg-white dark:focus:bg-[#0F172A] transition-all px-4 py-3 outline-none" placeholder="4. ...">
                             </div>
                         </div>
                     </div>
