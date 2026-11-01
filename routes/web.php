@@ -75,6 +75,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Route untuk menghapus master data Pendidikan
     Route::delete('/pendidikan/{id}', [App\Http\Controllers\AsesmenController::class, 'destroyPendidikan'])->name('pendidikan.destroy');
+    // --> TAMBAHKAN BARIS INI UNTUK PEKERJAAN <--
+    Route::delete('/pekerjaan/{id}', [App\Http\Controllers\AsesmenController::class, 'destroyPekerjaan'])->name('pekerjaan.destroy');
     // Route untuk menghapus master data Rekomendasi TAT
     Route::delete('/rekomendasi/{id}', [App\Http\Controllers\AsesmenController::class, 'destroyRekomendasi'])->name('rekomendasi.destroy');
 

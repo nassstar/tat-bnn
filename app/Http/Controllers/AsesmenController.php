@@ -805,6 +805,30 @@ class AsesmenController extends Controller
         }
     }
 
+    public function destroyPekerjaan(string $id)
+    {
+        try {
+            $pekerjaan = \App\Models\Pekerjaan::findOrFail($id);
+
+            // Cek apakah pekerjaan ini sedang digunakan oleh klien di tabel asesmens
+            $isUsed = \App\Models\Asesmen::where('pekerjaan_id', $pekerjaan->id)->exists();
+
+            if ($isUsed) {
+                // Kembali ke halaman sebelumnya dengan pesan error
+                return redirect()->back()->with('error', 'Pekerjaan ini tidak bisa dihapus karena sedang digunakan oleh data Klien!');
+            }
+
+            // Jika aman, lakukan penghapusan
+            $pekerjaan->delete();
+
+            // Kembali ke halaman sebelumnya dengan pesan sukses
+            return redirect()->back()->with('success', 'Data pekerjaan berhasil dihapus.');
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan sistem saat menghapus data.');
+        }
+    }
+
     public function destroyRekomendasi(string $id)
     {
         if (!Gate::allows('manage-data')) {

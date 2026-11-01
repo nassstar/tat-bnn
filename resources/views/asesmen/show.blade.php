@@ -46,7 +46,7 @@
             'tgl_surat', 'tgl_berkas', 'tgl_pelaksanaan', 'tgl_tangkap',
             'nama_lengkap', 'nik', 'kewarganegaraan', 'tempat_lahir', 'tgl_lahir', 'jenis_kelamin', 'no_hp',
             'pendidikan_id', 'pekerjaan_id', 'alamat_ktp', 'alamat_domisili',
-            'narkotika_id', 'berat_bb', 'deskripsi_bb', 'pasal_sangkaan',
+            'narkotika_id', 'deskripsi_bb', 'pasal_sangkaan',
             'status_hukum', 'keterlibatan_jaringan', 'cara_mendapatkan', 'dapat_dari_siapa',
             'tes_urine', 'hasil_asesmen_hukum', 'hasil_asesmen_medis',
             'alasan_penggunaan', 'kondisi_keluarga', 'tingkat_ketergantungan', 'pola_pemakaian', 'kondisi_lingkungan'
@@ -398,7 +398,7 @@
                     <div>
                                 <span class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Saran Sidang Case Conference</span>
                                 <div class="block w-full rounded-[1.25rem] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#1E293B] p-5 shadow-sm">
-                                    
+
                                     @php
                                         $saranString = $asesmen->saran_case_conference ?? '';
                                         $saranList = $saranString && $saranString !== '-' ? array_map('trim', explode(',', $saranString)) : [];

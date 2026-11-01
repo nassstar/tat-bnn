@@ -155,7 +155,7 @@ class AsesmenCaseConfImport implements ToCollection, WithStartRow
                 $asesmen->rekomendasi_id = Rekomendasi::firstOrCreate(['tempat_rehabilitasi' => '-'])->id;
             }
 
-            $this->assignValue($asesmen, 'rekomendasi_keterangan', $row[22] ?? '');
+            $this->assignValue($asesmen, 'keterangan_tambahan', $row[22] ?? '');
 
             $this->assignValue($asesmen, 'saran_1', $row[23] ?? '');
             $this->assignValue($asesmen, 'saran_2', $row[24] ?? '');

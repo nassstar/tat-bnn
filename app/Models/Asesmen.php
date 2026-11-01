@@ -12,7 +12,7 @@ class Asesmen extends Model
 
     protected $table = 'asesmens';
 
-    // PERBAIKAN: Gunakan $guarded, hapus $fillable. 
+    // PERBAIKAN: Gunakan $guarded, hapus $fillable.
     // Ini mengizinkan semua kolom (termasuk foto_klien & no_hp) tersimpan ke database.
     protected $guarded = ['id'];
 
@@ -77,7 +77,6 @@ class Asesmen extends Model
             'kewarganegaraan',
             'alamat_ktp',
             'alamat_domisili',
-            'berat_bb',
             'pasal_sangkaan',
             'deskripsi_bb',
             'status_hukum',
