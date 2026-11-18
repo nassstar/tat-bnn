@@ -20,7 +20,7 @@ class AsesmenImport implements ToModel, WithStartRow
         return 1;
     }
 
-    private function parseDecimal($value)
+    private function parseDecimal(string $value)
     {
         if ($value === null || trim((string)$value) === '' || trim((string)$value) === '-') {
             return null;
@@ -30,7 +30,7 @@ class AsesmenImport implements ToModel, WithStartRow
         return is_numeric($cleaned) ? (float) $cleaned : null;
     }
 
-    private function parseDate($value)
+    private function parseDate(string $value)
     {
         if (empty($value) || trim((string)$value) === '-' || trim((string)$value) === '') {
             return null;
@@ -66,7 +66,7 @@ class AsesmenImport implements ToModel, WithStartRow
     // =========================================================================
     // FUNGSI PENERJEMAH OTOMATIS JENIS KELAMIN (L/P)
     // =========================================================================
-    private function parseJenisKelamin($value)
+    private function parseJenisKelamin(string $value)
     {
         $val = strtoupper(trim((string)$value));
         if ($val === 'L' || $val === 'LAKI-LAKI' || $val === 'LAKI LAKI' || $val === 'PRIA') {

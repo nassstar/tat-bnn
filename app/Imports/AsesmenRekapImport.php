@@ -16,7 +16,7 @@ use Exception;
 
 class AsesmenRekapImport implements ToCollection, WithStartRow
 {
-    protected $updateExisting;
+    protected bool $updateExisting;
 
     public function __construct($updateExisting = false)
     {
@@ -28,7 +28,7 @@ class AsesmenRekapImport implements ToCollection, WithStartRow
         return 4;
     }
 
-    private function parseDecimal($value)
+    private function parseDecimal(string $value)
     {
         if ($value === null || trim((string) $value) === '' || trim((string) $value) === '-')
             return null;
@@ -37,7 +37,7 @@ class AsesmenRekapImport implements ToCollection, WithStartRow
         return is_numeric($cleaned) ? (float) $cleaned : null;
     }
 
-    private function parseDate($value)
+    private function parseDate(string $value)
     {
         if (empty($value) || trim((string) $value) === '-' || trim((string) $value) === '')
             return null;
@@ -57,7 +57,7 @@ class AsesmenRekapImport implements ToCollection, WithStartRow
         }
     }
 
-    private function parseJenisKelamin($value)
+    private function parseJenisKelamin(string $value)
     {
         $val = strtoupper(trim((string) $value));
         if (in_array($val, ['L', 'LAKI-LAKI', 'LAKI LAKI', 'PRIA']))
@@ -68,7 +68,7 @@ class AsesmenRekapImport implements ToCollection, WithStartRow
     }
 
     // FUNGSI SMART MERGE
-    private function assignValue($model, $field, $value)
+    private function assignValue(\App\Models\Asesmen $model, string $field, string|null $value)
     {
         $val = trim((string) $value);
         if ($val !== '' && $val !== '-') {
@@ -80,33 +80,33 @@ class AsesmenRekapImport implements ToCollection, WithStartRow
         }
     }
 
+
     public function collection(Collection $rows)
     {
+        // ==========================================
+        // 1. CEK DUPLIKASI NO. REGISTER (Mode Insert Baru)
+        // ==========================================
         if (!$this->updateExisting) {
             foreach ($rows as $row) {
                 $kolomA = strtoupper(trim((string) ($row[0] ?? '')));
                 if (empty($row[9]) || strpos($kolomA, 'NO') !== false || strpos($kolomA, 'REKAP DATA TAT') !== false)
                     continue;
 
-                $namaExcel = mb_strtoupper(trim($row[9] ?? ''), 'UTF-8');
-                $nikExcel = isset($row[20]) ? trim(str_replace("'", "", $row[20])) : null;
+                // Ambil No Register dari index array yang benar (Indeks ke-10 berdasarkan pemetaan kode di bawah)
+                $noRegisterExcel = trim((string) ($row[10] ?? ''));
 
-                $existingKlien = null;
-                if ($nikExcel !== '-' && $nikExcel !== null && $nikExcel !== '') {
-                    $existingKlien = Asesmen::where('nik', $nikExcel)->first();
-                }
-                if (!$existingKlien && $namaExcel !== '' && $namaExcel !== '-') {
-                    $existingKlien = Asesmen::where('nama_lengkap', $namaExcel)->first();
-                }
-
-                if ($existingKlien) {
-                    $namaLama = $existingKlien->nama_lengkap;
-                    $nikLama = $existingKlien->nik;
-                    throw new Exception("Data atas nama \"{$namaLama}\" (NIK: {$nikLama}) sudah terdaftar! Silakan centang kotak opsi 'Perbarui Data Lama'.");
+                if ($noRegisterExcel !== '' && $noRegisterExcel !== '-') {
+                    $existingKasus = Asesmen::where('no_register', $noRegisterExcel)->first();
+                    if ($existingKasus) {
+                        throw new Exception("Kasus dengan No Register \"{$noRegisterExcel}\" sudah terdaftar di sistem! Silakan centang kotak opsi 'Perbarui Data Lama' jika Anda ingin menimpanya.");
+                    }
                 }
             }
         }
 
+        // ==========================================
+        // 2. PROSES INSERT ATAU UPDATE
+        // ==========================================
         foreach ($rows as $row) {
             $kolomA = strtoupper(trim((string) ($row[0] ?? '')));
             if (empty($row[9]) || strpos($kolomA, 'NO') !== false || strpos($kolomA, 'REKAP DATA TAT') !== false)
@@ -114,19 +114,22 @@ class AsesmenRekapImport implements ToCollection, WithStartRow
 
             $namaExcel = mb_strtoupper(trim($row[9] ?? ''), 'UTF-8');
             $nikExcel = isset($row[20]) ? trim(str_replace("'", "", $row[20])) : '-';
+            $noRegisterExcel = trim((string) ($row[10] ?? ''));
 
             $asesmen = null;
-            if ($nikExcel !== '-' && $nikExcel !== '') {
-                $asesmen = Asesmen::where('nik', $nikExcel)->first();
-            }
-            if (!$asesmen && $namaExcel !== '' && $namaExcel !== '-') {
-                $asesmen = Asesmen::where('nama_lengkap', $namaExcel)->first();
+
+            // Jika "Update Data", maka cari datanya DARI NOMOR REGISTER
+            if ($this->updateExisting && $noRegisterExcel !== '' && $noRegisterExcel !== '-') {
+                $asesmen = Asesmen::where('no_register', $noRegisterExcel)->first();
             }
 
+            // Jika tidak ada atau Insert Baru, buat instansi baru
             if (!$asesmen) {
                 $asesmen = new Asesmen();
-                $asesmen->nik = ($nikExcel === '-' || $nikExcel === '') ? '-' : $nikExcel;
+                // Selalu catat NIK apa adanya dari Excel, biarpun kembar dengan klien lain.
+                $asesmen->nik = ($nikExcel === '' || $nikExcel === null) ? '-' : $nikExcel;
             } else {
+                // Update NIK jika NIK lama kosong
                 if (($asesmen->nik === '-' || empty($asesmen->nik)) && $nikExcel !== '-' && $nikExcel !== '') {
                     $asesmen->nik = $nikExcel;
                 }
@@ -154,7 +157,7 @@ class AsesmenRekapImport implements ToCollection, WithStartRow
             if ($tglTangkap)
                 $asesmen->tgl_tangkap = $tglTangkap;
 
-            $this->assignValue($asesmen, 'no_register', $row[10] ?? '');
+            $this->assignValue($asesmen, 'no_register', $noRegisterExcel); // Set nilai no_register
             $this->assignValue($asesmen, 'alamat_ktp', $row[11] ?? '');
             $this->assignValue($asesmen, 'alamat_domisili', $row[12] ?? '');
             $this->assignValue($asesmen, 'tempat_lahir', $row[13] ?? '');

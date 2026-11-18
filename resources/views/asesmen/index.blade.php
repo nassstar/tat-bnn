@@ -132,8 +132,8 @@
                             <label class="flex items-start gap-3 cursor-pointer group">
                                 <input type="checkbox" id="global_update_existing" value="yes" class="mt-0.5 w-4 h-4 rounded text-amber-500 focus:ring-amber-500 bg-white dark:bg-[#0B1120] border-amber-400 dark:border-amber-600 shadow-sm cursor-pointer transition-colors">
                                 <div>
-                                    <span class="block text-[11px] font-black uppercase tracking-widest text-amber-700 dark:text-amber-500 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Perbarui Data Lama (Timpa NIK Ganda)</span>
-                                    <span class="block text-[10px] font-medium text-amber-700/70 dark:text-amber-500/70 mt-1.5 leading-relaxed">Jika dicentang, Klien dengan NIK sama akan ditimpa. Jika kosong, sistem akan menolak duplikasi data.</span>
+                                    <span class="block text-[11px] font-black uppercase tracking-widest text-amber-700 dark:text-amber-500 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Perbarui Data Lama (Timpa Identitas Ganda)</span>
+                                    <span class="block text-[10px] font-medium text-amber-700/70 dark:text-amber-500/70 mt-1.5 leading-relaxed">Jika dicentang, Klien dengan identitas yang sama terakhir ditambahkan akan ditimpa. Jika kosong, sistem akan menolak duplikasi data.</span>
                                 </div>
                             </label>
                         </div>

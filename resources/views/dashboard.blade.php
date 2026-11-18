@@ -169,7 +169,7 @@
                     <div class="relative z-10 flex justify-between items-start">
                         <div>
                             <p class="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Total Bukti Disita</p>
-                            <h3 class="text-3xl font-black text-slate-800 dark:text-white">{{ number_format($totalBB, 1, ',', '.') }} <span class="text-base font-bold text-slate-400">Gram</span></h3>
+                            <h3 class="text-3xl font-black text-slate-800 dark:text-white">{{ number_format($totalBB, 2, ',', '.') }} <span class="text-base font-bold text-slate-400">Gram</span></h3>
                         </div>
                         <div class="p-3 bg-rose-50 dark:bg-rose-500/20 text-rose-500 dark:text-[#FF5F56] rounded-2xl border border-rose-100 dark:border-rose-500/30">
                             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path></svg>

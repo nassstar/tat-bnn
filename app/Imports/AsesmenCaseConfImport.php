@@ -9,13 +9,13 @@ use App\Models\Rekomendasi;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithStartRow;
-use Exception;
+
 
 class AsesmenCaseConfImport implements ToCollection, WithStartRow
 {
-    protected $updateExisting;
+    protected bool $updateExisting;
 
-    public function __construct($updateExisting = false)
+    public function __construct(bool $updateExisting = false)
     {
         $this->updateExisting = $updateExisting;
     }
@@ -26,7 +26,7 @@ class AsesmenCaseConfImport implements ToCollection, WithStartRow
     }
 
     // FUNGSI SMART MERGE: Hanya timpa jika data Excel terisi (bukan kosong/strip)
-    private function assignValue($model, $field, $value)
+    private function assignValue(\App\Models\Asesmen $model, string $field, string|null $value)
     {
         $val = trim((string) $value);
         if ($val !== '' && $val !== '-') {
@@ -42,34 +42,11 @@ class AsesmenCaseConfImport implements ToCollection, WithStartRow
     public function collection(Collection $rows)
     {
         // ==========================================================
-        // TAHAP 1: PRE-SCAN (ANTI DUPLIKAT GANDA)
+        // TAHAP 1: DIHAPUS (TIDAK ADA LAGI PRE-SCAN ANTI DUPLIKAT)
+        // Kita mengizinkan Klien dengan Nama atau NIK yang sama masuk
+        // sebagai data/kasus yang baru.
         // ==========================================================
-        if (!$this->updateExisting) {
-            foreach ($rows as $row) {
-                if (empty($row[1]) && empty($row[2]))
-                    continue;
 
-                $namaExcel = mb_strtoupper(trim($row[1] ?? ''), 'UTF-8');
-                $nikExcel = trim(str_replace("'", "", $row[2] ?? ''));
-
-                $existingKlien = null;
-
-                // Cari pakai NIK dulu
-                if ($nikExcel !== '-' && $nikExcel !== '') {
-                    $existingKlien = Asesmen::where('nik', $nikExcel)->first();
-                }
-                // Jika NIK tidak ketemu, cari pakai Nama
-                if (!$existingKlien && $namaExcel !== '' && $namaExcel !== '-') {
-                    $existingKlien = Asesmen::where('nama_lengkap', $namaExcel)->first();
-                }
-
-                if ($existingKlien) {
-                    $namaLama = $existingKlien->nama_lengkap;
-                    $nikLama = $existingKlien->nik;
-                    throw new Exception("Data atas nama \"{$namaLama}\" (NIK: {$nikLama}) sudah terdaftar! Silakan centang kotak opsi 'Perbarui Data Lama'.");
-                }
-            }
-        }
 
         // ==========================================================
         // TAHAP 2: PROSES PENYIMPANAN & PENGGABUNGAN CERDAS (MERGE)
@@ -83,21 +60,25 @@ class AsesmenCaseConfImport implements ToCollection, WithStartRow
 
             $asesmen = null;
 
-            // Cari pakai NIK
-            if ($nikExcel !== '-' && $nikExcel !== '') {
-                $asesmen = Asesmen::where('nik', $nikExcel)->first();
-            }
-            // Cari pakai Nama (Fallback jika NIK beda/kosong)
-            if (!$asesmen && $namaExcel !== '' && $namaExcel !== '-') {
-                $asesmen = Asesmen::where('nama_lengkap', $namaExcel)->first();
+            // JIKA USER MENCENTANG "PERBARUI DATA LAMA" (Mode Edit/Update)
+            if ($this->updateExisting) {
+                // Cari pakai NIK (Ambil kasus terbaru dari orang ini)
+                if ($nikExcel !== '-' && $nikExcel !== '') {
+                    $asesmen = Asesmen::where('nik', $nikExcel)->latest('created_at')->first();
+                }
+                // Jika tidak ketemu pakai NIK, cari pakai Nama (Ambil kasus terbaru)
+                if (!$asesmen && $namaExcel !== '' && $namaExcel !== '-') {
+                    $asesmen = Asesmen::where('nama_lengkap', $namaExcel)->latest('created_at')->first();
+                }
             }
 
-            // Jika Klien benar-benar baru
+            // JIKA MODE INSERT BARU, ATAU DATA LAMA TIDAK DITEMUKAN
             if (!$asesmen) {
+                // Sistem SELALU membuat record (kasus) baru
                 $asesmen = new Asesmen();
                 $asesmen->nik = ($nikExcel === '' || $nikExcel === '-') ? '-' : $nikExcel;
             } else {
-                // Jika Klien ada tapi NIK sebelumnya kosong, update NIK-nya
+                // Jika Klien di-update tapi NIK sebelumnya kosong, update NIK-nya
                 if (($asesmen->nik === '-' || empty($asesmen->nik)) && $nikExcel !== '-' && $nikExcel !== '') {
                     $asesmen->nik = $nikExcel;
                 }

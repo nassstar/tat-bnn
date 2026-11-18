@@ -21,7 +21,7 @@ use Illuminate\Http\Request;
 
 class AsesmenRekapExport implements FromQuery, WithHeadings, WithMapping, WithStyles, ShouldAutoSize, WithCustomStartCell, WithTitle, WithEvents
 {
-    protected $request;
+    protected Request $request;
     protected $rowNumber = 1;
 
     public function __construct(Request $request)

@@ -94,8 +94,8 @@ class AsesmenController extends Controller
             abort(403, 'Anda tidak memiliki hak akses.');
         }
 
-        $request->validate(['nik' => 'required|max:16|unique:asesmens,nik'], [
-            'nik.unique' => 'Peringatan: NIK ini sudah pernah terdaftar di dalam sistem!',
+        $request->validate(['no_register' => 'nullable|unique:asesmens,no_register'], [
+            'no_register.unique' => 'Peringatan: No Register ini sudah ada di sistem. Klien dengan kasus ini sudah didaftarkan!',
         ]);
 
         $validatedData = $request->validate([
@@ -242,8 +242,8 @@ class AsesmenController extends Controller
             abort(403, 'Anda tidak memiliki hak akses untuk mengelola data.');
         }
 
-        $request->validate(['nik' => 'required|max:16|unique:asesmens,nik,' . $id], [
-            'nik.unique' => 'Peringatan: NIK ini sudah digunakan oleh Klien lain.',
+        $request->validate(['no_register' => 'nullable|unique:asesmens,no_register,' . $id], [
+            'no_register.unique' => 'Peringatan: No Register ini sudah digunakan oleh Kasus lain.',
         ]);
 
         $validatedData = $request->validate([

@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use Maatwebsite\Excel\Concerns\FromCollection;
+
 use App\Models\Asesmen;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Concerns\FromQuery;
@@ -15,7 +15,7 @@ class AsesmenExport implements FromQuery, WithHeadings, WithMapping
 {
     use Exportable;
 
-    protected $request;
+    protected Request $request;
 
     // Menangkap request filter dari Controller
     public function __construct(Request $request)

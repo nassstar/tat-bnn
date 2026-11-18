@@ -26,7 +26,7 @@ return new class extends Migration {
 
             // --- BLOK IDENTITAS KLIEN ---
             $table->string('nama_lengkap');
-            $table->string('nik', 16)->unique();
+            $table->string('nik', 16)->nullable();
             $table->string('kewarganegaraan')->nullable(); // Kolom yang ditambahkan sebelumnya
             $table->string('agama')->nullable(); // Dibutuhkan untuk export
             $table->string('tempat_lahir')->nullable();

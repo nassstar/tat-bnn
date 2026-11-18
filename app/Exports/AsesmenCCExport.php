@@ -20,10 +20,13 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 class AsesmenCCExport implements FromQuery, WithHeadings, WithMapping, WithStyles, ShouldAutoSize, WithCustomStartCell, WithTitle, WithEvents
 {
-    protected $request;
+    protected Request $request;
+
+
     protected $rowNumber = 1;
 
-    public function __construct($request)
+
+    public function __construct(Request $request)
     {
         $this->request = $request instanceof Request ? $request : new Request($request);
     }
@@ -87,17 +90,17 @@ class AsesmenCCExport implements FromQuery, WithHeadings, WithMapping, WithStyle
         return [
             ['DATA CASE CONFERENCE TAHUN ' . date('Y')], // Baris 1
             [
-                'NO', 'NAMA KLIEN', 'NIK', 'USIA', 'P/L', 'PEKERJAAN', 'PENDIDIKAN TERAKHIR', 'DOMISILI', 
-                'HUKUM', '', '', '', '', 
-                'MEDIS', '', '', 
-                'ALASAN PENGGUNAAN', 'KONDISI KELUARGA', 'TINGKAT KETERGANTUNGAN', 'POLA PEMAKAIAN', 
+                'NO', 'NAMA KLIEN', 'NIK', 'USIA', 'P/L', 'PEKERJAAN', 'PENDIDIKAN TERAKHIR', 'DOMISILI',
+                'HUKUM', '', '', '', '',
+                'MEDIS', '', '',
+                'ALASAN PENGGUNAAN', 'KONDISI KELUARGA', 'TINGKAT KETERGANTUNGAN', 'POLA PEMAKAIAN',
                 'KONDISI LINGKUNGAN', 'REKOMENDASI', 'KETERANGAN', 'SARAN', '', '', '' // Y-AA dikosongi untuk merge SARAN
             ],
             [
-                '', '', '', '', '', '', '', '', 
+                '', '', '', '', '', '', '', '',
                 'STATUS HUKUM', 'KETERLIBATAN JARINGAN', 'BARANG BUKTI', 'CARA MENDAPATKAN', 'DAPAT DARI SIAPA',
                 'KESEHATAN', 'PSIKOLOGI', 'TES URINE',
-                '', '', '', '', '', '', '', 
+                '', '', '', '', '', '', '',
                 '1', '2', '3', '4' // Empat kolom anak untuk SARAN (X, Y, Z, AA)
             ]
         ];
@@ -117,7 +120,7 @@ class AsesmenCCExport implements FromQuery, WithHeadings, WithMapping, WithStyle
         // Pecah saran yang disimpan dengan koma di database
         $saranString = $asesmen->saran_case_conference ?? '';
         $saranArray = array_map('trim', explode(',', $saranString));
-        
+
         $saran1 = isset($saranArray[0]) && $saranArray[0] !== '' ? $saranArray[0] : '-';
         $saran2 = isset($saranArray[1]) && $saranArray[1] !== '' ? $saranArray[1] : '-';
         $saran3 = isset($saranArray[2]) && $saranArray[2] !== '' ? $saranArray[2] : '-';
@@ -132,17 +135,17 @@ class AsesmenCCExport implements FromQuery, WithHeadings, WithMapping, WithStyle
             $asesmen->pekerjaan_input ?? $asesmen->pekerjaan->nama_pekerjaan ?? '-',
             $asesmen->pendidikan_input ?? $asesmen->pendidikan->nama_pendidikan ?? '-',
             $asesmen->alamat_domisili ?? '-',
-            
+
             $asesmen->status_hukum ?? '-',
             $asesmen->keterlibatan_jaringan ?? '-',
             $asesmen->deskripsi_bb ?? $asesmen->barang_bukti ?? '-',
             $asesmen->cara_mendapatkan ?? '-',
             $asesmen->dapat_dari_siapa ?? $asesmen->dapat_dari ?? '-',
-            
+
             $asesmen->kesehatan_fisik ?? $asesmen->kesehatan ?? '-',
             $asesmen->psikologi ?? '-',
             $asesmen->tes_urine ?? '-',
-            
+
             $asesmen->alasan_penggunaan ?? '-',
             $asesmen->kondisi_keluarga ?? '-',
             $asesmen->tingkat_ketergantungan ?? '-',
@@ -150,7 +153,7 @@ class AsesmenCCExport implements FromQuery, WithHeadings, WithMapping, WithStyle
             $asesmen->kondisi_lingkungan ?? '-',
             $asesmen->rekomendasi_input ?? optional($asesmen->rekomendasi)->tempat_rehabilitasi ?? '-',
             $asesmen->rekomendasi_keterangan ?? '-',
-            
+
             // Empat kolom saran
             $saran1,
             $saran2,
@@ -207,7 +210,7 @@ class AsesmenCCExport implements FromQuery, WithHeadings, WithMapping, WithStyle
                     ],
                     'fill' => [
                         'fillType' => Fill::FILL_SOLID,
-                        'startColor' => ['argb' => 'FFE2EFDA'] // Hijau Pudar
+                        'startColor' => ['argb' => 'FFA9C8F5'] // Diubah menjadi Biru Seragam untuk semua header
                     ],
                     'borders' => [
                         'allBorders' => [
@@ -217,11 +220,6 @@ class AsesmenCCExport implements FromQuery, WithHeadings, WithMapping, WithStyle
                     ]
                 ];
                 $sheet->getStyle('A2:AA3')->applyFromArray($headerStyle);
-
-                // KHUSUS MEWARNAI BIRU UNTUK KOLOM SARAN (Persis Gambar Anda)
-                $sheet->getStyle('X2:AA3')->getFill()
-                    ->setFillType(Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FFA9C8F5'); // Biru pastel seperti di gambar
 
                 // STYLING AREA DATA
                 if ($highestRow > 3) {
@@ -251,17 +249,17 @@ class AsesmenCCExport implements FromQuery, WithHeadings, WithMapping, WithStyle
                 $sheet->getColumnDimension('F')->setWidth(20);
                 $sheet->getColumnDimension('G')->setWidth(20);
                 $sheet->getColumnDimension('H')->setWidth(30);
-                
+
                 $sheet->getColumnDimension('I')->setWidth(20);
                 $sheet->getColumnDimension('J')->setWidth(25);
                 $sheet->getColumnDimension('K')->setWidth(35);
                 $sheet->getColumnDimension('L')->setWidth(25);
                 $sheet->getColumnDimension('M')->setWidth(20);
-                
+
                 $sheet->getColumnDimension('N')->setWidth(25);
                 $sheet->getColumnDimension('O')->setWidth(25);
                 $sheet->getColumnDimension('P')->setWidth(25);
-                
+
                 $sheet->getColumnDimension('Q')->setWidth(25);
                 $sheet->getColumnDimension('R')->setWidth(25);
                 $sheet->getColumnDimension('S')->setWidth(25);
